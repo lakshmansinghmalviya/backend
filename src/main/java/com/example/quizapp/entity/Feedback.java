@@ -1,11 +1,13 @@
 package com.example.quizapp.entity;
-
 import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -25,6 +27,14 @@ public class Feedback {
 
 	@Column(nullable = false)
 	private String feebackText;
+
+	@ManyToOne()
+	@JoinColumn(name = "user_id", nullable = false)
+	private MyUser user;
+	
+	@ManyToOne()
+	@JoinColumn(name = "question_id", nullable = false)
+	private Question question;
 
 	private boolean isActive;
 

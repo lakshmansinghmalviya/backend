@@ -1,5 +1,4 @@
 package com.example.quizapp.entity;
-
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -39,7 +38,11 @@ public class Category {
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
- 
+
+	@ManyToOne()
+    @JoinColumn(name = "creator_id", nullable = false)
+    private MyUser creator;
+	
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
