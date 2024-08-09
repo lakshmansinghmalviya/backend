@@ -1,17 +1,20 @@
 package com.example.quizapp.entity;
 
-import java.time.LocalDateTime;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @Entity
 @Table(name = "users")
@@ -19,6 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyUser {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
@@ -55,6 +59,21 @@ public class MyUser {
 
 	private String bio;
 	private boolean isActive;
+
+	@OneToMany(mappedBy = "creator")
+	private List<Category> categories;
+
+	@OneToMany(mappedBy = "creator")
+	private List<Quiz> quizzes;
+
+	@OneToMany(mappedBy = "user")
+	private List<QuizAttempt> quizzesAttempted;
+
+	@OneToMany(mappedBy = "user")
+	private List<Feedback> feedbacks;
+
+	@OneToMany(mappedBy = "user")
+	private List<Bookmark> bookmarks;
 
 	@PrePersist
 	protected void onCreate() {

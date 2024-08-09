@@ -1,5 +1,4 @@
 package com.example.quizapp.entity;
-
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -40,7 +39,16 @@ public class QuizAttempt {
 	
 	@Column(nullable = false)
 	private Boolean timesTaken; // for counting how many times user has attempted the quiz
- 
+	 
+    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false)
+	private MyUser user;
+	
+    @ManyToOne()
+    @JoinColumn(name = "quiz_id", nullable = false)
+	private Quiz quiz;
+	
+	
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
