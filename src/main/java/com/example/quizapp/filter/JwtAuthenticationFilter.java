@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.quizapp.service.MyUserDetailService;
-import com.quizapp.util.JwtService;
+import com.example.quizapp.service.MyUserDetailService;
+import com.example.quizapp.util.JwtService;
 
 import java.io.IOException;
 
