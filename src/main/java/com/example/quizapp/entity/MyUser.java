@@ -42,7 +42,7 @@ public class MyUser {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(name = "profile_pic")
+	@Column(name = "profile_pic" , columnDefinition ="TEXT")
 	private String profilePic;
 
 	@Column(nullable = false)
