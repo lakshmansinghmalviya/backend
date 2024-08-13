@@ -1,6 +1,5 @@
 package com.example.quizapp.service;
 
-
 import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
@@ -26,6 +25,7 @@ import com.example.quizapp.util.JwtService;
 @Service
 public class AuthService {
    Logger logger = LoggerFactory.getLogger(AuthService.class);
+   
 	@Autowired
 	private AuthenticationManager authenticationManager;
 

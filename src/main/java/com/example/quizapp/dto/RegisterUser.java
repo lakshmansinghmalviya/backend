@@ -16,3 +16,4 @@ public class RegisterUser {
 	private String profilePic;
 	private String bio;
 }
+ 

@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.example.quizapp.filter.JwtAuthenticationFilter;
 import com.example.quizapp.service.MyUserDetailService;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -40,9 +39,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/**").permitAll();
-//                    registry.requestMatchers("/home", "/api/auth/register", "/api/auth/login").permitAll();
-//                    registry.requestMatchers("/admin/**").hasRole("Educator");
-//                    registry.requestMatchers("/user/**").hasRole("Student");
                     registry.anyRequest().authenticated();
                 })
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
@@ -72,23 +68,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//	@Bean
-//	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//		http.csrf(csrf -> csrf.disable())
-//				.authorizeHttpRequests(authorize -> authorize.requestMatchers("/**").permitAll())
-////				        .requestMatchers("/api/auth/register", "/api/auth/login")
-////						.permitAll()
-//                          .requestMatchers("/helloAdmin").hasRole("Educator")
-////						.requestMatchers("/helloUser").hasRole("User")
-////						.requestMatchers("/helloManager").hasRole("Manager")
-////						.requestMatchers("/helloEducator").hasRole("Educator")
-////                      .requestMatchers("/helloUnknown").hasRole("Unknown")
-////						.anyRequest().authenticated())
-//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//
-//		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//		return http.build();
-//	}
 }
