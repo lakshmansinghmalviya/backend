@@ -12,21 +12,23 @@ import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.RegisterUser;
 import com.example.quizapp.service.AuthService;
 
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
-//   @Valid before @RequestBody for valid data checks
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterUser registerUser) {
-        return authService.register(registerUser);
-    }
+	@Autowired
+	private AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-        return authService.login(authRequest);
-    }
+//   @Valid before @RequestBody for valid data checks
+	@PostMapping("/register")
+	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUser registerUser) {
+		return authService.register(registerUser);
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
+		return authService.login(authRequest);
+	}
 }
