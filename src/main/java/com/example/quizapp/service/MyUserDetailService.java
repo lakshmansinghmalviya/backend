@@ -29,7 +29,8 @@ public class MyUserDetailService implements UserDetailsService {
                     .password(userObj.getPassword())
                     .roles(getRoles(userObj))
                     .build();
-        } else {
+        } 
+        else {
             throw new UsernameNotFoundException(username);
         }
     }
