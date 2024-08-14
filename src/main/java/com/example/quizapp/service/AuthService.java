@@ -24,8 +24,8 @@ import com.example.quizapp.util.JwtService;
 
 @Service
 public class AuthService {
-   Logger logger = LoggerFactory.getLogger(AuthService.class);
-   
+	Logger logger = LoggerFactory.getLogger(AuthService.class);
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -43,7 +43,8 @@ public class AuthService {
 
 	public ResponseEntity<AuthResponse> register(RegisterUser registerUser) {
 		if (userRepository.existsByUsername(registerUser.getUsername())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AuthResponse("Username already exists.", null,null));
+			return ResponseEntity
+					.ok(new AuthResponse("Username already exists.", null, null, null,0));
 		}
 
 		MyUser user = new MyUser();
@@ -57,7 +58,7 @@ public class AuthService {
 		user.setCreatedAt(LocalDateTime.now());
 		user.setUpdatedAt(LocalDateTime.now());
 		userRepository.save(user);
-		return ResponseEntity.ok(new AuthResponse("User Registered Successfully", null,null));
+		return ResponseEntity.ok(new AuthResponse("User Registered Successfully", null, null, null,201));
 	}
 
 	public ResponseEntity<AuthResponse> login(AuthRequest authRequest) {
@@ -71,12 +72,11 @@ public class AuthService {
 			String token = jwtUtil.generateToken(userDetails);
 			user.setToken(token);
 			userRepository.save(user);
-			AuthResponse authResponse = new AuthResponse("Login successful.", token, user.getUserId());
+			AuthResponse authResponse = new AuthResponse("Login successful.", token, user.getUserId(), user.getRole(),200);
 
 			return ResponseEntity.ok(authResponse);
 		} catch (AuthenticationException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new AuthResponse("Invalid username or password.", null,null));
+			return ResponseEntity.ok(new AuthResponse("Invalid username or password.", null, null, null,404));
 		}
 	}
 }
