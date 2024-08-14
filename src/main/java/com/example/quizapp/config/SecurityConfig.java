@@ -28,44 +28,40 @@ import com.example.quizapp.service.MyUserDetailService;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private MyUserDetailService userDetailService;
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+	@Autowired
+	private MyUserDetailService userDetailService;
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/**").permitAll();
-                    registry.anyRequest().authenticated();
-                })
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+		return httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(registry -> {
+			registry.requestMatchers("/**").permitAll();
+			registry.anyRequest().authenticated();
+		}).formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+	}
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userDetailService;
-    }
+	@Bean
+	public UserDetailsService userDetailsService() {
+		return userDetailService;
+	}
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(userDetailService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(authenticationProvider());
-    }
+	@Bean
+	public AuthenticationManager authenticationManager() {
+		return new ProviderManager(authenticationProvider());
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

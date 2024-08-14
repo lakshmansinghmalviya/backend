@@ -12,6 +12,7 @@ import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.RegisterUser;
 import com.example.quizapp.service.AuthService;
 
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
