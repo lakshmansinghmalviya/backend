@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
@@ -42,7 +45,7 @@ public class MyUser {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(name = "profile_pic" , columnDefinition ="TEXT")
+	@Column(name = "profile_pic", columnDefinition = "TEXT")
 	private String profilePic;
 
 	@Column(nullable = false)
@@ -61,24 +64,30 @@ public class MyUser {
 	private boolean isActive;
 
 	@OneToMany(mappedBy = "creator")
+	@JsonManagedReference
 	private List<Category> categories;
 
 	@OneToMany(mappedBy = "creator")
+	@JsonManagedReference
 	private List<Quiz> quizzes;
 
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<QuizAttempt> quizzesAttempted;
 
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<Feedback> feedbacks;
 
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<Bookmark> bookmarks;
 
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
+		this.isActive = true;
 	}
 
 	@PreUpdate

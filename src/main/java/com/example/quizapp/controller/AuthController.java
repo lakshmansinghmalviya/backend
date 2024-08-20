@@ -21,7 +21,7 @@ public class AuthController {
 	@Autowired
 	private AuthService authService;
 
-//   @Valid before @RequestBody for valid data checks
+//  @Valid before @RequestBody for valid data checks
 	@PostMapping("/register")
 	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUser registerUser) {
 		return authService.register(registerUser);

@@ -1,5 +1,8 @@
 package com.example.quizapp.entity;
+
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,15 +28,17 @@ public class Feedback {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String feebackText;
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
+	@JsonBackReference
 	private MyUser user;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "question_id", nullable = false)
+	@JsonBackReference
 	private Question question;
 
 	private boolean isActive;

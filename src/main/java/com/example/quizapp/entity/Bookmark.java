@@ -2,6 +2,8 @@ package com.example.quizapp.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,10 +31,12 @@ public class Bookmark {
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
+	@JsonBackReference
 	private MyUser user;
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
+	@JsonBackReference
 	private Quiz quiz;
 	
 	@Column(name = "created_at", updatable = false)

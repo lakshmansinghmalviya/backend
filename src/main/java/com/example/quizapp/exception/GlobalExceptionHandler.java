@@ -8,7 +8,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+
 import com.example.quizapp.dto.ErrorResponse;
+import com.example.quizapp.dto.MessageResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,4 +38,10 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
+
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+		return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }
