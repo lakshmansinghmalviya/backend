@@ -36,7 +36,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(registry -> {
-			registry.requestMatchers("/**").permitAll();
+			registry.requestMatchers(AllowedPaths.directPaths).permitAll();
 			registry.anyRequest().authenticated();
 		}).formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
