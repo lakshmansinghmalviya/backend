@@ -19,6 +19,7 @@ import com.example.quizapp.dto.AuthRequest;
 import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.RegisterUser;
 import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
 import com.example.quizapp.util.JwtService;
 
@@ -41,26 +42,30 @@ public class AuthService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public ResponseEntity<AuthResponse> register(RegisterUser registerUser) {
-		if (userRepository.existsByUsername(registerUser.getUsername())) {
-			return ResponseEntity.ok(new AuthResponse("Username already exists.", null, null, null, 0));
-		}
+	public AuthResponse register(RegisterUser registerUser) {
+		try {
 
-		MyUser user = new MyUser();
-		user.setName(registerUser.getName());
-		user.setUsername(registerUser.getUsername());
-		user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
-		user.setRole(registerUser.getRole());
-		user.setProfilePic(registerUser.getProfilePic());
-		user.setBio(registerUser.getBio());
-		user.setActive(true);
-		user.setCreatedAt(LocalDateTime.now());
-		user.setUpdatedAt(LocalDateTime.now());
-		userRepository.save(user);
-		return ResponseEntity.ok(new AuthResponse("User Registered Successfully", null, null, null, 201));
+			if (userRepository.existsByUsername(registerUser.getUsername())) {
+				return new AuthResponse("Username already exists.", null, null, null, 409);
+			}
+			MyUser user = new MyUser();
+			user.setName(registerUser.getName());
+			user.setUsername(registerUser.getUsername());
+			user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
+			user.setRole(registerUser.getRole());
+			user.setProfilePic(registerUser.getProfilePic());
+			user.setBio(registerUser.getBio());
+			user.setActive(true);
+			user.setCreatedAt(LocalDateTime.now());
+			user.setUpdatedAt(LocalDateTime.now());
+			userRepository.save(user);
+			return (new AuthResponse("User Registered Successfully", null, null, null, 201));
+		} catch (Exception e) {
+			throw new RuntimeException("Counnd't save , something went wrong !");
+		}
 	}
 
-	public ResponseEntity<AuthResponse> login(AuthRequest authRequest) {
+	public AuthResponse login(AuthRequest authRequest) {
 		try {
 			authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -68,15 +73,16 @@ public class AuthService {
 			final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
 			MyUser user = userRepository.findByUsername(authRequest.getUsername())
 					.orElseThrow(() -> new RuntimeException("User not found"));
+
 			String token = jwtUtil.generateToken(userDetails);
 			user.setToken(token);
 			userRepository.save(user);
 			AuthResponse authResponse = new AuthResponse("Login successful.", token, user.getUserId(), user.getRole(),
 					200);
-
-			return ResponseEntity.ok(authResponse);
+			return authResponse;
 		} catch (AuthenticationException e) {
-			return ResponseEntity.ok(new AuthResponse("Invalid username or password.", null, null, null, 404));
+			new ResourceNotFoundException("Invalid username or password.");
 		}
+		return new AuthResponse("Invalid username or password.", null, null, null, 401);
 	}
 }
