@@ -1,6 +1,7 @@
 package com.example.quizapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,11 +25,13 @@ public class AuthController {
 //  @Valid before @RequestBody for valid data checks
 	@PostMapping("/register")
 	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUser registerUser) {
-		return authService.register(registerUser);
+		AuthResponse authResponse = authService.register(registerUser);
+		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
-		return authService.login(authRequest);
+		AuthResponse authResponse = authService.login(authRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
 	}
 }

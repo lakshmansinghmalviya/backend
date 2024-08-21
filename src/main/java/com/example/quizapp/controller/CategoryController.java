@@ -2,7 +2,10 @@ package com.example.quizapp.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +25,6 @@ import com.example.quizapp.service.CategoryService;
 
 @RestController
 @RequestMapping("/categories")
-
 public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
@@ -31,11 +33,10 @@ public class CategoryController {
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<MessageResponse> createCategory(@RequestBody CategoryRequest request) {
 		String message = categoryService.createCategory(request);
-		return ResponseEntity.ok(new MessageResponse(message));
+		return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(message));
 	}
 
 	@GetMapping("/creator/{id}")
-	
 	public ResponseEntity<List<Category>> getCategoriesByCreatorId(@PathVariable("id") Long id) {
 		List<Category> categories = categoryService.getCategoriesByCreatorId(id);
 		if (categories.isEmpty()) {
