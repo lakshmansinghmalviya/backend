@@ -30,6 +30,7 @@ public class SecurityConfig {
 
 	@Autowired
 	private MyUserDetailService userDetailService;
+
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 

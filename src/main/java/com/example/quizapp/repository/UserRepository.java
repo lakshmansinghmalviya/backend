@@ -7,6 +7,8 @@ import com.example.quizapp.entity.*;
 
 public interface UserRepository extends JpaRepository<MyUser, Long> {
 	Optional<MyUser> findByUsername(String username);
+
 	Boolean existsByUsername(String myUserRepo);
+
 	MyUser findByUserId(Long id);
 }

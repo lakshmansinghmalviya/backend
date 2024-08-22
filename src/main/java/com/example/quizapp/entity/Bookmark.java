@@ -38,12 +38,13 @@ public class Bookmark {
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@JsonBackReference
 	private Quiz quiz;
-	
+
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();

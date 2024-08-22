@@ -25,8 +25,6 @@ import com.example.quizapp.util.JwtService;
 
 @Service
 public class AuthService {
-	Logger logger = LoggerFactory.getLogger(AuthService.class);
-
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -79,12 +77,12 @@ public class AuthService {
 			userRepository.save(user);
 			AuthResponse authResponse = new AuthResponse("Login successful.", token, user.getUserId(), user.getRole(),
 					200);
+
 			return authResponse;
-		}
-		catch (AuthenticationException e) {
+		} catch (AuthenticationException e) {
 			new ResourceNotFoundException("Invalid username or password.");
 		}
 		return new AuthResponse("Invalid username or password.", null, null, null, 401);
 	}
-	
+
 }

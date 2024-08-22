@@ -1,6 +1,5 @@
 package com.example.quizapp.service;
 
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,29 +15,27 @@ import com.example.quizapp.repository.UserRepository;
 @Service
 public class MyUserDetailService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository repository;
+	@Autowired
+	private UserRepository repository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<MyUser> user = repository.findByUsername(username);
-        if (user.isPresent()) {
-            var userObj = user.get();
-            return User.builder()
-                    .username(userObj.getUsername())
-                    .password(userObj.getPassword())
-                    .roles(getRoles(userObj))
-                    .build();
-        } 
-        else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<MyUser> user = repository.findByUsername(username);
 
-    private String[] getRoles(MyUser user) {
-        if (user.getRole() == null) {
-            return new String[]{"Student"};
-        }
-        return user.getRole().split(",");
-    }
+		if (user.isPresent()) {
+			var userObj = user.get();
+			return User.builder().username(userObj.getUsername()).password(userObj.getPassword())
+					.roles(getRoles(userObj)).build();
+		} else {
+			throw new UsernameNotFoundException(username);
+		}
+	}
+
+	private String[] getRoles(MyUser user) {
+
+		if (user.getRole() == null) {
+			return new String[] { "Student" };
+		}
+		return user.getRole().split(",");
+	}
 }
