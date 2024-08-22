@@ -28,28 +28,28 @@ public class Option {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Boolean isActive ;
-	
-	@Column(nullable= false,columnDefinition = "TEXT")
+	private Boolean isActive;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String text;
-	
-	@Column(nullable= false)
-	private Boolean  isCorrect;
-	
-	@Column(name = "image_url",columnDefinition = "TEXT")
+
+	@Column(nullable = false)
+	private Boolean isCorrect;
+
+	@Column(name = "image_url", columnDefinition = "TEXT")
 	private String imageUrl;
-	
+
 	@ManyToOne()
-    @JoinColumn(name = "question_id", nullable = false)
+	@JoinColumn(name = "question_id", nullable = false)
 	@JsonBackReference
-    private Question question;
-	
+	private Question question;
+
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-	
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();

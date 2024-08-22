@@ -32,6 +32,7 @@ public class CategoryService {
 			category.setActive(true);
 			category.setCreator(creator);
 			categoryRepository.save(category);
+
 			return "Category Created!";
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create category: " + e.getMessage());

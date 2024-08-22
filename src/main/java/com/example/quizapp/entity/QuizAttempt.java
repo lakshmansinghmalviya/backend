@@ -57,7 +57,7 @@ public class QuizAttempt {
 	private Boolean correctAnswers;
 
 	@Column(nullable = false)
-	private Boolean timesTaken; // for counting how many times user has attempted the quiz
+	private Boolean timesTaken;
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
