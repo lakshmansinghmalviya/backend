@@ -61,7 +61,7 @@ public class AuthService {
 			userRepository.save(user);
 			return (new AuthResponse("User Registered Successfully", null, null, null, 201));
 		} catch (Exception e) {
-			throw new RuntimeException("Counnd't save , something went wrong !");
+			throw new RuntimeException("Couldn't save , something went wrong !");
 		}
 	}
 
@@ -80,9 +80,11 @@ public class AuthService {
 			AuthResponse authResponse = new AuthResponse("Login successful.", token, user.getUserId(), user.getRole(),
 					200);
 			return authResponse;
-		} catch (AuthenticationException e) {
+		}
+		catch (AuthenticationException e) {
 			new ResourceNotFoundException("Invalid username or password.");
 		}
 		return new AuthResponse("Invalid username or password.", null, null, null, 401);
 	}
+	
 }
