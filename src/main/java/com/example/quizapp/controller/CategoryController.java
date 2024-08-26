@@ -39,10 +39,10 @@ public class CategoryController {
 	@GetMapping("/creator/{id}")
 	public ResponseEntity<List<Category>> getCategoriesByCreatorId(@PathVariable("id") Long id) {
 		List<Category> categories = categoryService.getCategoriesByCreatorId(id);
-		if (categories.isEmpty()) {
+		if (categories.isEmpty())  
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-		} else
-			return ResponseEntity.ok(categories);
+
+		return ResponseEntity.status(HttpStatus.OK).body(categories);
 	}
 
 	@PutMapping("/{id}")

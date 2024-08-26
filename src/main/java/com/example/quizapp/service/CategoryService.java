@@ -72,12 +72,11 @@ public class CategoryService {
 	@Transactional
 	public String deleteCategoryById(Long categoryId) {
 		try {
-			if (categoryRepository.existsById(categoryId)) {
+			if (categoryRepository.existsById(categoryId))
 				categoryRepository.deleteById(categoryId);
-				return "Deleted the category Successfully";
-			} else {
-				throw new RuntimeException("Category not found");
-			}
+
+			return "Deleted the category Successfully";
+
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to delete category: " + e.getMessage());
 		}
@@ -102,7 +101,6 @@ public class CategoryService {
 		try {
 			Category category = categoryRepository.findById(categoryId)
 					.orElseThrow(() -> new RuntimeException("Category not found"));
-			category.setCreator(null);
 			return category;
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve category: " + e.getMessage());

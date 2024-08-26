@@ -27,31 +27,31 @@ public class QuizController {
 
 	@PostMapping()
 	public ResponseEntity<QuizResponse> createQuiz(@RequestBody QuizRequest request) {
-		return quizService.createQuiz(request);
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.createQuiz(request));
 	}
 
-	@GetMapping()
-	public ResponseEntity<List<Quiz>> getAllQuiz() {
-		List<Quiz> quizzes = quizService.getAllQuiz();
-		if (!quizzes.isEmpty())
-			return ResponseEntity.ok(quizzes);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-	}
-
-	@GetMapping("/creator/{creatorId}/categories/{categoryId}")
-	public ResponseEntity<List<Quiz>> getAllByCreatorAndCategoryId(@PathVariable("creatorId") Long creatorId,
-			@PathVariable("categoryId") Long categoryId) {
-		return quizService.getAllQuizByCreatorAndCategoryId(creatorId, categoryId);
-	}
-
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteQuizById(@PathVariable("id") Long id) {
-		quizService.deleteQuizById(id);
-		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-
-	@PutMapping("/{id}")
-	public ResponseEntity<Quiz> updateQuizById(@PathVariable("id") Long id, @RequestBody QuizRequest request) {
-		return quizService.updateQuizById(id, request);
-	}
+//	@GetMapping()
+//	public ResponseEntity<List<Quiz>> getAllQuiz() {
+//		List<Quiz> quizzes = quizService.getAllQuiz();
+//		if (!quizzes.isEmpty())
+//			return ResponseEntity.ok(quizzes);
+//		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+//	}
+//
+//	@GetMapping("/creator/{creatorId}/categories/{categoryId}")
+//	public ResponseEntity<List<Quiz>> getAllByCreatorAndCategoryId(@PathVariable("creatorId") Long creatorId,
+//			@PathVariable("categoryId") Long categoryId) {
+//		return quizService.getAllQuizByCreatorAndCategoryId(creatorId, categoryId);
+//	}
+//
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<?> deleteQuizById(@PathVariable("id") Long id) {
+//		quizService.deleteQuizById(id);
+//		return ResponseEntity.status(HttpStatus.OK).build();
+//	}
+//
+//	@PutMapping("/{id}")
+//	public ResponseEntity<Quiz> updateQuizById(@PathVariable("id") Long id, @RequestBody QuizRequest request) {
+//		return quizService.updateQuizById(id, request);
+//	}
 }

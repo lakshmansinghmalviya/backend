@@ -26,65 +26,66 @@ public class QuizService {
 	@Autowired
 	private CategoryService categoryService;
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	@Transactional
-	public ResponseEntity<QuizResponse> createQuiz(QuizRequest request) {
-		Quiz quiz = new Quiz();
-		Category category = categoryService.getCategoryById(request.getCategoryId());
-		MyUser creator = userRepository.findById(request.getCreatorId())
-				.orElseThrow(() -> new RuntimeException("Creator not found"));
-		quiz.setTitle(request.getTitle());
-		quiz.setDescription(request.getDescription());
-		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
-		quiz.setTimeLimit(request.getTimeLimit());
-		quiz.setQuizPic(request.getQuizPic());
-		quiz.setCategory(category);
-		quiz.setCreator(creator);
-		quiz = quizRepository.save(quiz);
-		if (quiz != null)
-			return ResponseEntity.ok(new QuizResponse("Quiz Created!"));
-		else
-			return ResponseEntity.ok(new QuizResponse("Something went wrong!"));
-	}
-
-	public ResponseEntity<List<Quiz>> getAllQuizByCreatorAndCategoryId(Long creatorId, Long categoryId) {
+	public QuizResponse createQuiz(QuizRequest request) {
 		try {
-			List<Quiz> quizzes = quizRepository.findByCreatorIdAndCategoryId(creatorId, categoryId);
-			if (quizzes.isEmpty()) {
-				return ResponseEntity.noContent().build();
-			}
-			return ResponseEntity.ok(quizzes);
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().build();
+			MyUser creator = userService.getUser(request.getCreatorId());
+			Category category = categoryService.getCategoryById(request.getCategoryId());
+			Quiz quiz = new Quiz();
+			quiz.setTitle(request.getTitle());
+			quiz.setDescription(request.getDescription());
+			quiz.setRandomizeQuestions(request.getRandomizeQuestions());
+			quiz.setTimeLimit(request.getTimeLimit());
+			quiz.setQuizPic(request.getQuizPic());
+			quiz.setCategory(category);
+			quiz.setCreator(creator);
+			quiz = quizRepository.save(quiz);
+			return new QuizResponse("Quiz Created!");
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
-	@Transactional
-	public void deleteQuizById(Long id) {
-		quizRepository.deleteById(id);
-	}
+//	public ResponseEntity<List<Quiz>> getAllQuizByCreatorAndCategoryId(Long creatorId, Long categoryId) {
+//		try {
+//			List<Quiz> quizzes = quizRepository.findByCreatorIdAndCategoryId(creatorId, categoryId);
+//			if (quizzes.isEmpty()) {
+//				return ResponseEntity.noContent().build();
+//			}
+//			return ResponseEntity.ok(quizzes);
+//		} catch (Exception e) {
+//			return ResponseEntity.internalServerError().build();
+//		}
+//	}
 
-	@Transactional
-	public ResponseEntity<Quiz> updateQuizById(Long id, QuizRequest request) {
-		Quiz quiz = quizRepository.findById(id).get();
-		quiz.setId(id);
-		quiz.setTitle(request.getTitle());
-		quiz.setDescription(request.getDescription());
-		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
-		quiz.setTimeLimit(request.getTimeLimit());
-		quiz = quizRepository.save(quiz);
-		if (quiz != null) {
-			return ResponseEntity.ok(quiz);
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	}
-
-	public Quiz findById(Long id) {
-		return quizRepository.findById(id).get();
-	}
-
-	public List<Quiz> getAllQuiz() {
-		return quizRepository.findAll();
-	}
+//	@Transactional
+//	public void deleteQuizById(Long id) {
+//		quizRepository.deleteById(id);
+//	}
+//
+//	@Transactional
+//	public ResponseEntity<Quiz> updateQuizById(Long id, QuizRequest request) {
+//		Quiz quiz = quizRepository.findById(id).get();
+//		quiz.setId(id);
+//		quiz.setTitle(request.getTitle());
+//		quiz.setDescription(request.getDescription());
+//		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
+//		quiz.setTimeLimit(request.getTimeLimit());
+//		quiz = quizRepository.save(quiz);
+//		if (quiz != null) {
+//			return ResponseEntity.ok(quiz);
+//		}
+//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//	}
+//
+//	public Quiz findById(Long id) {
+//		return quizRepository.findById(id).get();
+//	}
+//
+//	public List<Quiz> getAllQuiz() {
+//		return quizRepository.findAll();
+//	}
 }
