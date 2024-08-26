@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.AuthRequest;
 import com.example.quizapp.dto.AuthResponse;
@@ -39,7 +40,8 @@ public class AuthService {
 
 	@Autowired
 	private UserRepository userRepository;
-
+    
+	@Transactional
 	public AuthResponse register(RegisterUser registerUser) {
 		try {
 
@@ -62,7 +64,7 @@ public class AuthService {
 			throw new RuntimeException("Couldn't save , something went wrong !");
 		}
 	}
-
+	@Transactional
 	public AuthResponse login(AuthRequest authRequest) {
 		try {
 			authenticationManager.authenticate(

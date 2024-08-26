@@ -29,4 +29,12 @@ public class UserController {
 		MyUser user = userService.updateUserById(id, request);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
+
+	@PutMapping("/logout/{id}")
+	public ResponseEntity<Void> doUserLogout(@PathVariable Long id) {
+		// not happening
+		userService.logout(id);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
 }

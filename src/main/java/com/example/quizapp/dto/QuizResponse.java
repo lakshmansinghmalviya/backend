@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryUpdateRequest {
-	private String name;
-	private String description;
-	private String categoryPic;
+public class QuizResponse {
+   private String message;
 }

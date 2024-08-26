@@ -40,11 +40,14 @@ public class Category {
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
+	@Column(name = "category_pic", columnDefinition = "TEXT")
+	private String categoryPic;
+
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
 	@ManyToOne()
-	@JoinColumn(name = "creator_id")
+	@JoinColumn(name = "creator_id", nullable = false)
 	@JsonBackReference
 	private MyUser creator;
 

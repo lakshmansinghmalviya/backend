@@ -7,8 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryUpdateRequest {
-	private String name;
+public class QuizRequest {
+	private String title;
 	private String description;
-	private String categoryPic;
+	private String quizPic;
+	private Long timeLimit;
+	private Boolean randomizeQuestions;
+	private Long categoryId;
+	private Long creatorId;
 }

@@ -11,4 +11,5 @@ public class CategoryRequest {
 	private Long creatorId;
 	private String name;
 	private String description;
+	private String categoryPic;
 }
