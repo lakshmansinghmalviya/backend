@@ -33,7 +33,10 @@ public class Quiz {
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
-
+	
+	@Column(name = "quiz_pic", columnDefinition = "TEXT")
+	private String quizPic;
+	
 	@Column(nullable = false)
 	private Long timeLimit;
 	private Boolean randomizeQuestions;

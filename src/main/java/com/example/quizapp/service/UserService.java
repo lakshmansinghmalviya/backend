@@ -31,6 +31,8 @@ public class UserService {
 			MyUser user = userRepository.findByUserId(id);
 			user.setBio(request.getBio());
 			user.setName(request.getName());
+			user.setProfilePic(request.getProfilePic());
+			user.setUsername(request.getUsername());
 			if (!request.getPassword().trim().isEmpty())
 				user.setPassword(passwordEncoder.encode(request.getPassword()));
 			user = userRepository.save(user);
@@ -40,4 +42,13 @@ public class UserService {
 		}
 	}
 
+	public void logout(Long id) {
+		try {
+			MyUser user = userRepository.findByUserId(id);
+			user.setToken(null);
+			userRepository.save(user);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException("User Not Found" + e.getMessage());
+		}
+	}
 }
