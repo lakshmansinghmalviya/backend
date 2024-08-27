@@ -65,4 +65,9 @@ public class CategoryController {
 		Category category = categoryService.getCategoryById(id);
 		return ResponseEntity.ok(category);
 	}
+	
+	@GetMapping("/creator/{id}/{total}")
+	public ResponseEntity<Long> getTotalNumberOfCategories(@PathVariable("id") Long id){
+	  return ResponseEntity.ok(categoryService.getTotalCategory(id));
+	}
 }

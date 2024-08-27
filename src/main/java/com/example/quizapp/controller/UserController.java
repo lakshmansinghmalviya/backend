@@ -32,7 +32,6 @@ public class UserController {
 
 	@PutMapping("/logout/{id}")
 	public ResponseEntity<Void> doUserLogout(@PathVariable Long id) {
-		// not happening
 		userService.logout(id);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

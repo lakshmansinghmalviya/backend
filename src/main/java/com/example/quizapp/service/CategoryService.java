@@ -106,4 +106,13 @@ public class CategoryService {
 			throw new RuntimeException("Failed to retrieve category: " + e.getMessage());
 		}
 	}
+
+	public Long getTotalCategory(Long id) {
+		try {
+			Long total = categoryRepository.countByCreator_UserId(id);
+			return total;
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to fetch total category of the user: " + e.getMessage());
+		}
+	}
 }
