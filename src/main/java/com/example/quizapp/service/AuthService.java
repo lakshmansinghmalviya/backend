@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.AuthRequest;
 import com.example.quizapp.dto.AuthResponse;
+import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.RegisterUser;
 import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.exception.ResourceAlreadyExits;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
 import com.example.quizapp.util.JwtService;
@@ -40,14 +42,15 @@ public class AuthService {
 
 	@Autowired
 	private UserRepository userRepository;
-    
+
 	@Transactional
-	public AuthResponse register(RegisterUser registerUser) {
+	public MessageResponse register(RegisterUser registerUser) {
 		try {
 
 			if (userRepository.existsByUsername(registerUser.getUsername())) {
-				return new AuthResponse("Username already exists.", null, null, null, 409);
+				throw new ResourceAlreadyExits("User Already Exits please try with other credentials");
 			}
+
 			MyUser user = new MyUser();
 			user.setName(registerUser.getName());
 			user.setUsername(registerUser.getUsername());
@@ -59,12 +62,13 @@ public class AuthService {
 			user.setCreatedAt(LocalDateTime.now());
 			user.setUpdatedAt(LocalDateTime.now());
 			userRepository.save(user);
-			return (new AuthResponse("User Registered Successfully", null, null, null, 201));
+			return new MessageResponse("User Registered Successfully");
+
 		} catch (Exception e) {
-			throw new RuntimeException("Couldn't save , something went wrong !");
+			throw new RuntimeException("Couldn't register please try again");
 		}
 	}
-	@Transactional
+
 	public AuthResponse login(AuthRequest authRequest) {
 		try {
 			authenticationManager.authenticate(
@@ -72,19 +76,15 @@ public class AuthService {
 
 			final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
 			MyUser user = userRepository.findByUsername(authRequest.getUsername())
-					.orElseThrow(() -> new RuntimeException("User not found"));
+					.orElseThrow(() -> new ResourceNotFoundException("User data not found"));
 
 			String token = jwtUtil.generateToken(userDetails);
 			user.setToken(token);
+			user.setLastLogin(LocalDateTime.now());
 			userRepository.save(user);
-			AuthResponse authResponse = new AuthResponse("Login successful.", token, user.getUserId(), user.getRole(),
-					200);
-
-			return authResponse;
+			return new AuthResponse(token, user.getUserId(), user.getRole());
 		} catch (AuthenticationException e) {
-			new ResourceNotFoundException("Invalid username or password.");
+			throw new ResourceNotFoundException("Invalid username or password.");
 		}
-		return new AuthResponse("Invalid username or password.", null, null, null, 401);
 	}
-
 }

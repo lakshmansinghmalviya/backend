@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.AuthRequest;
 import com.example.quizapp.dto.AuthResponse;
+import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.RegisterUser;
 import com.example.quizapp.service.AuthService;
 
@@ -23,14 +24,12 @@ public class AuthController {
 	private AuthService authService;
 
 	@PostMapping("/register")
-	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUser registerUser) {
-		AuthResponse authResponse = authService.register(registerUser);
-		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
+	public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterUser registerUser) {
+		return ResponseEntity.status(HttpStatus.OK).body(authService.register(registerUser));
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
-		AuthResponse authResponse = authService.login(authRequest);
-		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
+		return ResponseEntity.status(HttpStatus.OK).body(authService.login(authRequest));
 	}
 }

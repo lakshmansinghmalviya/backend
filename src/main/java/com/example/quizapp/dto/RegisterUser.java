@@ -26,6 +26,6 @@ public class RegisterUser {
 
 	private String profilePic;
 
-	@Size(max = 250, message = "Bio should not exceed 250 characters")
+	@Size(max = 100, message = "Bio should not exceed 100 characters")
 	private String bio;
 }

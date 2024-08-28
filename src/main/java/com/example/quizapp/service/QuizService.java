@@ -5,18 +5,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.QuizRequest;
-import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
-import com.example.quizapp.repository.UserRepository;
 
 @Service
 public class QuizService {
@@ -26,65 +22,84 @@ public class QuizService {
 	@Autowired
 	private CategoryService categoryService;
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
-	@Transactional
-	public ResponseEntity<QuizResponse> createQuiz(QuizRequest request) {
-		Quiz quiz = new Quiz();
-		Category category = categoryService.getCategoryById(request.getCategoryId());
-		MyUser creator = userRepository.findById(request.getCreatorId())
-				.orElseThrow(() -> new RuntimeException("Creator not found"));
-		quiz.setTitle(request.getTitle());
-		quiz.setDescription(request.getDescription());
-		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
-		quiz.setTimeLimit(request.getTimeLimit());
-		quiz.setQuizPic(request.getQuizPic());
-		quiz.setCategory(category);
-		quiz.setCreator(creator);
-		quiz = quizRepository.save(quiz);
-		if (quiz != null)
-			return ResponseEntity.ok(new QuizResponse("Quiz Created!"));
-		else
-			return ResponseEntity.ok(new QuizResponse("Something went wrong!"));
-	}
-
-	public ResponseEntity<List<Quiz>> getAllQuizByCreatorAndCategoryId(Long creatorId, Long categoryId) {
+	public Quiz createQuiz(QuizRequest request) {
 		try {
-			List<Quiz> quizzes = quizRepository.findByCreatorIdAndCategoryId(creatorId, categoryId);
-			if (quizzes.isEmpty()) {
-				return ResponseEntity.noContent().build();
-			}
-			return ResponseEntity.ok(quizzes);
+			MyUser creator = userService.getUser(request.getCreatorId());
+			Category category = categoryService.getCategoryById(request.getCategoryId());
+			Quiz quiz = new Quiz();
+			quiz.setTitle(request.getTitle());
+			quiz.setDescription(request.getDescription());
+			quiz.setRandomizeQuestions(request.getRandomizeQuestions());
+			quiz.setTimeLimit(request.getTimeLimit());
+			quiz.setQuizPic(request.getQuizPic());
+			quiz.setCategory(category);
+			quiz.setCreator(creator);
+			quiz = quizRepository.save(quiz);
+			return quiz;
 		} catch (Exception e) {
-			return ResponseEntity.internalServerError().build();
+			throw new RuntimeException("Something went wrong " + e.getMessage());
 		}
 	}
 
-	@Transactional
+	public Long getTotalQuiz(Long id) {
+		try {
+			return quizRepository.countByCreator_UserId(id);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
+	public List<Quiz> getAllQuizByCreatorId(Long creatorId) {
+		try {
+			List<Quiz> quizzes = quizRepository.findByCreator_UserId(creatorId);
+			return quizzes;
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
 	public void deleteQuizById(Long id) {
-		quizRepository.deleteById(id);
+		try {
+			if (quizRepository.existsById(id))
+				quizRepository.deleteById(id);
+			else
+				throw new ResourceNotFoundException("Quiz id not found");
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
-	@Transactional
-	public ResponseEntity<Quiz> updateQuizById(Long id, QuizRequest request) {
-		Quiz quiz = quizRepository.findById(id).get();
-		quiz.setId(id);
-		quiz.setTitle(request.getTitle());
-		quiz.setDescription(request.getDescription());
-		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
-		quiz.setTimeLimit(request.getTimeLimit());
-		quiz = quizRepository.save(quiz);
-		if (quiz != null) {
-			return ResponseEntity.ok(quiz);
+	public Quiz updateQuizById(Long id, QuizRequest request) {
+		try {
+			Quiz quiz = quizRepository.findById(id).get();
+			quiz.setTitle(request.getTitle());
+			quiz.setDescription(request.getDescription());
+			quiz.setRandomizeQuestions(request.getRandomizeQuestions());
+			quiz.setTimeLimit(request.getTimeLimit());
+			quiz.setQuizPic(request.getQuizPic());
+			quiz = quizRepository.save(quiz);
+			return quiz;
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 
 	public Quiz findById(Long id) {
-		return quizRepository.findById(id).get();
+		try {
+			return quizRepository.findById(id).get();
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
 	}
 
 	public List<Quiz> getAllQuiz() {
-		return quizRepository.findAll();
+		try {
+			return quizRepository.findAll();
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
 	}
 }

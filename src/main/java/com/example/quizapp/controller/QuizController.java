@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.QuizRequest;
-import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.service.QuizService;
 
@@ -26,22 +25,23 @@ public class QuizController {
 	QuizService quizService;
 
 	@PostMapping()
-	public ResponseEntity<QuizResponse> createQuiz(@RequestBody QuizRequest request) {
-		return quizService.createQuiz(request);
+	public ResponseEntity<Quiz> createQuiz(@RequestBody QuizRequest request) {
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.createQuiz(request));
 	}
 
 	@GetMapping()
 	public ResponseEntity<List<Quiz>> getAllQuiz() {
+
 		List<Quiz> quizzes = quizService.getAllQuiz();
 		if (!quizzes.isEmpty())
-			return ResponseEntity.ok(quizzes);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.status(HttpStatus.OK).body(quizzes);
+
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
-	@GetMapping("/creator/{creatorId}/categories/{categoryId}")
-	public ResponseEntity<List<Quiz>> getAllByCreatorAndCategoryId(@PathVariable("creatorId") Long creatorId,
-			@PathVariable("categoryId") Long categoryId) {
-		return quizService.getAllQuizByCreatorAndCategoryId(creatorId, categoryId);
+	@GetMapping("/creator/{creatorId}")
+	public ResponseEntity<List<Quiz>> getAllByCreatorId(@PathVariable("creatorId") Long creatorId) {
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuizByCreatorId(creatorId));
 	}
 
 	@DeleteMapping("/{id}")
@@ -52,6 +52,11 @@ public class QuizController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Quiz> updateQuizById(@PathVariable("id") Long id, @RequestBody QuizRequest request) {
-		return quizService.updateQuizById(id, request);
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.updateQuizById(id, request));
+	}
+
+	@GetMapping("/creator/{id}/{total}")
+	public ResponseEntity<Long> getTotalNumberOfQuizzes(@PathVariable("id") Long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getTotalQuiz(id));
 	}
 }
