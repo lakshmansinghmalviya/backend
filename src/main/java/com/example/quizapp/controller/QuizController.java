@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.QuizRequest;
-import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.service.QuizService;
 
@@ -26,7 +25,7 @@ public class QuizController {
 	QuizService quizService;
 
 	@PostMapping()
-	public ResponseEntity<QuizResponse> createQuiz(@RequestBody QuizRequest request) {
+	public ResponseEntity<Quiz> createQuiz(@RequestBody QuizRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.createQuiz(request));
 	}
 
@@ -35,7 +34,7 @@ public class QuizController {
 
 		List<Quiz> quizzes = quizService.getAllQuiz();
 		if (!quizzes.isEmpty())
-			return ResponseEntity.ok(quizzes);
+			return ResponseEntity.status(HttpStatus.OK).body(quizzes);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
@@ -58,6 +57,6 @@ public class QuizController {
 
 	@GetMapping("/creator/{id}/{total}")
 	public ResponseEntity<Long> getTotalNumberOfQuizzes(@PathVariable("id") Long id) {
-		return ResponseEntity.ok(quizService.getTotalQuiz(id));
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getTotalQuiz(id));
 	}
 }

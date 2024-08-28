@@ -5,18 +5,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.QuizRequest;
-import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
-import com.example.quizapp.repository.UserRepository;
 
 @Service
 public class QuizService {
@@ -28,7 +24,7 @@ public class QuizService {
 	@Autowired
 	private UserService userService;
 
-	public QuizResponse createQuiz(QuizRequest request) {
+	public Quiz createQuiz(QuizRequest request) {
 		try {
 			MyUser creator = userService.getUser(request.getCreatorId());
 			Category category = categoryService.getCategoryById(request.getCategoryId());
@@ -41,9 +37,9 @@ public class QuizService {
 			quiz.setCategory(category);
 			quiz.setCreator(creator);
 			quiz = quizRepository.save(quiz);
-			return new QuizResponse("Quiz Created!");
+			return quiz;
 		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("Something went wrong " + e.getMessage());
 		}
 	}
 
@@ -64,20 +60,18 @@ public class QuizService {
 		}
 	}
 
-	@Transactional
 	public void deleteQuizById(Long id) {
 		try {
 			if (quizRepository.existsById(id))
 				quizRepository.deleteById(id);
 			else
-				throw new Exception("Quiz id not found");
+				throw new ResourceNotFoundException("Quiz id not found");
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
 
-	@Transactional
 	public Quiz updateQuizById(Long id, QuizRequest request) {
 		try {
 			Quiz quiz = quizRepository.findById(id).get();
@@ -94,10 +88,18 @@ public class QuizService {
 	}
 
 	public Quiz findById(Long id) {
-		return quizRepository.findById(id).get();
+		try {
+			return quizRepository.findById(id).get();
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
 	}
 
 	public List<Quiz> getAllQuiz() {
-		return quizRepository.findAll();
+		try {
+			return quizRepository.findAll();
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
 	}
 }

@@ -40,9 +40,15 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
 		return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(ResourceAlreadyExits.class)
+	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExits ex) {
+		MessageResponse res = new MessageResponse(ex.getMessage());
+		return new ResponseEntity<>(res, HttpStatus.CONFLICT);
 	}
 
 }

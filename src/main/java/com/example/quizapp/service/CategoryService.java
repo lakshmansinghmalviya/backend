@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.CategoryRequest;
 import com.example.quizapp.dto.CategoryUpdateRequest;
+import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
 import com.example.quizapp.repository.UserRepository;
 
@@ -26,34 +28,19 @@ public class CategoryService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public String createCategory(CategoryRequest request) {
+	public MessageResponse createCategory(CategoryRequest request) {
 		try {
 			MyUser creator = userRepository.findById(request.getCreatorId())
-					.orElseThrow(() -> new RuntimeException("User not found"));
-
-			log.info("UserInformation from database {} ", creator.getUserId());
-			log.info("UserInformation from database {} ", creator.getName());
-			log.info("UserInformation from database {} ", creator.getUsername());
-			log.info("UserInformation from database {} ", creator.getProfilePic());
-
-			log.info("UserInformation from database {} ", creator.getUserId());
-			log.info("UserInformation from database {} ", creator.getUserId());
+					.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+			
 			Category category = new Category();
 			category.setName(request.getName());
 			category.setDescription(request.getDescription());
 			category.setActive(true);
 			category.setCategoryPic(request.getCategoryPic());
 			category.setCreator(creator);
-
-			Category savedCategory = categoryRepository.save(category);
-			log.info("Saved Category: {}-------------------------------", savedCategory.getCategoryPic());
-
-			log.info("Save in category UserInformation from database {} ", creator.getUserId());
-			log.info("Save in category UserInformation from database {} ", creator.getName());
-			log.info("Save in category UserInformation from database {} ", creator.getUsername());
-			log.info("Save in category UserInformation from database {} ", creator.getProfilePic());
-
-			return "Category Created!";
+			categoryRepository.save(category);
+			return new MessageResponse("Category Created");
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create category: " + e.getMessage());
 		}
@@ -83,15 +70,15 @@ public class CategoryService {
 	}
 
 	@Transactional
-	public String updateCategoryById(Long categoryId, CategoryUpdateRequest request) {
+	public Category updateCategoryById(Long categoryId, CategoryUpdateRequest request) {
 		try {
 			Category category = categoryRepository.findById(categoryId)
-					.orElseThrow(() -> new RuntimeException("Category not found"));
+					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 			category.setName(request.getName());
 			category.setDescription(request.getDescription());
 			category.setCategoryPic(request.getCategoryPic());
-			categoryRepository.save(category);
-			return "Updated the category Successfully";
+			category = categoryRepository.save(category);
+			return  category;
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update category: " + e.getMessage());
 		}
@@ -100,7 +87,7 @@ public class CategoryService {
 	public Category getCategoryById(Long categoryId) {
 		try {
 			Category category = categoryRepository.findById(categoryId)
-					.orElseThrow(() -> new RuntimeException("Category not found"));
+					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 			return category;
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve category: " + e.getMessage());
@@ -109,8 +96,7 @@ public class CategoryService {
 
 	public Long getTotalCategory(Long id) {
 		try {
-			Long total = categoryRepository.countByCreator_UserId(id);
-			return total;
+			return categoryRepository.countByCreator_UserId(id);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to fetch total category of the user: " + e.getMessage());
 		}
