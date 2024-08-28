@@ -1,5 +1,6 @@
 package com.example.quizapp.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.service.UserService;
@@ -35,5 +37,4 @@ public class UserController {
 		userService.logout(id);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
-
 }

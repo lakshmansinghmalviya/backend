@@ -41,8 +41,8 @@ public class Question {
 	@Column(name = "randomize_options")
 	private Boolean randomizeOptions;
 
-	@Column(name = "image_url", columnDefinition = "TEXT")
-	private String imageUrl;
+	@Column(name = "question_pic", columnDefinition = "TEXT")
+	private String questionPic;
 
 	@Column(name = "maxscore", nullable = false)
 	private Long maxScore;
