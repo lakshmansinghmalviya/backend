@@ -41,8 +41,8 @@ public class Question {
 	@Column(name = "randomize_options")
 	private Boolean randomizeOptions;
 
-	@Column(name = "image_url", columnDefinition = "TEXT")
-	private String imageUrl;
+	@Column(name = "question_pic", columnDefinition = "TEXT")
+	private String questionPic;
 
 	@Column(name = "maxscore", nullable = false)
 	private Long maxScore;
@@ -51,6 +51,11 @@ public class Question {
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@JsonBackReference
 	private Quiz quiz;
+	
+	@ManyToOne()
+	@JoinColumn(name = "creator_id", nullable = false)
+	@JsonBackReference
+	private MyUser creator;
 
 	@OneToMany(mappedBy = "question")
 	@JsonManagedReference
