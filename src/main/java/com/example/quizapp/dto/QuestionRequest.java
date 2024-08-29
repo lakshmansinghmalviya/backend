@@ -1,5 +1,7 @@
 package com.example.quizapp.dto;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,5 @@ public class QuestionRequest {
 
 	private String questionPic;
 	private Boolean randomizeOptions;
-	
-	
+	private List<OptionRequest> options;	
 }

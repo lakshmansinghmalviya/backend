@@ -2,7 +2,10 @@ package com.example.quizapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.quizapp.dto.OptionRequest;
 import com.example.quizapp.dto.QuestionRequest;
+import com.example.quizapp.entity.Option;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.repository.QuestionRepository;
@@ -18,6 +21,9 @@ public class QuestionService {
 	@Autowired
 	private QuizService quizService;
 
+	@Autowired
+	private OptionService optionService;
+
 	@Transactional
 	public Question create(QuestionRequest request) {
 		try {
@@ -31,13 +37,14 @@ public class QuestionService {
 			question.setMaxScore(request.getMaxScore());
 			question.setRandomizeOptions(request.getRandomizeOptions());
 			question = questionRepository.save(question);
+			for (OptionRequest optionReq : request.getOptions())
+				optionService.createOption(optionReq, question);
 			return question;
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create question: " + e.getMessage());
 		}
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		try {
 			questionRepository.deleteById(id);
@@ -58,6 +65,14 @@ public class QuestionService {
 			return questionRepository.save(question);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update question: " + e.getMessage());
+		}
+	}
+
+	public Long getTotalQuestionsOfTheEducator(Long id) {
+		try {
+			return questionRepository.countByCreator_UserId(id);
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
 		}
 	}
 }

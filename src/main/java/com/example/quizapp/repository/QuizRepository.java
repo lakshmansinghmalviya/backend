@@ -11,9 +11,10 @@ import com.example.quizapp.entity.Quiz;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
-	
+
 	List<Quiz> findByCreator_UserId(Long userId);
 
 	Long countByCreator_UserId(Long userId);
+
 	boolean existsById(Long id);
 }

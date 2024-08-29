@@ -9,5 +9,6 @@ import com.example.quizapp.entity.Option;
 
 @Repository
 public interface OptionRepository extends JpaRepository<Option, Long> {
+
 	List<Option> findAllByQuestionId(Long id);
 }

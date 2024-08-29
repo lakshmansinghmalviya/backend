@@ -11,7 +11,6 @@ import com.example.quizapp.entity.Category;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	List<Category> findByCreator_UserId(Long userId);
-//	@Query("SELECT u FROM User u WHERE u.status = 1")
-	Long countByCreator_UserId(Long userId);
 
+	Long countByCreator_UserId(Long userId);
 }
