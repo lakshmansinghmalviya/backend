@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -30,7 +29,7 @@ public class MyUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
-    
+
 	@Column(nullable = false, unique = true)
 	private String username;
 
@@ -83,6 +82,10 @@ public class MyUser {
 	@OneToMany(mappedBy = "user")
 	@JsonBackReference
 	private List<Bookmark> bookmarks;
+
+	@OneToMany(mappedBy = "creator")
+	@JsonBackReference
+	private List<Question> questions;
 
 	@PrePersist
 	protected void onCreate() {

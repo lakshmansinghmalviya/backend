@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.OptionRequest;
 import com.example.quizapp.dto.QuestionRequest;
-import com.example.quizapp.entity.Option;
+import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.repository.QuestionRepository;
@@ -23,16 +23,21 @@ public class QuestionService {
 
 	@Autowired
 	private OptionService optionService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Transactional
 	public Question create(QuestionRequest request) {
 		try {
 			Quiz quiz = quizService.findById(request.getQuizId());
+			MyUser creator = userService.getUser(request.getCreatorId());
 			Question question = new Question();
 			question.setText(request.getText());
 			question.setIsActive(true);
 			question.setQuestionPic(request.getQuestionPic());
 			question.setQuiz(quiz);
+			question.setCreator(creator);
 			question.setQuestionType(request.getQuestionType());
 			question.setMaxScore(request.getMaxScore());
 			question.setRandomizeOptions(request.getRandomizeOptions());

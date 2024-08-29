@@ -51,6 +51,11 @@ public class Question {
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@JsonBackReference
 	private Quiz quiz;
+	
+	@ManyToOne()
+	@JoinColumn(name = "creator_id", nullable = false)
+	@JsonBackReference
+	private MyUser creator;
 
 	@OneToMany(mappedBy = "question")
 	@JsonManagedReference

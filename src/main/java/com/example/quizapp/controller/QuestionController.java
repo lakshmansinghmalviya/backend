@@ -20,6 +20,7 @@ import com.example.quizapp.service.QuestionService;
 @RestController
 @RequestMapping("/questions")
 public class QuestionController {
+	
 	@Autowired
 	QuestionService questionService;
 
@@ -42,10 +43,9 @@ public class QuestionController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/creator/{id}/total")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<Long> getTotalQuestionOfTheEducator(@PathVariable("id") Long id) {
-//		questionService.delete(id);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getTotalQuestionsOfTheEducator(id));
 	}
 }
