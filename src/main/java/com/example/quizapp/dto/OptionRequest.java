@@ -11,11 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OptionRequest {
+	
 	@NotBlank(message = "text can't be blank")
 	private String text;
-
+	
 	@NotNull(message = "isCorrect should not be null")
 	private Boolean isCorrect;
+	
+	private Long id;
 	
 	private String optionPic;
 }

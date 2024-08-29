@@ -1,5 +1,7 @@
 package com.example.quizapp.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ import com.example.quizapp.service.QuestionService;
 @RestController
 @RequestMapping("/questions")
 public class QuestionController {
-	
+
 	@Autowired
 	QuestionService questionService;
 
@@ -30,10 +32,10 @@ public class QuestionController {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.create(request));
 	}
 
-	@PutMapping()
+	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> update(@RequestBody QuestionRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.update(request));
+	public ResponseEntity<Question> update(@PathVariable("id") Long id, @RequestBody QuestionRequest request) {
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.update(id,request));
 	}
 
 	@DeleteMapping("/{id}")
@@ -47,5 +49,22 @@ public class QuestionController {
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<Long> getTotalQuestionOfTheEducator(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getTotalQuestionsOfTheEducator(id));
+	}
+
+	@GetMapping()
+	public ResponseEntity<List<Question>> getQuestions() {
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestion());
+	}
+
+	@GetMapping("/creator/{id}")
+	@PreAuthorize("hasRole('Educator')")
+	public ResponseEntity<List<Question>> getQuestionsByCreatorId(@PathVariable("id") Long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestionByCreatorId(id));
+	}
+	
+	@GetMapping("/{id}")
+	@PreAuthorize("hasRole('Educator')")
+	public ResponseEntity<Question> getQuestionsById(@PathVariable("id") Long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionById(id));
 	}
 }

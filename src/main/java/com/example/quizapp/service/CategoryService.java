@@ -32,7 +32,7 @@ public class CategoryService {
 		try {
 			MyUser creator = userRepository.findById(request.getCreatorId())
 					.orElseThrow(() -> new ResourceNotFoundException("User not found"));
-			
+
 			Category category = new Category();
 			category.setName(request.getName());
 			category.setDescription(request.getDescription());
@@ -78,7 +78,7 @@ public class CategoryService {
 			category.setDescription(request.getDescription());
 			category.setCategoryPic(request.getCategoryPic());
 			category = categoryRepository.save(category);
-			return  category;
+			return category;
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update category: " + e.getMessage());
 		}
@@ -99,6 +99,14 @@ public class CategoryService {
 			return categoryRepository.countByCreator_UserId(id);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to fetch total category of the user: " + e.getMessage());
+		}
+	}
+
+	public List<Category> getCategories() {
+		try {
+			return categoryRepository.findAll();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
 		}
 	}
 }

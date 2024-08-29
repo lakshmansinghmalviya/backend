@@ -66,4 +66,10 @@ public class CategoryController {
 	public ResponseEntity<Long> getTotalNumberOfCategories(@PathVariable("id") Long id){
 	  return ResponseEntity.status(HttpStatus.OK).body(categoryService.getTotalCategory(id));
 	}
+	
+	
+	@GetMapping()
+	public ResponseEntity<List<Category>> getCategories() {
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategories());
+	}
 }

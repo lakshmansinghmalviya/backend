@@ -31,12 +31,7 @@ public class QuizController {
 
 	@GetMapping()
 	public ResponseEntity<List<Quiz>> getAllQuiz() {
-
-		List<Quiz> quizzes = quizService.getAllQuiz();
-		if (!quizzes.isEmpty())
-			return ResponseEntity.status(HttpStatus.OK).body(quizzes);
-
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
 	}
 
 	@GetMapping("/creator/{creatorId}")

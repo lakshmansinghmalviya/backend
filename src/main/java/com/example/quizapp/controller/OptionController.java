@@ -16,11 +16,4 @@ import com.example.quizapp.service.OptionService;
 @RestController
 @RequestMapping("/options")
 public class OptionController {
-	@Autowired
-	OptionService optionService;
-	
-	@GetMapping("/questions/{id}")
-    public ResponseEntity<List<Option>> getAllOptionByQuestionId(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(optionService.getAllOptionByQuestionId(id));
-    }
 }
