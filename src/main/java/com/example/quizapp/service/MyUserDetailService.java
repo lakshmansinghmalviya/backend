@@ -16,11 +16,12 @@ import com.example.quizapp.repository.UserRepository;
 public class MyUserDetailService implements UserDetailsService {
 
 	@Autowired
-	private UserRepository repository;
+	private UserRepository userRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<MyUser> user = repository.findByUsername(username);
+
+		Optional<MyUser> user = userRepository.findByUsername(username);
 
 		if (user.isPresent()) {
 			var userObj = user.get();
@@ -32,7 +33,6 @@ public class MyUserDetailService implements UserDetailsService {
 	}
 
 	private String[] getRoles(MyUser user) {
-
 		if (user.getRole() == null) {
 			return new String[] { "Student" };
 		}

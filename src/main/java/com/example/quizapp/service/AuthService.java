@@ -2,11 +2,7 @@ package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -24,7 +20,7 @@ import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.exception.ResourceAlreadyExits;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
-import com.example.quizapp.util.JwtService;
+import com.example.quizapp.util.JwtHelper;
 
 @Service
 public class AuthService {
@@ -32,7 +28,7 @@ public class AuthService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private JwtService jwtUtil;
+	private JwtHelper jwtHelper;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -78,7 +74,7 @@ public class AuthService {
 			MyUser user = userRepository.findByUsername(authRequest.getUsername())
 					.orElseThrow(() -> new ResourceNotFoundException("User data not found"));
 
-			String token = jwtUtil.generateToken(userDetails);
+			String token = jwtHelper.generateToken(userDetails);
 			user.setToken(token);
 			user.setLastLogin(LocalDateTime.now());
 			userRepository.save(user);

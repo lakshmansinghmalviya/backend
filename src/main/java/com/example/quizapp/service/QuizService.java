@@ -2,8 +2,6 @@ package com.example.quizapp.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +14,13 @@ import com.example.quizapp.repository.QuizRepository;
 
 @Service
 public class QuizService {
-	Logger logger = LoggerFactory.getLogger(QuizService.class);
+
 	@Autowired
 	private QuizRepository quizRepository;
+
 	@Autowired
 	private CategoryService categoryService;
+
 	@Autowired
 	private UserService userService;
 
@@ -36,8 +36,7 @@ public class QuizService {
 			quiz.setQuizPic(request.getQuizPic());
 			quiz.setCategory(category);
 			quiz.setCreator(creator);
-			quiz = quizRepository.save(quiz);
-			return quiz;
+			return quizRepository.save(quiz);
 		} catch (Exception e) {
 			throw new RuntimeException("Something went wrong " + e.getMessage());
 		}
@@ -53,8 +52,7 @@ public class QuizService {
 
 	public List<Quiz> getAllQuizByCreatorId(Long creatorId) {
 		try {
-			List<Quiz> quizzes = quizRepository.findByCreator_UserId(creatorId);
-			return quizzes;
+			return quizRepository.findByCreator_UserId(creatorId);
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -80,8 +78,7 @@ public class QuizService {
 			quiz.setRandomizeQuestions(request.getRandomizeQuestions());
 			quiz.setTimeLimit(request.getTimeLimit());
 			quiz.setQuizPic(request.getQuizPic());
-			quiz = quizRepository.save(quiz);
-			return quiz;
+			return quizRepository.save(quiz);
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}

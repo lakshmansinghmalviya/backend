@@ -35,7 +35,7 @@ public class QuestionController {
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<Question> update(@PathVariable("id") Long id, @RequestBody QuestionRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.update(id,request));
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.update(id, request));
 	}
 
 	@DeleteMapping("/{id}")
@@ -61,7 +61,7 @@ public class QuestionController {
 	public ResponseEntity<List<Question>> getQuestionsByCreatorId(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestionByCreatorId(id));
 	}
-	
+
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<Question> getQuestionsById(@PathVariable("id") Long id) {

@@ -2,6 +2,7 @@ package com.example.quizapp.util;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -12,22 +13,23 @@ import io.jsonwebtoken.security.Keys;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Service
-public class JwtService {
-	private static final String SECRET = "638CBE3A90E0303BF3808F40F95A7F02A24B4B5D029C"
-			+ "954CF553F79E9EF1DC0384BE681C249F1223F6B55AA21DC070914834CA22C8DD98E14A872CA010091ACC";
+public class JwtHelper {
 
-	private static final long VALIDITY = TimeUnit.MINUTES.toMillis(60 * 3);
-
+	@Value("${jwt.secret}")
+	private String SECRET_KEY;
+	
+	@Value("${token.validity}")
+	private long VALIDITY;
+	
 	public String generateToken(UserDetails userDetails) {
 		return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(Date.from(Instant.now()))
 				.setExpiration(Date.from(Instant.now().plusMillis(VALIDITY))).signWith(generateKey()).compact();
 	}
 
 	private SecretKey generateKey() {
-		byte[] decodedKey = Base64.getDecoder().decode(SECRET);
+		byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
 		return Keys.hmacShaKeyFor(decodedKey);
 	}
 
