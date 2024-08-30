@@ -19,6 +19,8 @@ public class QuestionRequest {
 	@NotNull(message = "The creatorId should not be null")
 	private Long creatorId;
 
+	private Long id;
+
 	@NotBlank(message = "questionType can't be blank")
 	private String questionType;
 

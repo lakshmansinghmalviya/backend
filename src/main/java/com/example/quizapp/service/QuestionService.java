@@ -1,5 +1,8 @@
 package com.example.quizapp.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +11,7 @@ import com.example.quizapp.dto.QuestionRequest;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuestionRepository;
 
 import jakarta.transaction.Transactional;
@@ -23,7 +27,7 @@ public class QuestionService {
 
 	@Autowired
 	private OptionService optionService;
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -50,6 +54,7 @@ public class QuestionService {
 		}
 	}
 
+	@Transactional
 	public void delete(Long id) {
 		try {
 			questionRepository.deleteById(id);
@@ -58,9 +63,15 @@ public class QuestionService {
 		}
 	}
 
-	public Question update(QuestionRequest request) {
-		try {
-			Question question = new Question();
+	@Transactional
+	public Question update(Long id, QuestionRequest request) {
+		try {		 
+			
+			Question question =  getQuestionById(request.getId());
+			
+			for (OptionRequest optionReq : request.getOptions())
+				optionService.updateOption(optionReq);
+
 			question.setText(request.getText());
 			question.setIsActive(true);
 			question.setQuestionPic(request.getQuestionPic());
@@ -78,6 +89,34 @@ public class QuestionService {
 			return questionRepository.countByCreator_UserId(id);
 		} catch (Exception e) {
 			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
+	}
+
+	public List<Question> getAllQuestion() {
+		try {
+			return questionRepository.findAll();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
+		}
+	}
+
+	public List<Question> getAllQuestionByCreatorId(Long id) {
+		try {
+			return questionRepository.findByCreator_UserId(id);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
+		}
+	}
+
+	public Question getQuestionById(Long id) {
+		try {
+			Optional<Question> question = questionRepository.findById(id);
+			if (question.isPresent())
+				return question.get();
+			else
+				throw new ResourceNotFoundException("Question not found");
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve question");
 		}
 	}
 }

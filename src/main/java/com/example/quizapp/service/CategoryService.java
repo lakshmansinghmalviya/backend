@@ -1,8 +1,6 @@
 package com.example.quizapp.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import com.example.quizapp.repository.UserRepository;
 @Service
 public class CategoryService {
 
-	Logger log = LoggerFactory.getLogger(CategoryService.class);
 	@Autowired
 	private CategoryRepository categoryRepository;
 
@@ -32,7 +29,7 @@ public class CategoryService {
 		try {
 			MyUser creator = userRepository.findById(request.getCreatorId())
 					.orElseThrow(() -> new ResourceNotFoundException("User not found"));
-			
+
 			Category category = new Category();
 			category.setName(request.getName());
 			category.setDescription(request.getDescription());
@@ -49,8 +46,7 @@ public class CategoryService {
 	@Transactional
 	public List<Category> getCategoriesByCreatorId(Long creatorId) {
 		try {
-			List<Category> categories = categoryRepository.findByCreator_UserId(creatorId);
-			return categories;
+			return categoryRepository.findByCreator_UserId(creatorId);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
 		}
@@ -77,8 +73,7 @@ public class CategoryService {
 			category.setName(request.getName());
 			category.setDescription(request.getDescription());
 			category.setCategoryPic(request.getCategoryPic());
-			category = categoryRepository.save(category);
-			return  category;
+			return categoryRepository.save(category);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update category: " + e.getMessage());
 		}
@@ -99,6 +94,14 @@ public class CategoryService {
 			return categoryRepository.countByCreator_UserId(id);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to fetch total category of the user: " + e.getMessage());
+		}
+	}
+
+	public List<Category> getCategories() {
+		try {
+			return categoryRepository.findAll();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
 		}
 	}
 }

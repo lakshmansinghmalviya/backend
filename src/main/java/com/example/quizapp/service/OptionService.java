@@ -1,14 +1,11 @@
 package com.example.quizapp.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.OptionRequest;
 import com.example.quizapp.entity.Option;
 import com.example.quizapp.entity.Question;
-import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.OptionRepository;
 
 @Service
@@ -29,15 +26,16 @@ public class OptionService {
 		}
 	}
 
-	public List<Option> getAllOptionByQuestionId(Long id) {
+	public Option updateOption(OptionRequest request) {
 		try {
-			List<Option> options = optionRepository.findAllByQuestionId(id);
-			if (!options.isEmpty())
-				return options;
-			else
-				throw new ResourceNotFoundException("Option are not available in this question");
+			Option option = optionRepository.findById(request.getId())
+					.orElseThrow(() -> new RuntimeException("Option not found with id: " + request.getId()));
+			option.setText(request.getText());
+			option.setOptionPic(request.getOptionPic());
+			option.setIsCorrect(request.getIsCorrect());
+			return optionRepository.save(option);
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to find all options by the question id" + e.getMessage());
+			throw new RuntimeException("Failed to update question: " + e.getMessage());
 		}
 	}
 }

@@ -24,6 +24,7 @@ import com.example.quizapp.service.MyUserDetailService;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+	
 	@Autowired
 	private MyUserDetailService userDetailService;
 
@@ -33,7 +34,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(registry -> {
-			registry.requestMatchers(AllowedPaths.permitedPaths).permitAll();
+			registry.requestMatchers(AllowedPaths.PERMITTEDPATHS).permitAll();
 			registry.anyRequest().authenticated();
 		}).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
