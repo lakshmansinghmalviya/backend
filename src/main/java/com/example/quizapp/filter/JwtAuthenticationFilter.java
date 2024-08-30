@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.quizapp.service.MyUserDetailService;
-import com.example.quizapp.util.JwtService;
+import com.example.quizapp.util.JwtHelper;
 
 import java.io.IOException;
 
@@ -21,7 +21,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private JwtService jwtService;
+	private JwtHelper jwtHelper;
+
 	@Autowired
 	private MyUserDetailService myUserDetailService;
 
@@ -35,12 +36,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		String jwt = authHeader.substring(7);
-		String username = jwtService.extractUsername(jwt);
+		String username = jwtHelper.extractUsername(jwt);
 
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			
 			UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
 
-			if (userDetails != null && jwtService.isTokenValid(jwt)) {
+			if (userDetails != null && jwtHelper.isTokenValid(jwt)) {
 				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 						username, userDetails.getPassword(), userDetails.getAuthorities());
 				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -3,6 +3,7 @@ package com.example.quizapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +23,6 @@ import com.example.quizapp.service.CategoryService;
 
 @RestController
 @RequestMapping("/categories")
-
 public class CategoryController {
 	@Autowired
 	CategoryService categoryService;
@@ -30,38 +30,43 @@ public class CategoryController {
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<MessageResponse> createCategory(@RequestBody CategoryRequest request) {
-		String message = categoryService.createCategory(request);
-		return ResponseEntity.ok(new MessageResponse(message));
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.createCategory(request));
 	}
 
 	@GetMapping("/creator/{id}")
-	
 	public ResponseEntity<List<Category>> getCategoriesByCreatorId(@PathVariable("id") Long id) {
 		List<Category> categories = categoryService.getCategoriesByCreatorId(id);
-		if (categories.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(categories);
+		if (categories.isEmpty())
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+		return ResponseEntity.status(HttpStatus.OK).body(categories);
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<MessageResponse> updateCategoryById(@PathVariable("id") Long id,
+	public ResponseEntity<Category> updateCategoryById(@PathVariable("id") Long id,
 			@RequestBody CategoryUpdateRequest request) {
-		String message = categoryService.updateCategoryById(id, request);
-		return ResponseEntity.ok(new MessageResponse(message));
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.updateCategoryById(id, request));
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<MessageResponse> deleteCategory(@PathVariable("id") Long id) {
-		String message = categoryService.deleteCategoryById(id);
-		return ResponseEntity.ok(new MessageResponse(message));
+	public ResponseEntity<String> deleteCategory(@PathVariable("id") Long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.deleteCategoryById(id));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Category> getCategoryById(@PathVariable("id") Long id) {
-		Category category = categoryService.getCategoryById(id);
-		return ResponseEntity.ok(category);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(id));
+	}
+
+	@GetMapping("/creator/{id}/{total}")
+	public ResponseEntity<Long> getTotalNumberOfCategories(@PathVariable("id") Long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getTotalCategory(id));
+	}
+
+	@GetMapping()
+	public ResponseEntity<List<Category>> getCategories() {
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategories());
 	}
 }

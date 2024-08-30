@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor 
+@NoArgsConstructor
 public class ErrorResponse {
-    private int status;
-    private String message;
+	private int status;
+	private String message;
 }

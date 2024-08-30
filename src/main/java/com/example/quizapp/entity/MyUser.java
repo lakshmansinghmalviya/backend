@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -64,24 +64,28 @@ public class MyUser {
 	private boolean isActive;
 
 	@OneToMany(mappedBy = "creator")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Category> categories;
 
 	@OneToMany(mappedBy = "creator")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Quiz> quizzes;
 
 	@OneToMany(mappedBy = "user")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<QuizAttempt> quizzesAttempted;
 
 	@OneToMany(mappedBy = "user")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Feedback> feedbacks;
 
 	@OneToMany(mappedBy = "user")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Bookmark> bookmarks;
+
+	@OneToMany(mappedBy = "creator")
+	@JsonBackReference
+	private List<Question> questions;
 
 	@PrePersist
 	protected void onCreate() {
