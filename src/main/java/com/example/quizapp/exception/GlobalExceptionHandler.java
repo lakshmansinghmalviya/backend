@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<MessageResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
 		MessageResponse errorResponse = new MessageResponse(ex.getMessage());
-		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -27,25 +27,24 @@ public class GlobalExceptionHandler {
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
 		});
-		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<MessageResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
 		MessageResponse errorResponse = new MessageResponse(ex.getMessage());
-		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
-		return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 
 	@ExceptionHandler(ResourceAlreadyExits.class)
 	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExits ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
-		return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
 	}
-
 }

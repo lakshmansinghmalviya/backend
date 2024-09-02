@@ -1,11 +1,16 @@
 package com.example.quizapp.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.quizapp.dto.LimitedUsersRequest;
+import com.example.quizapp.dto.LimitedUsersResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.exception.ResourceNotFoundException;
@@ -20,16 +25,36 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public Page<MyUser> getEducators(String role,int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findByRole(role, pageable);
-    }
-	
+	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
+		try {
+			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+			Page<MyUser> usersPage = userRepository.findByRole(request.getRole(), pageable);
+			return usersPage.map(user -> {
+				LimitedUsersResponse response = new LimitedUsersResponse();
+				response.setUserId(user.getUserId());
+				response.setName(user.getName());
+				response.setProfilePic(user.getProfilePic());
+				response.setBio(user.getBio());
+				return response;
+			});
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
+	}
+
 	public MyUser getUser(Long id) {
 		try {
 			return userRepository.findByUserId(id);
 		} catch (Exception e) {
 			throw new ResourceNotFoundException("User Not Found" + e.getMessage());
+		}
+	}
+
+	public List<MyUser> getUserProfileByRole(String role) {
+		try {
+			return userRepository.findByRole(role);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException(e.getMessage() + " Educators not found");
 		}
 	}
 

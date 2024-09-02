@@ -34,9 +34,15 @@ public class QuizController {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
 	}
 
+	
 	@GetMapping("/creator/{creatorId}")
 	public ResponseEntity<List<Quiz>> getAllByCreatorId(@PathVariable("creatorId") Long creatorId) {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuizByCreatorId(creatorId));
+	}
+	
+	@GetMapping("/category/{categoryId}")
+	public ResponseEntity<List<Quiz>> getAllByCategoryId(@PathVariable("categoryId") Long categoryId) {
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllByCategoryId(categoryId));
 	}
 
 	@DeleteMapping("/{id}")

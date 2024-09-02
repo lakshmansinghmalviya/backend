@@ -58,6 +58,14 @@ public class QuizService {
 		}
 	}
 
+	public List<Quiz> getAllByCategoryId(Long categoryId) {
+		try {
+			return quizRepository.findByCategory_Id(categoryId);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
 	public void deleteQuizById(Long id) {
 		try {
 			if (quizRepository.existsById(id))

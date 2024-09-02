@@ -26,7 +26,7 @@ public class QuizRequest {
 
 	@NotNull(message = "The categoryId should not be null")
 	private Long categoryId;
-	
+
 	@NotNull(message = "The creatorId should not be null")
 	private Long creatorId;
 }
