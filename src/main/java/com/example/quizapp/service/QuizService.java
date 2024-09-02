@@ -99,4 +99,13 @@ public class QuizService {
 			throw new RuntimeException("Something went wrong " + e.getMessage());
 		}
 	}
+	
+	public boolean exist(Long id) {
+		try {
+			return quizRepository.existsById(id);
+		}catch(Exception e) {
+			throw new ResourceNotFoundException("Quiz not found "+e.getMessage());
+		}
+	}
+	
 }

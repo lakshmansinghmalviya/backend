@@ -1,5 +1,6 @@
 package com.example.quizapp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,16 @@ public class QuestionService {
 
 	@Autowired
 	private UserService userService;
+
+	public List<Question> getAllByQuizId(Long id) {
+		try {
+
+			quizService.exist(id);
+			return questionRepository.findAllByQuizId(id);
+		} catch (Exception e) {
+			throw new RuntimeException("Something went wrong " + e.getMessage());
+		}
+	}
 
 	@Transactional
 	public Question create(QuestionRequest request) {
@@ -65,10 +76,10 @@ public class QuestionService {
 
 	@Transactional
 	public Question update(Long id, QuestionRequest request) {
-		try {		 
-			
-			Question question =  getQuestionById(request.getId());
-			
+		try {
+
+			Question question = getQuestionById(request.getId());
+
 			for (OptionRequest optionReq : request.getOptions())
 				optionService.updateOption(optionReq);
 
@@ -119,4 +130,5 @@ public class QuestionService {
 			throw new RuntimeException("Failed to retrieve question");
 		}
 	}
+
 }
