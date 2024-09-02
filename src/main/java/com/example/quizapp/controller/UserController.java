@@ -1,6 +1,7 @@
 package com.example.quizapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.LimitedUsersRequest;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.service.UserService;
@@ -23,6 +25,12 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<MyUser> getUserProfile(@PathVariable Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
+	}
+
+	@GetMapping("/top")
+	public ResponseEntity<Page<MyUser>> getLimitedUsersByRole(@RequestBody LimitedUsersRequest request) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(userService.getEducators(request.getRole(), request.getPage(), request.getSize()));
 	}
 
 	@PutMapping("/{id}")

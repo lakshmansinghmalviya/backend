@@ -1,6 +1,9 @@
 package com.example.quizapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.quizapp.dto.UpdateUserRequest;
@@ -17,6 +20,11 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	public Page<MyUser> getEducators(String role,int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findByRole(role, pageable);
+    }
+	
 	public MyUser getUser(Long id) {
 		try {
 			return userRepository.findByUserId(id);
