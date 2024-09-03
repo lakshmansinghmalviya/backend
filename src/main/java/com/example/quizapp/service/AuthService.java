@@ -61,7 +61,7 @@ public class AuthService {
 			return new MessageResponse("User Registered Successfully");
 
 		} catch (Exception e) {
-			throw new RuntimeException("Couldn't register please try again");
+			throw new RuntimeException(e.getMessage() + " Couldn't register please try again");
 		}
 	}
 

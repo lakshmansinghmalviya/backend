@@ -48,6 +48,9 @@ public class MyUser {
 	@Column(name = "profile_pic", columnDefinition = "TEXT")
 	private String profilePic;
 
+	@Column(name = "education")
+	private String education;
+
 	@Column(nullable = false)
 	private String role;
 
