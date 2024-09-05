@@ -39,6 +39,9 @@ public class AuthService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private UserService userService;
+
 	@Transactional
 	public MessageResponse register(RegisterUser registerUser) {
 		try {
@@ -55,6 +58,7 @@ public class AuthService {
 			user.setProfilePic(registerUser.getProfilePic());
 			user.setBio(registerUser.getBio());
 			user.setActive(true);
+			user.setEducation(registerUser.getEducation());
 			user.setCreatedAt(LocalDateTime.now());
 			user.setUpdatedAt(LocalDateTime.now());
 			userRepository.save(user);
@@ -83,4 +87,19 @@ public class AuthService {
 			throw new ResourceNotFoundException("Invalid username or password.");
 		}
 	}
+
+	public MyUser checkTokenValidityAndGetInfo(String token) {
+		try {
+			if (jwtHelper.isTokenValid(token)) {
+				String username = jwtHelper.extractUsername(token);
+				MyUser user = userRepository.findByUsername(username)
+						.orElseThrow(() -> new ResourceNotFoundException("User data not found"));
+				return user;
+			}
+			return null;
+		} catch (Exception e) {
+			throw new RuntimeException("Token is not valid " + e.getMessage());
+		}
+	}
+
 }
