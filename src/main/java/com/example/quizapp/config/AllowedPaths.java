@@ -12,8 +12,5 @@ public class AllowedPaths {
 			"/v3/api-docs",
 			"/users/top",
 			"/users/byRole/**",
-			"/categories",
-			"/quizzes",
-			"/questions",
 	  };
 }

@@ -127,7 +127,7 @@ public class QuestionService {
 			else
 				throw new ResourceNotFoundException("Question not found");
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve question");
+			throw new RuntimeException("Failed to retrieve question"+e.getMessage());
 		}
 	}
 
