@@ -12,6 +12,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
 	List<Quiz> findByCreator_UserId(Long userId);
 
+	List<Quiz> findByCategory_Id(Long id);
+
 	Long countByCreator_UserId(Long userId);
 
 	boolean existsById(Long id);

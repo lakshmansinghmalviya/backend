@@ -36,10 +36,10 @@ public class Quiz {
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
-	
+
 	@Column(name = "quiz_pic", columnDefinition = "TEXT")
 	private String quizPic;
-	
+
 	@Column(nullable = false)
 	private Long timeLimit;
 	private Boolean randomizeQuestions;
@@ -51,13 +51,13 @@ public class Quiz {
 	@JsonBackReference
 	private Category category;
 
-	@OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Question> questions;
 
 	@OneToMany(mappedBy = "quiz")
 	@JsonBackReference
-	private List<QuizAttempt> quizzesAttempted;
+	private List<Result> results;
 
 	@OneToMany(mappedBy = "quiz")
 	@JsonBackReference

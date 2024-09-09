@@ -58,6 +58,14 @@ public class QuizService {
 		}
 	}
 
+	public List<Quiz> getAllByCategoryId(Long categoryId) {
+		try {
+			return quizRepository.findByCategory_Id(categoryId);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
 	public void deleteQuizById(Long id) {
 		try {
 			if (quizRepository.existsById(id))
@@ -99,4 +107,13 @@ public class QuizService {
 			throw new RuntimeException("Something went wrong " + e.getMessage());
 		}
 	}
+	
+	public boolean exist(Long id) {
+		try {
+			return quizRepository.existsById(id);
+		}catch(Exception e) {
+			throw new ResourceNotFoundException("Quiz not found "+e.getMessage());
+		}
+	}
+	
 }

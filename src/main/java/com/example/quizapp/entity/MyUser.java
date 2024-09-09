@@ -48,6 +48,9 @@ public class MyUser {
 	@Column(name = "profile_pic", columnDefinition = "TEXT")
 	private String profilePic;
 
+	@Column(name = "education")
+	private String education;
+
 	@Column(nullable = false)
 	private String role;
 
@@ -73,7 +76,7 @@ public class MyUser {
 
 	@OneToMany(mappedBy = "user")
 	@JsonBackReference
-	private List<QuizAttempt> quizzesAttempted;
+	private List<Result> results;
 
 	@OneToMany(mappedBy = "user")
 	@JsonBackReference

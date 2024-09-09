@@ -64,7 +64,12 @@ public class QuestionController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> getQuestionsById(@PathVariable("id") Long id) {
+	public ResponseEntity<Question> getQuestionById(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionById(id));
+	}
+	
+	@GetMapping("/quiz/{id}")
+	public ResponseEntity<?> getAllQuestionByQuizId(@PathVariable("id") Long id){
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllByQuizId(id));
 	}
 }
