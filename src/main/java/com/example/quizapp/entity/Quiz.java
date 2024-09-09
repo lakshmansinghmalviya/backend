@@ -57,7 +57,7 @@ public class Quiz {
 
 	@OneToMany(mappedBy = "quiz")
 	@JsonBackReference
-	private List<QuizAttempt> quizzesAttempted;
+	private List<Result> results;
 
 	@OneToMany(mappedBy = "quiz")
 	@JsonBackReference

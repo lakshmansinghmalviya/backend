@@ -16,30 +16,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table(name = "quiz_attempted")
+@Table(name = "results")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizAttempt {
+public class Result {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -48,25 +34,34 @@ public class QuizAttempt {
 	private Long score;
 
 	@Column(nullable = false)
+	private Long totalScore;
+
+	@Column(nullable = false)
+	private Long totalQuestion;;
+
+	@Column(nullable = false)
 	private Long timeSpent;
 
 	@Column(nullable = false)
 	private Boolean isCompleted;
 
 	@Column(nullable = false)
-	private Boolean correctAnswers;
+	private Long correctAnswers;
 
 	@Column(nullable = false)
-	private Boolean timesTaken;
+	private Long incorrectAnswers;;
+
+	@Column(nullable = false)
+	private Long timesTaken;
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
-	@JsonBackReference
+	@JsonBackReference // can get that how users has taken the quizzes easily by this managed awesome
 	private MyUser user;
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@JsonBackReference
+	@JsonManagedReference // quizzes atttempted easily
 	private Quiz quiz;
 
 	@Column(name = "created_at", updatable = false)

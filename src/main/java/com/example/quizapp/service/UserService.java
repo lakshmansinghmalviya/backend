@@ -64,6 +64,7 @@ public class UserService {
 			user.setBio(request.getBio());
 			user.setName(request.getName());
 			user.setProfilePic(request.getProfilePic());
+			user.setEducation(request.getEducation());
 			user.setUsername(request.getUsername());
 			if (!request.getPassword().trim().isEmpty())
 				user.setPassword(passwordEncoder.encode(request.getPassword()));

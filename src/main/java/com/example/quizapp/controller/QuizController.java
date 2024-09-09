@@ -28,7 +28,7 @@ public class QuizController {
 	public ResponseEntity<Quiz> createQuiz(@RequestBody QuizRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.createQuiz(request));
 	}
-
+     //for student 
 	@GetMapping()
 	public ResponseEntity<List<Quiz>> getAllQuiz() {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
