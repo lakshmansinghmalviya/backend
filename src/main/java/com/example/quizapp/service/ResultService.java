@@ -8,14 +8,14 @@ import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.ResultRequest;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Quiz;
-import com.example.quizapp.entity.QuizAttempt;
-import com.example.quizapp.repository.QuizAttemptedRepository;
+import com.example.quizapp.entity.Result;
+import com.example.quizapp.repository.ResultRepository;
 
 @Service
-public class QuizAttemptedService {
+public class ResultService {
 
 	@Autowired
-	QuizAttemptedRepository quizAttemptedRepository;
+	ResultRepository resultRepository;
 
 	@Autowired
 	UserService userService;
@@ -27,12 +27,11 @@ public class QuizAttemptedService {
 
 		try {
 
-			QuizAttempt quizAttemt = quizAttemptedRepository.findByUser_UserIdAndQuiz_Id(request.getUserId(),
-					request.getQuizId());
+			Result quizAttemt = resultRepository.findByUser_UserIdAndQuiz_Id(request.getUserId(), request.getQuizId());
 			if (quizAttemt != null)
 				quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() + 1);
 			else
-				quizAttemt = new QuizAttempt();
+				quizAttemt = new Result();
 
 			MyUser user = userService.getUser(request.getUserId());
 			Quiz quiz = quizService.findById(request.getQuizId());
@@ -46,18 +45,18 @@ public class QuizAttemptedService {
 			quizAttemt.setCorrectAnswers(request.getCorrectAnswers());
 			quizAttemt.setIncorrectAnswers(request.getIncorrectAnswers());
 			quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() != null ? quizAttemt.getTimesTaken() : 0);
-			quizAttemptedRepository.save(quizAttemt);
+			resultRepository.save(quizAttemt);
 			return new MessageResponse("Result is submitted successfully");
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to save result please try again : " + e.getMessage());
 		}
 	}
 
-	public List<QuizAttempt> getAllAttemptedQuizOfUser(Long userId) {
+	public List<Result> getAllAttemptedQuizOfUser(Long userId) {
 		try {
-			return quizAttemptedRepository.findAllByUser_UserId(userId);
+			return resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(userId);
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to fetch quiz : " + e.getMessage());
+			throw new RuntimeException("Failed to fetch results  : " + e.getMessage());
 		}
 	}
 }

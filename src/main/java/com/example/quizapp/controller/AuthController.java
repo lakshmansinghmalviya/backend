@@ -28,7 +28,9 @@ public class AuthController {
 	private AuthService authService;
 
 	@PostMapping("/register")
-	public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterUser registerUser) {
+	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUser registerUser) {
+		log.info("This came in the register controoler   in the  auth {} ",registerUser);
+		
 		return ResponseEntity.status(HttpStatus.OK).body(authService.register(registerUser));
 	}
 
@@ -38,8 +40,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/checkToken/{token}")
-	public ResponseEntity<MyUser> checkTokenValidity(@PathVariable String token) {
+	public ResponseEntity<AuthResponse> checkTokenValidity(@PathVariable String token) {
 		log.info("The token we here is {} ",token);
-		return ResponseEntity.status(HttpStatus.OK).body(authService.checkTokenValidityAndGetInfo(token));
+		return ResponseEntity.status(HttpStatus.OK).body(authService.getInfoViaToken(token));
 	}
 }

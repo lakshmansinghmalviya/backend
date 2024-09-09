@@ -20,11 +20,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table(name = "quiz_attempted")
+@Table(name = "results")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizAttempt {
+public class Result {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

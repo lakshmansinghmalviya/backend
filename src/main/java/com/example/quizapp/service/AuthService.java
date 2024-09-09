@@ -39,11 +39,9 @@ public class AuthService {
 	@Autowired
 	private UserRepository userRepository;
 
-	@Autowired
-	private UserService userService;
-
+ 
 	@Transactional
-	public MessageResponse register(RegisterUser registerUser) {
+	public AuthResponse register(RegisterUser registerUser) {
 		try {
 
 			if (userRepository.existsByUsername(registerUser.getUsername())) {
@@ -62,7 +60,8 @@ public class AuthService {
 			user.setCreatedAt(LocalDateTime.now());
 			user.setUpdatedAt(LocalDateTime.now());
 			userRepository.save(user);
-			return new MessageResponse("User Registered Successfully");
+			AuthRequest authrequest = new AuthRequest(registerUser.getUsername(),registerUser.getPassword());
+			return login(authrequest);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage() + " Couldn't register please try again");
@@ -75,8 +74,7 @@ public class AuthService {
 					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
 			final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-			MyUser user = userRepository.findByUsername(authRequest.getUsername())
-					.orElseThrow(() -> new ResourceNotFoundException("User data not found"));
+			MyUser user = userRepository.findByUsername(authRequest.getUsername()).get();
 
 			String token = jwtHelper.generateToken(userDetails);
 			user.setToken(token);
@@ -88,18 +86,14 @@ public class AuthService {
 		}
 	}
 
-	public MyUser checkTokenValidityAndGetInfo(String token) {
+	public AuthResponse getInfoViaToken(String token) {
 		try {
-			if (jwtHelper.isTokenValid(token)) {
-				String username = jwtHelper.extractUsername(token);
-				MyUser user = userRepository.findByUsername(username)
-						.orElseThrow(() -> new ResourceNotFoundException("User data not found"));
-				return user;
-			}
-			return null;
+			String username = jwtHelper.extractUsername(token);
+			MyUser user = userRepository.findByUsername(username)
+					.orElseThrow(() -> new ResourceNotFoundException("User data not found"));
+			return new AuthResponse(token, user.getUserId(), user.getRole());
 		} catch (Exception e) {
-			throw new RuntimeException("Token is not valid " + e.getMessage());
+			throw new RuntimeException(" Something went wrong " + e.getMessage());
 		}
 	}
-
 }
