@@ -69,7 +69,7 @@ public class QuestionController {
 	}
 	
 	@GetMapping("/quiz/{id}")
-	public ResponseEntity<?> getAllQuestionByQuizId(@PathVariable("id") Long id){
+	public ResponseEntity<List<Question> > getAllQuestionByQuizId(@PathVariable("id") Long id){
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllByQuizId(id));
 	}
 }

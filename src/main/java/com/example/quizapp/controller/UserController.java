@@ -25,11 +25,12 @@ import com.example.quizapp.service.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+	
 	@Autowired
 	UserService userService;
 
 	@GetMapping("/{id}")
-	public ResponseEntity<MyUser> getUserProfile(@PathVariable Long id) {
+	public ResponseEntity<MyUser> getUserInformation(@PathVariable Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
 	}
 
