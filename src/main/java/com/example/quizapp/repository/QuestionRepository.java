@@ -8,6 +8,7 @@ import com.example.quizapp.entity.Question;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
+	
 	Long countByCreator_UserId(Long userId);
 
 	List<Question> findByCreator_UserId(Long userId);

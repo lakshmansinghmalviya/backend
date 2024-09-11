@@ -15,6 +15,7 @@ import com.example.quizapp.service.FeedbackService;
 @RestController
 @RequestMapping("/feedbacks")
 public class FeedbackController {
+	
 	@Autowired
 	FeedbackService feedbackService;
 	

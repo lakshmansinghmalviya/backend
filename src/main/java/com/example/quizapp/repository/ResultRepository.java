@@ -32,5 +32,4 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
 	@Query("SELECT COUNT(r) FROM Result r WHERE r.user.id = :userId AND r.isCompleted = false")
 	Long findTotalIncompleteQuizzesByUserId(@Param("userId") Long userId);
-
 }

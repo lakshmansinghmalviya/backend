@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.AuthRequest;
 import com.example.quizapp.dto.AuthResponse;
-import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.RegisterUser;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.exception.ResourceAlreadyExits;
@@ -31,16 +30,15 @@ public class AuthService {
 	private JwtHelper jwtHelper;
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private MyUserDetailService userDetailsService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserRepository userRepository;
-
  
-	@Transactional
+	 
 	public AuthResponse register(RegisterUser registerUser) {
 		try {
 
@@ -55,14 +53,10 @@ public class AuthService {
 			user.setRole(registerUser.getRole());
 			user.setProfilePic(registerUser.getProfilePic());
 			user.setBio(registerUser.getBio());
-			user.setActive(true);
 			user.setEducation(registerUser.getEducation());
-			user.setCreatedAt(LocalDateTime.now());
-			user.setUpdatedAt(LocalDateTime.now());
 			userRepository.save(user);
 			AuthRequest authrequest = new AuthRequest(registerUser.getUsername(),registerUser.getPassword());
 			return login(authrequest);
-
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage() + " Couldn't register please try again");
 		}
@@ -74,9 +68,9 @@ public class AuthService {
 					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
 			final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-			MyUser user = userRepository.findByUsername(authRequest.getUsername()).get();
-
 			String token = jwtHelper.generateToken(userDetails);
+			
+			MyUser user = userRepository.findByUsername(authRequest.getUsername()).get();
 			user.setToken(token);
 			user.setLastLogin(LocalDateTime.now());
 			userRepository.save(user);

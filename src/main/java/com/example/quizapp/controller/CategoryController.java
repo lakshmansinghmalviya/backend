@@ -24,6 +24,7 @@ import com.example.quizapp.service.CategoryService;
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
+	
 	@Autowired
 	CategoryService categoryService;
 

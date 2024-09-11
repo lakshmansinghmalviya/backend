@@ -22,6 +22,7 @@ import com.example.quizapp.service.QuizService;
 @RestController
 @RequestMapping("/quizzes")
 public class QuizController {
+	
 	@Autowired
 	QuizService quizService;
 
