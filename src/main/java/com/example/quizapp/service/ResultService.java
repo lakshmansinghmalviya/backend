@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.ResultRequest;
+import com.example.quizapp.dto.StudentProfileResponse;
 import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.Result;
@@ -44,7 +45,7 @@ public class ResultService {
 			quizAttemt.setIsCompleted(request.getIsCompleted());
 			quizAttemt.setCorrectAnswers(request.getCorrectAnswers());
 			quizAttemt.setIncorrectAnswers(request.getIncorrectAnswers());
-			quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() != null ? quizAttemt.getTimesTaken() : 0);
+			quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() != null ? quizAttemt.getTimesTaken() : 1);
 			resultRepository.save(quizAttemt);
 			return new MessageResponse("Result is submitted successfully");
 		} catch (Exception e) {
@@ -59,4 +60,19 @@ public class ResultService {
 			throw new RuntimeException("Failed to fetch results  : " + e.getMessage());
 		}
 	}
+
+	public StudentProfileResponse getUserProfileData(Long userId) {
+		try {
+			Long totalCompletedQuizzes = resultRepository.findTotalCompletedQuizzesByUserId(userId);
+			Long totalInCompletedQuizzes = resultRepository.findTotalIncompleteQuizzesByUserId(userId);
+			Long totalTimeSpent = resultRepository.findTotalTimeSpentByUserId(userId);
+			Long totalOfTotalScore = resultRepository.findTotalOfTheTotalScoreByUserId(userId);
+			Long totalScore = resultRepository.findTotalScoreByUserId(userId);
+			return new StudentProfileResponse(totalCompletedQuizzes, totalInCompletedQuizzes, totalTimeSpent,
+					totalOfTotalScore,totalScore);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to get the user profile data : " + e.getMessage());
+		}
+	}
+
 }

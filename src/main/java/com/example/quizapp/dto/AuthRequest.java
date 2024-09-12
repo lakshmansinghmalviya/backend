@@ -13,6 +13,6 @@ public class AuthRequest {
 	@Size(min = 3, max = 100, message = "Username should have at least 3 characters and max 100")
 	private String username;
 
-	@Size(min = 6, message = "Password should have at least 6 characters")
+	@Size(min = 8, message = "Password should have at least 8 characters")
 	private String password;
 }
