@@ -44,8 +44,7 @@ public class UserController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<MyUser> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {
-		MyUser user = userService.updateUserById(id, request);
-		return ResponseEntity.status(HttpStatus.OK).body(user);
+		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, request));
 	}
 
 	@PutMapping("/logout/{id}")

@@ -37,6 +37,11 @@ public class QuizController {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
 	}
 
+	@GetMapping("/top")
+	public ResponseEntity<List<Quiz>> getTopQuizzes() {
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getTop4());
+	}
+
 	@GetMapping("/creator/{creatorId}")
 	public ResponseEntity<List<Quiz>> getAllByCreatorId(@PathVariable("creatorId") Long creatorId) {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuizByCreatorId(creatorId));

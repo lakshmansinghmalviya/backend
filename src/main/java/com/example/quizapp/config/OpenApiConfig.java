@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 
 @OpenAPIDefinition(
     info = @Info(
-         title= "Documentation for the quiz app",
+         title= "Documentation for the quiz application",
          description = "All information of the controller and Methods For Quiz App",
          version = "1.0"
     ),
