@@ -42,8 +42,11 @@ public class Quiz {
 
 	@Column(nullable = false)
 	private Long timeLimit;
+
 	private Boolean randomizeQuestions;
+
 	private Long attemptedTimes;
+
 	private Boolean isActive;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -55,11 +58,11 @@ public class Quiz {
 	@JsonBackReference
 	private List<Question> questions;
 
-	@OneToMany(mappedBy = "quiz")
+	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Result> results;
 
-	@OneToMany(mappedBy = "quiz")
+	@OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Bookmark> bookmarks;
 

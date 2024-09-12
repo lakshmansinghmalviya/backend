@@ -1,9 +1,6 @@
 package com.example.quizapp.util;
 
 import javax.crypto.SecretKey;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,7 @@ import java.util.Date;
 
 @Service
 public class JwtHelper {
-	Logger log = LoggerFactory.getLogger(JwtHelper.class);
+
 	@Value("${jwt.secret}")
 	private String SECRET_KEY;
 
@@ -26,8 +23,6 @@ public class JwtHelper {
 	private long VALIDITY;
 
 	public String generateToken(UserDetails userDetails) {
-		log.info("This came in the generateToken generateToken {} ", userDetails);
-
 		return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(Date.from(Instant.now()))
 				.setExpiration(Date.from(Instant.now().plusMillis(VALIDITY))).signWith(generateKey()).compact();
 	}

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -37,7 +37,7 @@ public class Result {
 	private Long totalScore;
 
 	@Column(nullable = false)
-	private Long totalQuestion;;
+	private Long totalQuestion;
 
 	@Column(nullable = false)
 	private Long timeSpent;
@@ -56,12 +56,12 @@ public class Result {
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
-	@JsonBackReference // can get that how users has taken the quizzes easily by this managed awesome
+	@JsonBackReference
 	private MyUser user;
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@JsonManagedReference // quizzes atttempted easily
+	@JsonManagedReference
 	private Quiz quiz;
 
 	@Column(name = "created_at", updatable = false)

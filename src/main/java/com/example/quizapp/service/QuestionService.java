@@ -1,6 +1,5 @@
 package com.example.quizapp.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +33,6 @@ public class QuestionService {
 
 	public List<Question> getAllByQuizId(Long id) {
 		try {
-
 			quizService.exist(id);
 			return questionRepository.findAllByQuizId(id);
 		} catch (Exception e) {

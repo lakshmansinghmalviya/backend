@@ -2,8 +2,6 @@ package com.example.quizapp.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,11 +23,12 @@ import com.example.quizapp.service.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+	
 	@Autowired
 	UserService userService;
 
 	@GetMapping("/{id}")
-	public ResponseEntity<MyUser> getUserProfile(@PathVariable Long id) {
+	public ResponseEntity<MyUser> getUserInformation(@PathVariable Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
 	}
 
@@ -45,8 +44,7 @@ public class UserController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<MyUser> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {
-		MyUser user = userService.updateUserById(id, request);
-		return ResponseEntity.status(HttpStatus.OK).body(user);
+		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, request));
 	}
 
 	@PutMapping("/logout/{id}")

@@ -24,6 +24,7 @@ import com.example.quizapp.service.CategoryService;
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
+
 	@Autowired
 	CategoryService categoryService;
 
@@ -35,11 +36,7 @@ public class CategoryController {
 
 	@GetMapping("/creator/{id}")
 	public ResponseEntity<List<Category>> getCategoriesByCreatorId(@PathVariable("id") Long id) {
-		List<Category> categories = categoryService.getCategoriesByCreatorId(id);
-		if (categories.isEmpty())
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
-		return ResponseEntity.status(HttpStatus.OK).body(categories);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesByCreatorId(id));
 	}
 
 	@PutMapping("/{id}")
