@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.quizapp.dto.LimitedUsersRequest;
 import com.example.quizapp.dto.LimitedUsersResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.service.UserService;
 
 @RestController
@@ -26,14 +26,14 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
-
+  
 	@GetMapping("/{id}")
-	public ResponseEntity<MyUser> getUserInformation(@PathVariable Long id) {
+	public ResponseEntity<User> getUserInformation(@PathVariable Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
 	}
 
 	@GetMapping("/byRole/{role}")
-	public ResponseEntity<List<MyUser>> getUserProfileByRole(@PathVariable("role") String role) {
+	public ResponseEntity<List<User>> getUserProfileByRole(@PathVariable("role") String role) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfileByRole(role));
 	}
 
@@ -43,7 +43,7 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<MyUser> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {
+	public ResponseEntity<User> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, request));
 	}
 

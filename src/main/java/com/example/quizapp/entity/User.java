@@ -24,20 +24,20 @@ import jakarta.persistence.PreUpdate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyUser {
+public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userId;
+	private Long id;
 
 	@Column(nullable = false, unique = true)
-	private String username;
+	private String email;
 
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
 	@Column(nullable = false)
-	private boolean logout;
+	private boolean isLogout;
 
 	@Column(nullable = false)
 	private String name;
@@ -54,9 +54,6 @@ public class MyUser {
 	@Column(nullable = false)
 	private String role;
 
-	@Column(nullable = true)
-	private String token;
-
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
@@ -64,7 +61,6 @@ public class MyUser {
 	private LocalDateTime updatedAt;
 
 	private String bio;
-	private boolean isActive;
 
 	@OneToMany(mappedBy = "creator")
 	@JsonBackReference
@@ -94,7 +90,6 @@ public class MyUser {
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
-		this.isActive = true;
 	}
 
 	@PreUpdate

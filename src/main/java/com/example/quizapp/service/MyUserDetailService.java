@@ -1,41 +1,24 @@
 package com.example.quizapp.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.example.quizapp.entity.MyUser;
-import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.entity.User;
 
 @Service
 public class MyUserDetailService implements UserDetailsService {
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-		Optional<MyUser> user = userRepository.findByUsername(username);
-
-		if (user.isPresent()) {
-			var userObj = user.get();
-			return User.builder().username(userObj.getUsername()).password(userObj.getPassword())
-					.roles(getRoles(userObj)).build();
-		} else {
-			throw new UsernameNotFoundException(username);
-		}
+	public UserDetails loadUserByUsername(String email) {
+		User user = userService.getUserByEmail(email);
+		return org.springframework.security.core.userdetails.User.builder().username(user.getEmail()).password(user.getPassword()).roles(getRoles(user)).build();
 	}
 
-	private String[] getRoles(MyUser user) {
-		if (user.getRole() == null) {
-			return new String[] { "Student" };
-		}
+	private String[] getRoles(User user) {
 		return user.getRole().split(",");
 	}
 }

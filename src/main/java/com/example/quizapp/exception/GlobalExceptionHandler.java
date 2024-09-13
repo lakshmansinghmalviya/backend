@@ -42,8 +42,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 
-	@ExceptionHandler(ResourceAlreadyExits.class)
-	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExits ex) {
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExistsException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
 	}

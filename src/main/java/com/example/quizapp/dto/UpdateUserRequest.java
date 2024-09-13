@@ -1,5 +1,7 @@
 package com.example.quizapp.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,16 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UpdateUserRequest {
-	@Size(min = 3, max = 100, message = "Username should have at least 3 characters and max 100")
-	private String username;
-
-	@Size(min = 3, max = 50, message = "Name should have at least 3 characters and max 50")
-	private String name;
-
-	@Size(min = 6, message = "Password should have at least 6 characters")
+	
+	@NotBlank(message = "Name is required.")
+    @Size(min = 3, max = 100, message = "Name should have between 3 and 100 characters.")
+    private String name;
+	
+	@NotBlank(message = "Password cannot be empty")
+	@Size(min = 8, max = 50, message = "Password should have at least 8 characters and max 50 ")
+	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", 
+	message = "Password must be at least 8 characters long and max 50 and include at least one number, one uppercase letter, and one lowercase letter.")
 	private String password;
-
 	private String education;
+	
 
 	private String profilePic;
 

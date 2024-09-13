@@ -33,9 +33,10 @@ public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Boolean isActive;
-
-	@Column(nullable = false, columnDefinition = "TEXT")
+	
+	private Boolean isDeleted;
+	
+	@Column(nullable = false, unique =true)
 	private String text;
 
 	@Column(name = "question_type", nullable = false)
@@ -58,7 +59,7 @@ public class Question {
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
 	@JsonBackReference
-	private MyUser creator;
+	private User creator;
 
 	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
 	@JsonManagedReference

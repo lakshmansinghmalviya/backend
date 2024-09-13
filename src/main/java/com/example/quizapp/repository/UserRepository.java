@@ -8,19 +8,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.quizapp.dto.LimitedUsersResponse;
 import com.example.quizapp.entity.*;
 
 @Repository
-public interface UserRepository extends JpaRepository<MyUser, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
    
-	Optional<MyUser> findByUsername(String username);
+	Optional<User> findByEmail(String email);
 
-	boolean existsByUsername(String myUserRepo);
+	boolean existsByEmail(String email);
 
-	MyUser findByUserId(Long userId);
+	Optional<User> findByUserId(Long id);
 
-	Page<MyUser> findByRole(String role, Pageable pageable);
+	Page<User> findByRole(String role, Pageable pageable);
 
-	List<MyUser> findByRole(String role);
+	List<User> findByRole(String role);
 }

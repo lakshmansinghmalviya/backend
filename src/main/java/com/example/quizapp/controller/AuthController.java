@@ -3,7 +3,6 @@ package com.example.quizapp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +30,5 @@ public class AuthController {
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
 		return ResponseEntity.status(HttpStatus.OK).body(authService.login(authRequest));
-	}
-
-	@PostMapping("/checkToken/{token}")
-	public ResponseEntity<AuthResponse> checkTokenValidity(@PathVariable String token) {
-		return ResponseEntity.status(HttpStatus.OK).body(authService.getInfoViaToken(token));
 	}
 }

@@ -10,7 +10,7 @@ import com.example.quizapp.entity.Bookmark;
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 	
-	boolean existsByUser_UserIdAndQuiz_Id(Long userId, Long id);
+	boolean existsByUserIdAndQuizId(Long userId, Long id);
 	
-	List<Bookmark> findAllByUser_UserId(Long userId);
+	List<Bookmark> findAllByUserId(Long userId);
 }

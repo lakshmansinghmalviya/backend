@@ -11,22 +11,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuizRequest {
 
-	@Size(min = 3, message = "Title should have at least 3 characters")
-	private String title;
+    @NotNull(message = "Title cannot be null.")
+    @Size(min = 3, max = 100, message = "Title should have between 3 and 100 characters.")
+    private String title;
 
-	@Size(min = 6, message = "description should have at least 6 characters")
-	private String description;
+    @NotNull(message = "Description cannot be null.")
+    @Size(min = 10, max = 300, message = "Description should have between 6 and 500 characters.")
+    private String description;
 
-	private String quizPic;
+    private String quizPic;
 
-	@NotNull(message = "There should be some time for every quiz")
-	private Long timeLimit;
+    @NotNull(message = "Time limit should not be null.")
+    @Size(min = 1, message = "Time limit should be greater than 0.")
+    private Long timeLimit;
 
-	private Boolean randomizeQuestions;
+    private Boolean randomizeQuestions;
 
-	@NotNull(message = "The categoryId should not be null")
-	private Long categoryId;
-
-	@NotNull(message = "The creatorId should not be null")
-	private Long creatorId;
+    @NotNull(message = "Category ID should not be null.")
+    private Long categoryId;
 }

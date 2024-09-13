@@ -31,10 +31,10 @@ public class Quiz {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false,unique=true)
 	private String title;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(nullable = false)
 	private String description;
 
 	@Column(name = "quiz_pic", columnDefinition = "TEXT")
@@ -44,10 +44,8 @@ public class Quiz {
 	private Long timeLimit;
 
 	private Boolean randomizeQuestions;
-
-	private Long attemptedTimes;
-
-	private Boolean isActive;
+    
+	private Boolean isDeleted;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "categroy_id", nullable = false)
@@ -69,7 +67,7 @@ public class Quiz {
 	@JsonBackReference
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
-	private MyUser creator;
+	private User creator;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
