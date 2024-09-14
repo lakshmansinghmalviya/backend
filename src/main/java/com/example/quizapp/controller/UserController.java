@@ -32,15 +32,20 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
 	}
 
+	@GetMapping("/getByToken")
+	public ResponseEntity<User> getUserInformationByToken() {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfoUsingContextHolder());
+	}
+
 	@GetMapping("/byRole/{role}")
 	public ResponseEntity<List<User>> getUserProfileByRole(@PathVariable("role") String role) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfileByRole(role));
 	}
 
-	@PostMapping("/top")
-	public ResponseEntity<Page<LimitedUsersResponse>> getLimitedUsersByRole(@RequestBody LimitedUsersRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators(request));
-	}
+//	@PostMapping("/top")
+//	public ResponseEntity<Page<LimitedUsersResponse>> getLimitedUsersByRole(@RequestBody LimitedUsersRequest request) {
+//		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators(request));
+//	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<User> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {

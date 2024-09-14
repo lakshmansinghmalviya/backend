@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,6 @@ import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
-import com.example.quizapp.util.JwtHelper;
 
 @Service
 public class UserService {
@@ -26,30 +23,27 @@ public class UserService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private JwtHelper jwtHelper;
-
-	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
-		try {
-			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-			Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
-			return usersPage.map(user -> {
-				LimitedUsersResponse response = new LimitedUsersResponse();
-				response.setName(user.getName());
-				response.setProfilePic(user.getProfilePic());
-				response.setBio(user.getBio());
-				return response;
-			});
-		} catch (Exception e) {
-			throw new RuntimeException("Error fetching educators: " + e.getMessage(), e);
-		}
-	}
+//	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
+//		try {
+//			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+//			Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
+//			return usersPage.map(user -> {
+//				LimitedUsersResponse response = new LimitedUsersResponse();
+//				response.setName(user.getName());
+//				response.setProfilePic(user.getProfilePic());
+//				response.setBio(user.getBio());
+//				return response;
+//			});
+//		} catch (Exception e) {
+//			throw new RuntimeException("Error fetching educators: " + e.getMessage(), e);
+//		}
+//	}
 
 	public User getUser(Long id) {
 		try {
-			return userRepository.findByUserId(id)
+			return userRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + id));
 		} catch (Exception e) {
 			throw new ResourceNotFoundException("Error fetching user with ID: " + id + " " + e.getMessage());
@@ -78,7 +72,7 @@ public class UserService {
 
 	public User updateUserById(Long id, UpdateUserRequest request) {
 		try {
-			User user = userRepository.findByUserId(id)
+			User user = userRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + id));
 			user.setBio(request.getBio());
 			user.setName(request.getName());
@@ -95,7 +89,7 @@ public class UserService {
 
 	public void logout(Long id) {
 		try {
-			User user = userRepository.findByUserId(id)
+			User user = userRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + id));
 			user.setLogout(true);
 			userRepository.save(user);
