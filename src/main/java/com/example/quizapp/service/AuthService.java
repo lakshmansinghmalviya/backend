@@ -38,6 +38,7 @@ public class AuthService {
     private UserRepository userRepository;
 
     public AuthResponse register(RegisterUser registerUser) {
+    	
         if (userRepository.existsByEmail(registerUser.getEmail())) {
             throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
         }
@@ -75,13 +76,5 @@ public class AuthService {
         } catch (AuthenticationException e) {
             throw new ResourceNotFoundException("Invalid username or password.");
         }
-    }
-
-    public AuthResponse getAuthInfoViaToken(String token) {
-        String username = jwtHelper.extractUsername(token);
-        User user = userRepository.findByEmail(username)
-            .orElseThrow(() -> new ResourceNotFoundException("User data not found with email: " + username));
-
-        return new AuthResponse(token, user.getRole());
     }
 }

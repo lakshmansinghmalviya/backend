@@ -17,12 +17,16 @@ import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.util.JwtHelper;
 
 @Service
 public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private JwtHelper jwtHelper;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -101,19 +105,7 @@ public class UserService {
 	}
 
 	public User getUserInfoUsingContextHolder() {
-		try {
-
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-				UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-				String username = userDetails.getUsername();
-				return userRepository.findByEmail(username)
-						.orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
-			} else {
-				throw new ResourceNotFoundException("User not authenticated");
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("Error fetching user info: " + e.getMessage(), e);
-		}
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return getUserByEmail(username);
 	}
 }
