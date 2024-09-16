@@ -3,6 +3,7 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,7 +32,7 @@ public class Quiz {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false,unique=true)
+	@Column(nullable = false, unique = true)
 	private String title;
 
 	@Column(nullable = false)
@@ -44,7 +45,7 @@ public class Quiz {
 	private Long timeLimit;
 
 	private Boolean randomizeQuestions;
-    
+
 	private Boolean isDeleted;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -53,19 +54,19 @@ public class Quiz {
 	private Category category;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Question> questions;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Result> results;
 
-	@OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Bookmark> bookmarks;
 
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference
-	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
 	private User creator;
 

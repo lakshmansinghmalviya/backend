@@ -55,7 +55,7 @@ public class Category {
 	private User creator;
 
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Quiz> quizzes;
 
 	@PrePersist

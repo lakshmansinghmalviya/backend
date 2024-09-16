@@ -1,6 +1,5 @@
 package com.example.quizapp.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.LimitedUsersRequest;
 import com.example.quizapp.dto.LimitedUsersResponse;
@@ -28,10 +28,10 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-	
+
 	@Autowired
 	UserService userService;
-  
+
 	@GetMapping("/currentUser")
 	public ResponseEntity<User> getUserInformation() {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfoUsingTokenInfo());
@@ -62,4 +62,5 @@ public class UserController {
 		userService.logout();
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
+
 }

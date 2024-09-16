@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.LimitedUsersRequest;
 import com.example.quizapp.dto.LimitedUsersResponse;

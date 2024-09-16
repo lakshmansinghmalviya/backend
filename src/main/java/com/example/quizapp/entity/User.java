@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.example.quizapp.enums.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -71,7 +72,7 @@ public class User {
 	private List<Category> categories;
 
 	@OneToMany(mappedBy = "creator")
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Quiz> quizzes;
 
 	@OneToMany(mappedBy = "user")
