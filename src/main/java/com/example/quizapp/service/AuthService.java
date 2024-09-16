@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,59 +23,54 @@ import com.example.quizapp.util.JwtHelper;
 @Service
 public class AuthService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtHelper jwtHelper;
+	@Autowired
+	private JwtHelper jwtHelper;
 
-    @Autowired
-    private MyUserDetailService userDetailsService;
+	@Autowired
+	private MyUserDetailService userDetailsService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    public AuthResponse register(SignupRequest registerUser) {
-    
-        if (userRepository.existsByEmail(registerUser.getEmail())) {
-            throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
-        }
-        
-        User user = new User();
-        user.setName(registerUser.getName());
-        user.setEmail(registerUser.getEmail());
-        user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
-        user.setRole(registerUser.getRole());
-        user.setProfilePic(registerUser.getProfilePic());
-        user.setBio(registerUser.getBio());
-        user.setEducation(registerUser.getEducation());
-        userRepository.save(user);
+	public AuthResponse register(SignupRequest registerUser) {
 
-        LoginRequest authRequest = new LoginRequest(registerUser.getEmail(), registerUser.getPassword());
-        return login(authRequest);
-    }
+		if (userRepository.existsByEmail(registerUser.getEmail())) {
+			throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
+		}
 
-    public AuthResponse login(LoginRequest authRequest) {
-        try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+		User user = new User();
+		user.setName(registerUser.getName());
+		user.setEmail(registerUser.getEmail());
+		user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
+		user.setRole(registerUser.getRole());
+		user.setProfilePic(registerUser.getProfilePic());
+		user.setBio(registerUser.getBio());
+		user.setEducation(registerUser.getEducation());
+		userRepository.save(user);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
-            String token = jwtHelper.generateToken(userDetails);
+		LoginRequest authRequest = new LoginRequest(registerUser.getEmail(), registerUser.getPassword());
+		return login(authRequest);
+	}
 
-            User user = userRepository.findByEmail(authRequest.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + authRequest.getEmail()));
-            
-            user.setLastLogin(LocalDateTime.now());
-            user.setLogout(false);
-            userRepository.save(user);
+	public AuthResponse login(LoginRequest authRequest) {
+		
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+		UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
+		String token = jwtHelper.generateToken(userDetails);
 
-            return new AuthResponse(token, user.getRole().name());
-        } catch (AuthenticationException e) {
-            throw new ResourceNotFoundException("Invalid username or password.");
-        }
-    }
+		User user = userRepository.findByEmail(authRequest.getEmail()).orElseThrow(
+				() -> new UsernameNotFoundException("email " + authRequest.getEmail()+" not found"));
+
+		user.setLastLogin(LocalDateTime.now());
+		user.setLogout(false);
+		userRepository.save(user);
+
+		return new AuthResponse(token, user.getRole().name());
+	}
 }

@@ -87,11 +87,8 @@ public class QuizService {
 	}
 
 	public Quiz findById(Long id) {
-		try {
-			return quizRepository.findById(id).get();
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
+		return quizRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Quiz not found with the id " + id));
 	}
 
 	public List<Quiz> getAllQuiz() {
