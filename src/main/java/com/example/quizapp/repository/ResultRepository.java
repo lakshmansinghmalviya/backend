@@ -1,6 +1,7 @@
 package com.example.quizapp.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +14,7 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
 	boolean existsByUserIdAndQuizId(Long userId, Long id);
 
-	Result findByUserIdAndQuizId(Long userId, Long id);
+	Optional<Result> findByUserIdAndQuizId(Long userId, Long id);
 
 	@Query("SELECT r FROM Result r WHERE r.user.id = :id ORDER BY r.updatedAt DESC")
 	List<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id);

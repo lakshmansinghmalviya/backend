@@ -1,6 +1,7 @@
 package com.example.quizapp.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,86 +15,59 @@ import com.example.quizapp.repository.CategoryRepository;
 @Service
 public class CategoryService {
 
-	@Autowired
-	private CategoryRepository categoryRepository;
-	
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-	public MessageResponse createCategory(CategoryRequest request) {
-		try {
-			User creator = userService.getUserInfoUsingTokenInfo();
-			Category category = new Category();
-			category.setName(request.getName());
-			category.setDescription(request.getDescription());
-			category.setCategoryPic(request.getCategoryPic());
-			category.setCreator(creator);
-			categoryRepository.save(category);
-			return new MessageResponse("Category Created");
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create category: " + e.getMessage());
-		}
-	}
+    @Autowired
+    private UserService userService;
 
-	 
-	public List<Category> getCategoriesByCreatorId(Long creatorId) {
-		try {
-			return categoryRepository.findByCreatorId(creatorId);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
-		}
-	}
+    public MessageResponse createCategory(CategoryRequest request) {
+        User creator = userService.getUserInfoUsingTokenInfo();
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        category.setCategoryPic(request.getCategoryPic());
+        category.setCreator(creator);
+        categoryRepository.save(category);
+        return new MessageResponse("Category Created");
+    }
 
-	 
-	public List<Category> getCategoriesOfCreator() {
-		try {
-			User creator = userService.getUserInfoUsingTokenInfo();
-			return categoryRepository.findByCreatorId(creator.getId());
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
-		}
-	}
+    public List<Category> getCategoriesByCreatorId(Long creatorId) {
+        return categoryRepository.findByCreatorId(creatorId);
+    }
 
-	public String deleteCategoryById(Long categoryId) {
-		try {
-			if (categoryRepository.existsById(categoryId))
-				categoryRepository.deleteById(categoryId);
+    public List<Category> getCategoriesOfCreator() {
+        User creator = userService.getUserInfoUsingTokenInfo();
+        return categoryRepository.findByCreatorId(creator.getId());
+    }
 
-			return "Deleted the category Successfully";
+    public void deleteCategoryById(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+        	throwException(categoryId);
+        }
+        categoryRepository.deleteById(categoryId);
+    }
 
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to delete category: " + e.getMessage());
-		}
-	}
+    public Category updateCategoryById(Long categoryId, CategoryRequest request) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> throwException(categoryId));
+        
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        category.setCategoryPic(request.getCategoryPic());
+        return categoryRepository.save(category);
+    }
 
-	public Category updateCategoryById(Long categoryId, CategoryRequest request) {
-		try {
-			Category category = categoryRepository.findById(categoryId)
-					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-			category.setName(request.getName());
-			category.setDescription(request.getDescription());
-			category.setCategoryPic(request.getCategoryPic());
-			return categoryRepository.save(category);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to update category: " + e.getMessage());
-		}
-	}
+    public Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+            .orElseThrow(() -> throwException(categoryId));
+    }
 
-	public Category getCategoryById(Long categoryId) {
-		try {
-			Category category = categoryRepository.findById(categoryId)
-					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-			return category;
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve category: " + e.getMessage());
-		}
-	}
+    public List<Category> getCategories() {
+        return categoryRepository.findAll();
+    }
 
-	public List<Category> getCategories() {
-		try {
-			return categoryRepository.findAll();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
-		}
-	}
+    public ResourceNotFoundException throwException(Long id) {
+        throw new ResourceNotFoundException("Category not found with the id " + id);
+    }
 }

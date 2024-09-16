@@ -1,8 +1,6 @@
 package com.example.quizapp.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,101 +30,68 @@ public class QuestionService {
 	private UserService userService;
 
 	public List<Question> getAllByQuizId(Long id) {
-		try {
-			quizService.exist(id);
-			return questionRepository.findAllByQuizId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
+		quizService.exist(id);
+		return questionRepository.findAllByQuizId(id);
 	}
 
 	@Transactional
 	public Question create(QuestionRequest request) {
-		try {
-			Quiz quiz = quizService.findById(request.getQuizId());
-			User creator = userService.getUserInfoUsingTokenInfo();
-			Question question = new Question();
-			question.setText(request.getText());
-			question.setIsDeleted(false);
-			question.setQuestionPic(request.getQuestionPic());
-			question.setQuiz(quiz);
-			question.setCreator(creator);
-			question.setQuestionType(request.getQuestionType());
-			question.setMaxScore(request.getMaxScore());
-			question.setRandomizeOptions(request.getRandomizeOptions());
-			question = questionRepository.save(question);
-			for (OptionRequest optionReq : request.getOptions())
-				optionService.createOption(optionReq, question);
-			return question;
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create question: " + e.getMessage());
-		}
+		Quiz quiz = quizService.findById(request.getQuizId());
+		User creator = userService.getUserInfoUsingTokenInfo();
+		Question question = new Question();
+		question.setText(request.getText());
+		question.setIsDeleted(false);
+		question.setQuestionPic(request.getQuestionPic());
+		question.setQuiz(quiz);
+		question.setCreator(creator);
+		question.setQuestionType(request.getQuestionType());
+		question.setMaxScore(request.getMaxScore());
+		question.setRandomizeOptions(request.getRandomizeOptions());
+		question = questionRepository.save(question);
+		for (OptionRequest optionReq : request.getOptions())
+			optionService.createOption(optionReq, question);
+		return question;
 	}
 
 	@Transactional
 	public void delete(Long id) {
-		try {
+		if (questionRepository.existsById(id))
 			questionRepository.deleteById(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to delete question: " + e.getMessage());
-		}
+		else
+			throw new ResourceNotFoundException("Question id not found ");
 	}
 
 	@Transactional
 	public Question update(Long id, QuestionRequest request) {
-		try {
 
-			Question question = getQuestionById(id);
+		Question question = getQuestionById(id);
+		for (OptionRequest optionReq : request.getOptions())
+			optionService.updateOption(optionReq);
 
-			for (OptionRequest optionReq : request.getOptions())
-				optionService.updateOption(optionReq);
-
-			question.setText(request.getText());
-			question.setQuestionPic(request.getQuestionPic());
-			question.setQuestionType(request.getQuestionType());
-			question.setMaxScore(request.getMaxScore());
-			question.setRandomizeOptions(request.getRandomizeOptions());
-			return questionRepository.save(question);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to update question: " + e.getMessage());
-		}
+		question.setText(request.getText());
+		question.setQuestionPic(request.getQuestionPic());
+		question.setQuestionType(request.getQuestionType());
+		question.setMaxScore(request.getMaxScore());
+		question.setRandomizeOptions(request.getRandomizeOptions());
+		return questionRepository.save(question);
 	}
- 
+
 	public List<Question> getAllQuestion() {
-		try {
-			return questionRepository.findAll();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
-		}
+		return questionRepository.findAll();
 	}
 
 	public List<Question> getQuestionsofCreator() {
-		try {
-			User creator = userService.getUserInfoUsingTokenInfo();
-			return questionRepository.findByCreatorId(creator.getId());
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
-		}
+		User creator = userService.getUserInfoUsingTokenInfo();
+		return questionRepository.findByCreatorId(creator.getId());
 	}
 
 	public List<Question> getAllQuestionByCreatorId(Long id) {
-		try {
-			return questionRepository.findByCreatorId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
-		}
+		return questionRepository.findByCreatorId(id);
 	}
 
 	public Question getQuestionById(Long id) {
-		try {
-			Optional<Question> question = questionRepository.findById(id);
-			if (question.isPresent())
-				return question.get();
-			else
-				throw new ResourceNotFoundException("Question not found");
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve question"+e.getMessage());
-		}
+		return questionRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Question id not found "));
 	}
 
 }

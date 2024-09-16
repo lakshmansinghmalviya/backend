@@ -49,8 +49,9 @@ public class CategoryController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<String> deleteCategory(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(categoryService.deleteCategoryById(id));
+	public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
+		categoryService.deleteCategoryById(id);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 
