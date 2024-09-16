@@ -7,9 +7,12 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.quizapp.enums.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -52,7 +55,8 @@ public class User {
 	private String education;
 
 	@Column(nullable = false)
-	private String role;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;

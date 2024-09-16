@@ -50,9 +50,6 @@ public class Result {
 
 	@Column(nullable = false)
 	private Long incorrectAnswers;
-	
-	@Column(nullable = false)
-	private Long unAttemtedQuestion;
 
 	@Column(nullable = false)
 	private Long timesTaken;

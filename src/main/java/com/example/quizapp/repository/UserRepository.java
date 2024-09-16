@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.quizapp.entity.*;
+import com.example.quizapp.enums.Role;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -21,5 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Page<User> findByRole(String role, Pageable pageable);
 
-	List<User> findByRole(String role);
+	List<User> findAllByRole(Role role);
 }

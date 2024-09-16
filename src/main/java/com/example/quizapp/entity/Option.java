@@ -28,7 +28,7 @@ public class Option {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false,unique=true)
+	@Column(nullable = false)
 	private String text;
 
 	@Column(nullable = false)

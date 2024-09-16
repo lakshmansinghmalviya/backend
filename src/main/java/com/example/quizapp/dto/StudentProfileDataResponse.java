@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentProfileResponse {
+public class StudentProfileDataResponse {
 	private Long totalCompletedQuizzes;
 	private Long totalInCompletedQuizzes;
 	private Long totalTimeSpent;

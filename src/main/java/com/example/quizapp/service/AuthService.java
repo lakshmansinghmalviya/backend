@@ -10,9 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.AuthRequest;
+import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.AuthResponse;
-import com.example.quizapp.dto.RegisterUser;
+import com.example.quizapp.dto.SignupRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.exception.ResourceNotFoundException;
@@ -37,12 +37,12 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    public AuthResponse register(RegisterUser registerUser) {
-    	
+    public AuthResponse register(SignupRequest registerUser) {
+    
         if (userRepository.existsByEmail(registerUser.getEmail())) {
             throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
         }
-
+        
         User user = new User();
         user.setName(registerUser.getName());
         user.setEmail(registerUser.getEmail());
@@ -53,11 +53,11 @@ public class AuthService {
         user.setEducation(registerUser.getEducation());
         userRepository.save(user);
 
-        AuthRequest authRequest = new AuthRequest(registerUser.getEmail(), registerUser.getPassword());
+        LoginRequest authRequest = new LoginRequest(registerUser.getEmail(), registerUser.getPassword());
         return login(authRequest);
     }
 
-    public AuthResponse login(AuthRequest authRequest) {
+    public AuthResponse login(LoginRequest authRequest) {
         try {
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -72,7 +72,7 @@ public class AuthService {
             user.setLogout(false);
             userRepository.save(user);
 
-            return new AuthResponse(token, user.getRole());
+            return new AuthResponse(token, user.getRole().name());
         } catch (AuthenticationException e) {
             throw new ResourceNotFoundException("Invalid username or password.");
         }

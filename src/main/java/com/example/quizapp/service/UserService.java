@@ -9,11 +9,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.LimitedUsersRequest;
 import com.example.quizapp.dto.LimitedUsersResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Role;
 import com.example.quizapp.exception.ResourceNotFoundException;
+import com.example.quizapp.repository.CategoryRepository;
+import com.example.quizapp.repository.QuestionRepository;
+import com.example.quizapp.repository.QuizRepository;
 import com.example.quizapp.repository.UserRepository;
 
 @Service
@@ -23,30 +28,30 @@ public class UserService {
 	private UserRepository userRepository;
 
 	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private QuizRepository quizRepository;
+
+	@Autowired
+	private QuestionRepository questionRepository;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-//	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
-//		try {
-//			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-//			Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
-//			return usersPage.map(user -> {
-//				LimitedUsersResponse response = new LimitedUsersResponse();
-//				response.setName(user.getName());
-//				response.setProfilePic(user.getProfilePic());
-//				response.setBio(user.getBio());
-//				return response;
-//			});
-//		} catch (Exception e) {
-//			throw new RuntimeException("Error fetching educators: " + e.getMessage(), e);
-//		}
-//	}
-
-	public User getUser(Long id) {
+	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
 		try {
-			return userRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + id));
+			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+			Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
+			return usersPage.map(user -> {
+				LimitedUsersResponse response = new LimitedUsersResponse();
+				response.setName(user.getName());
+				response.setProfilePic(user.getProfilePic());
+				response.setBio(user.getBio());
+				return response;
+			});
 		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error fetching user with ID: " + id + " " + e.getMessage());
+			throw new RuntimeException("Error fetching educators: " + e.getMessage(), e);
 		}
 	}
 
@@ -59,21 +64,21 @@ public class UserService {
 		}
 	}
 
-	public List<User> getUserProfileByRole(String role) {
+	public List<User> getEducators() {
 		try {
-			List<User> users = userRepository.findByRole(role);
+			 Role role = Role.valueOf("Educator");
+			List<User> users = userRepository.findAllByRole(role);
 			if (users.isEmpty())
-				throw new ResourceNotFoundException("No users found with role: " + role);
+				throw new ResourceNotFoundException("No users found with role: ");
 			return users;
 		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error fetching users with role: " + role + " " + e.getMessage());
+			throw new ResourceNotFoundException("Error fetching educators " + e.getMessage());
 		}
 	}
 
-	public User updateUserById(Long id, UpdateUserRequest request) {
+	public User updateUser(UpdateUserRequest request) {
 		try {
-			User user = userRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + id));
+			User user = getUserInfoUsingTokenInfo();
 			user.setBio(request.getBio());
 			user.setName(request.getName());
 			user.setProfilePic(request.getProfilePic());
@@ -83,23 +88,34 @@ public class UserService {
 			}
 			return userRepository.save(user);
 		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error updating user with ID: " + id + " " + e.getMessage());
+			throw new ResourceNotFoundException("Error updating user " + e.getMessage());
 		}
 	}
 
-	public void logout(Long id) {
+	public void logout() {
 		try {
-			User user = userRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + id));
+			User user = getUserInfoUsingTokenInfo();
 			user.setLogout(true);
 			userRepository.save(user);
 		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error logging out user with ID: " + id + " " + e.getMessage());
+			throw new ResourceNotFoundException("Error logging out user " + e.getMessage());
 		}
 	}
 
-	public User getUserInfoUsingContextHolder() {
+	public User getUserInfoUsingTokenInfo() {
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return getUserByEmail(username);
+	}
+
+	public EducatorProfileDataResponse getEducatorProfileInformation() {
+		try {
+			User creator = getUserInfoUsingTokenInfo();
+			Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
+			Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
+			Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
+			return new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to get the educator profile data : " + e.getMessage());
+		}
 	}
 }

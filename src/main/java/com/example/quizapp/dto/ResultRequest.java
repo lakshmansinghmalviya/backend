@@ -10,17 +10,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResultRequest {
-
+    
     @NotNull(message = "Score should not be null.")
-    @Min(value = 1, message = "Score must be at least 1.")
+    @Min(value = 0, message = "Score must be at least 0.")
     private Long score;
 
     @NotNull(message = "Total score should not be null.")
-    @Min(value = 1, message = "Total score must be at least 1.")
+    @Min(value = 0, message = "Total score must be at least 0.")
     private Long totalScore;
 
     @NotNull(message = "Time spent should not be null.")
-    @Min(value = 1, message = "Time spent must be at least 1 seconds.")
+    @Min(value = 0, message = "Time spent must be at least 0 seconds.")
     private Long timeSpent;
 
     @NotNull(message = "Completion status should not be null.")
@@ -35,7 +35,7 @@ public class ResultRequest {
     private Long incorrectAnswers;
 
     @NotNull(message = "Total number of questions should not be null.")
-    @Min(value = 1, message = "Total number of questions must be at least 1.")
+    @Min(value = 0, message = "Total number of questions must be at least 0.")
     private Long totalQuestion;
 
     @NotNull(message = "Number of times taken should not be null.")

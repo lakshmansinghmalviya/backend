@@ -1,5 +1,6 @@
 package com.example.quizapp.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,32 +25,34 @@ import com.example.quizapp.service.MyUserDetailService;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final MyUserDetailService userDetailService;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	@Autowired
+	private MyUserDetailService userDetailService;
 
-    // Constructor injection to break the circular dependency
-    public SecurityConfig(MyUserDetailService userDetailService, JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.userDetailService = userDetailService;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(registry -> {
-            registry.requestMatchers(AllowedPaths.PERMITTEDPATHS).permitAll();
-            registry.anyRequest().authenticated();
-        }).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+		return httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(registry -> {
+			registry.requestMatchers(AllowedPaths.PERMITTEDPATHS).permitAll();
+			registry.anyRequest().authenticated();
+		}).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+	}
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailService); // No need for a separate bean, inject directly
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+	@Bean
+	public UserDetailsService userDetailsService() {
+		return userDetailService;
+	}
 
-    @Bean
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(userDetailService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
+	}
+
+	@Bean
 	public AuthenticationManager authenticationManager() {
 		return new ProviderManager(authenticationProvider());
 	}
