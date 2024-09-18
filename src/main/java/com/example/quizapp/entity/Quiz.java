@@ -48,13 +48,13 @@ public class Quiz {
 
 	private Boolean isDeleted;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "categroy_id", nullable = false)
 	@JsonBackReference
 	private Category category;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Question> questions;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)

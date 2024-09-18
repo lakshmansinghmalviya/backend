@@ -3,16 +3,13 @@ package com.example.quizapp.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.EducatorProfileDataResponse;
-import com.example.quizapp.dto.LimitedUsersRequest;
-import com.example.quizapp.dto.LimitedUsersResponse;
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Role;
@@ -40,16 +37,11 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
-		Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-		Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
-		return usersPage.map(user -> {
-			LimitedUsersResponse response = new LimitedUsersResponse();
-			response.setName(user.getName());
-			response.setProfilePic(user.getProfilePic());
-			response.setBio(user.getBio());
-			return response;
-		});
+	public PageResponse<User> getEducatorsForPublic(Pageable pageable) {
+		Role role = Role.valueOf("Educator");
+		Page<User> userPage = userRepository.findByRole(role, pageable);
+		return new PageResponse<>(userPage.getContent(), userPage.getNumber(), userPage.getSize(),
+				userPage.getTotalElements(), userPage.getTotalPages());
 	}
 
 	public User getUserByEmail(String email) {

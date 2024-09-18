@@ -3,6 +3,8 @@ package com.example.quizapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,10 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.CategoryRequest;
 import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.CategoryService;
 
@@ -54,9 +59,22 @@ public class CategoryController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-
 	@GetMapping()
 	public ResponseEntity<List<Category>> getCategories() {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategories());
 	}
+
+	@GetMapping("/ofCreator/pagination")
+	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesByPagination(
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesByPagination(pageable));
+	}
+
+//	@GetMapping("/ofCreator/betweenDates")
+//	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesByPagination(
+//			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+//		Pageable pageable = PageRequest.of(page, size);
+//		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesByPagination(pageable));
+//	}
 }

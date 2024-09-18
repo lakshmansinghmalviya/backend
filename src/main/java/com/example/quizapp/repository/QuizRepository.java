@@ -19,7 +19,4 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 	Long countByCreatorId(Long id);
 
 	boolean existsById(Long id);
-
-	@Query(nativeQuery = true, value = "SELECT * FROM quizzes q  ORDER BY created_at DESC LIMIT :limit")
-	List<Quiz> getTop4(@Param("limit") int limit);
 }

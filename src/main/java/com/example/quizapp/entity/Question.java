@@ -51,7 +51,7 @@ public class Question {
 	@Column(name = "maxscore", nullable = false)
 	private Long maxScore;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@JsonBackReference
 	private Quiz quiz;
@@ -66,7 +66,7 @@ public class Question {
 	private List<Option> options;
 
 	@OneToMany(mappedBy = "question")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Feedback> feedbacks;
 
 	@Column(name = "created_at", updatable = false)

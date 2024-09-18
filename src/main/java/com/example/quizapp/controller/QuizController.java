@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/quizzes")
 public class QuizController {
-	
+
 	@Autowired
 	QuizService quizService;
 
@@ -43,12 +43,7 @@ public class QuizController {
 	@GetMapping("/ofCreator")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<List<Quiz>> getAllQuizOfCreator() {
-		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
-	}
-
-	@GetMapping("/top")
-	public ResponseEntity<List<Quiz>> getTopQuizzes() {
-		return ResponseEntity.status(HttpStatus.OK).body(quizService.getTop4());
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuizOfCreator());
 	}
 
 	@GetMapping("/creator/{creatorId}")

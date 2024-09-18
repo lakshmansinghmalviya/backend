@@ -75,15 +75,11 @@ public class QuizService {
 
 	public List<Quiz> getAllQuizOfCreator() {
 		User user = userService.getUserInfoUsingTokenInfo();
-		return quizRepository.findByCategoryId(user.getId());
+		return quizRepository.findByCreatorId(user.getId());
 	}
 
 	public boolean exist(Long id) {
 		return quizRepository.existsById(id);
-	}
-
-	public List<Quiz> getTop4() {
-		return quizRepository.getTop4(4);
 	}
 
 	public ResourceNotFoundException throwException(Long id) {

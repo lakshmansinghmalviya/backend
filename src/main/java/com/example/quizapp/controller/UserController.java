@@ -3,24 +3,21 @@ package com.example.quizapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.EducatorProfileDataResponse;
-import com.example.quizapp.dto.LimitedUsersRequest;
-import com.example.quizapp.dto.LimitedUsersResponse;
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
-import com.example.quizapp.enums.Role;
 import com.example.quizapp.service.UserService;
 
 import jakarta.validation.Valid;
@@ -47,11 +44,6 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators());
 	}
 
-	@PostMapping("/top")
-	public ResponseEntity<Page<LimitedUsersResponse>> getLimitedUsersByRole(@RequestBody LimitedUsersRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators(request));
-	}
-
 	@PutMapping("/update")
 	public ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(request));
@@ -63,4 +55,10 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@GetMapping("/public")
+	public ResponseEntity<PageResponse<User>> getEducatorsForPublic(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.ok(userService.getEducatorsForPublic(pageable));
+	}
 }
