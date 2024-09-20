@@ -63,7 +63,7 @@ public class Question {
 	@JsonManagedReference
 	private List<Option> options;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Feedback> feedbacks;
 
