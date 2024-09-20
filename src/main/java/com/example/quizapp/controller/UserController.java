@@ -51,6 +51,7 @@ public class UserController {
 
 	@PutMapping("/logout")
 	public ResponseEntity<Void> doUserLogout() {
+//		hello checking
 		userService.logout();
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
