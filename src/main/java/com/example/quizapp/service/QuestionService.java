@@ -1,6 +1,7 @@
 package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public class QuestionService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	CommonHelper commonHelper;
 
@@ -102,27 +103,31 @@ public class QuestionService {
 		return questionRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Question id not found "));
 	}
-	
+
 	public UnifiedResponse<PageResponse<Question>> getQuestionsByPagination(Pageable pageable) {
-        Page<Question> questions = questionRepository.findByCreatorId(getUser().getId(), pageable);
-        return commonHelper.getPageResponse(questions);
-    }
+		Page<Question> questions = questionRepository.findByCreatorId(getUser().getId(), pageable);
+		return commonHelper.getPageResponse(questions);
+	}
 
-    public UnifiedResponse<PageResponse<Question>> getQuestionsByPaginationBetweenDates(String startDate, String endDate, Pageable pageable) {
-        LocalDateTime start = LocalDateTime.parse(startDate);
-        LocalDateTime end = LocalDateTime.parse(endDate);
-        Page<Question> questions = questionRepository.findByCreatorIdAndDateBetween(getUser().getId(), start, end, pageable);
-        return commonHelper.getPageResponse(questions);
-    }
+	public UnifiedResponse<PageResponse<Question>> getQuestionsByPaginationBetweenDates(String startDate,
+			String endDate, Pageable pageable) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		LocalDateTime startDateTime = LocalDateTime.parse(startDate + " 00:00:00", formatter);
+		LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
+		Page<Question> questions = questionRepository.findByCreatorIdAndDateBetween(getUser().getId(), startDateTime,
+				endDateTime, pageable);
+		return commonHelper.getPageResponse(questions);
+	}
 
-    public UnifiedResponse<PageResponse<Question>> searchQuestionsByQuery(String query, Pageable pageable) {
-        Page<Question> questions = questionRepository.findByCreatorIdAndTextContainingIgnoreCaseQuestionTypeContainingIgnoreCase(getUser().getId(), query, query, pageable);
-        return commonHelper.getPageResponse(questions);
-    }
-    
-    public User getUser() {
-    	return commonHelper.getUser();
-    }
+	public UnifiedResponse<PageResponse<Question>> searchQuestionsByQuery(String query, Pageable pageable) {
+		Page<Question> questions = questionRepository
+				.findByCreatorIdAndTextContainingIgnoreCaseOrQuestionTypeContainingIgnoreCase(getUser().getId(), query,
+						query, pageable);
+		return commonHelper.getPageResponse(questions);
+	}
 
+	public User getUser() {
+		return commonHelper.getUser();
+	}
 
 }

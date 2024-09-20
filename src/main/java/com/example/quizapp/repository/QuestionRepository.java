@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.quizapp.entity.Question;
-import com.example.quizapp.entity.Quiz;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
@@ -25,10 +24,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	boolean existsById(Long id);
 
 	Page<Question> findByCreatorId(Long creatorId, Pageable pageable);
+
 	@Query("SELECT q FROM Question q WHERE q.creator.id = :creatorId AND q.createdAt BETWEEN :startDate AND :endDate")
 	Page<Question> findByCreatorIdAndDateBetween(@Param("creatorId") Long creatorId,
 			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
-    Page<Question> findByCreatorIdAndTextContainingIgnoreCaseQuestionTypeContainingIgnoreCase(Long creatorId, String text, String questionType, Pageable pageable);
+	Page<Question> findByCreatorIdAndTextContainingIgnoreCaseOrQuestionTypeContainingIgnoreCase(Long creatorId,
+			String text, String questionType, Pageable pageable);
 
 }
