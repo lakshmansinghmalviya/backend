@@ -30,7 +30,7 @@ public class FeedbackService {
 		}
 		feedback.setUser(user);
 		feedback.setQuestion(question);
-		feedback.setFeebackText(request.getFeedbackText());
+		feedback.setFeedbackText(request.getFeedbackText());
 		feedbackRepository.save(feedback);
 		return new MessageResponse("Feedback submitted");
 	}

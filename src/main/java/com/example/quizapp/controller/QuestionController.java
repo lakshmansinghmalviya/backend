@@ -3,6 +3,8 @@ package com.example.quizapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,9 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuestionRequest;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.service.QuestionService;
 
@@ -52,11 +57,6 @@ public class QuestionController {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestion());
 	}
 
-	@GetMapping("/ofCreator")
-	public ResponseEntity<List<Question>> getQuestionsofCreator() {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionsofCreator());
-	}
-
 	@GetMapping("/creator/{id}")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<List<Question>> getQuestionsByCreatorId(@PathVariable("id") Long id) {
@@ -68,9 +68,34 @@ public class QuestionController {
 	public ResponseEntity<Question> getQuestionById(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionById(id));
 	}
-	
+
 	@GetMapping("/quiz/{id}")
-	public ResponseEntity<List<Question> > getAllQuestionByQuizId(@PathVariable("id") Long id){
+	public ResponseEntity<List<Question>> getAllQuestionByQuizId(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllByQuizId(id));
+	}
+
+	@GetMapping("/ofCreator")
+	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> getQuestionsByPagination(
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionsByPagination(pageable));
+	}
+
+	@GetMapping("/ofCreator/betweenDates/{start}/{end}")
+	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> getQuestionsBetweenDates(@PathVariable String start,
+			@PathVariable String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(questionService.getQuestionsByPaginationBetweenDates(start, end, pageable));
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> searchQuestions(@RequestParam String query,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.searchQuestionsByQuery(query, pageable));
 	}
 }

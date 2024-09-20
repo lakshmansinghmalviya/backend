@@ -3,7 +3,6 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -33,10 +32,10 @@ public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	private Boolean isDeleted;
-	
-	@Column(nullable = false, unique =true)
+
+	@Column(nullable = false, unique = true)
 	private String text;
 
 	@Column(name = "question_type", nullable = false)
@@ -61,7 +60,7 @@ public class Question {
 	@JsonBackReference
 	private User creator;
 
-	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Option> options;
 

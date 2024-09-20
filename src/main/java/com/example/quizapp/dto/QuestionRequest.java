@@ -14,23 +14,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuestionRequest {
 
-    private Long quizId;
+	private Long quizId;
 
-    @NotBlank(message = "Question type cannot be blank.")
-    private String questionType;
+	@NotBlank(message = "Question type cannot be blank.")
+	private String questionType;
 
-    @NotBlank(message = "Text cannot be blank.")
-    @Size(min = 3, max = 300, message = "Question text should be between 3 and 300 characters.")
-    private String text;
+	@NotBlank(message = "Text cannot be blank.")
+	@Size(min = 3, max = 300, message = "Question text should be between 3 and 300 characters.")
+	private String text;
 
-    @NotNull(message = "Max score should not be null.")
-    @Min(value = 1, message = "Max score must be at least 1.")
-    private Long maxScore;
+	@NotNull(message = "Max score should not be null.")
+	@Min(value = 1, message = "Max score must be at least 1.")
+	private Long maxScore;
 
-    private String questionPic;
+	private String questionPic;
 
-    private Boolean randomizeOptions;
+	private Boolean randomizeOptions;
 
-    @Size(min = 2, message = "At least two options must be provided.")
-    private List<OptionRequest> options;
+	@Size(min = 2, message = "At least two options must be provided.")
+	private List<OptionRequest> options;
 }

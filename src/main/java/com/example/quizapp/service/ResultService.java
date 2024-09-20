@@ -27,8 +27,7 @@ public class ResultService {
 
 	public MessageResponse attemptedQuiz(ResultRequest request) {
 		User user = userService.getUserInfoUsingTokenInfo();
-		Result quizAttemt = resultRepository.findByUserIdAndQuizId(user.getId(), request.getQuizId())
-				.orElseThrow(() -> new ResourceNotFoundException("Result not found with the id and quiz id "));
+		Result quizAttemt = resultRepository.findByUserIdAndQuizId(user.getId(), request.getQuizId());
 		if (quizAttemt != null)
 			quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() + 1);
 		else

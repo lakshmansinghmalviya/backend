@@ -1,7 +1,5 @@
 package com.example.quizapp.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
@@ -36,13 +33,8 @@ public class CategoryController {
 
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<MessageResponse> createCategory(@Valid @RequestBody CategoryRequest request) {
+	public ResponseEntity<UnifiedResponse<?>> createCategory(@Valid @RequestBody CategoryRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.createCategory(request));
-	}
-
-	@GetMapping("/ofCreator")
-	public ResponseEntity<List<Category>> getCategoriesOfCreator() {
-		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesOfCreator());
 	}
 
 	@PutMapping("/{id}")
@@ -60,21 +52,33 @@ public class CategoryController {
 	}
 
 	@GetMapping()
-	public ResponseEntity<List<Category>> getCategories() {
+	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategories() {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategories());
 	}
 
-	@GetMapping("/ofCreator/pagination")
+	@GetMapping("/ofCreator")
 	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesByPagination(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+
 		Pageable pageable = PageRequest.of(page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesByPagination(pageable));
 	}
 
-//	@GetMapping("/ofCreator/betweenDates")
-//	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesByPagination(
-//			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-//		Pageable pageable = PageRequest.of(page, size);
-//		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesByPagination(pageable));
-//	}
+	@GetMapping("/ofCreator/betweenDates/{start}/{end}")
+	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesBetweenDates(@PathVariable String start,
+			@PathVariable String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(categoryService.getCategoriesByPaginationBetweenDates(start, end, pageable));
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> searchCategories(@RequestParam String query,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.searchCategoriesByQuery(query, pageable));
+	}
 }

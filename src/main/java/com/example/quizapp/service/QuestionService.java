@@ -1,16 +1,22 @@
 package com.example.quizapp.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.OptionRequest;
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuestionRequest;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuestionRepository;
+import com.example.quizapp.util.CommonHelper;
 
 import jakarta.transaction.Transactional;
 
@@ -28,6 +34,9 @@ public class QuestionService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	CommonHelper commonHelper;
 
 	public List<Question> getAllByQuizId(Long id) {
 		quizService.exist(id);
@@ -93,5 +102,27 @@ public class QuestionService {
 		return questionRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Question id not found "));
 	}
+	
+	public UnifiedResponse<PageResponse<Question>> getQuestionsByPagination(Pageable pageable) {
+        Page<Question> questions = questionRepository.findByCreatorId(getUser().getId(), pageable);
+        return commonHelper.getPageResponse(questions);
+    }
+
+    public UnifiedResponse<PageResponse<Question>> getQuestionsByPaginationBetweenDates(String startDate, String endDate, Pageable pageable) {
+        LocalDateTime start = LocalDateTime.parse(startDate);
+        LocalDateTime end = LocalDateTime.parse(endDate);
+        Page<Question> questions = questionRepository.findByCreatorIdAndDateBetween(getUser().getId(), start, end, pageable);
+        return commonHelper.getPageResponse(questions);
+    }
+
+    public UnifiedResponse<PageResponse<Question>> searchQuestionsByQuery(String query, Pageable pageable) {
+        Page<Question> questions = questionRepository.findByCreatorIdAndTextContainingIgnoreCaseQuestionTypeContainingIgnoreCase(getUser().getId(), query, query, pageable);
+        return commonHelper.getPageResponse(questions);
+    }
+    
+    public User getUser() {
+    	return commonHelper.getUser();
+    }
+
 
 }

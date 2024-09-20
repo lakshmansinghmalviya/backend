@@ -29,7 +29,7 @@ public class Feedback {
 	private Long id;
 
 	@Column(nullable = false)
-	private String feebackText;
+	private String feedbackText;
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
