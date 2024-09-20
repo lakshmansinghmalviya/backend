@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +15,6 @@ import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.SignupRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
-import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
 import com.example.quizapp.util.JwtHelper;
 
@@ -53,24 +51,22 @@ public class AuthService {
 		user.setBio(registerUser.getBio());
 		user.setEducation(registerUser.getEducation());
 		userRepository.save(user);
-
-		LoginRequest authRequest = new LoginRequest(registerUser.getEmail(), registerUser.getPassword());
-		return login(authRequest);
+		return login(new LoginRequest(registerUser.getEmail(), registerUser.getPassword()));
 	}
 
 	public AuthResponse login(LoginRequest authRequest) {
-		
-		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+
+		authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
 		String token = jwtHelper.generateToken(userDetails);
 
-		User user = userRepository.findByEmail(authRequest.getEmail()).orElseThrow(
-				() -> new UsernameNotFoundException("email " + authRequest.getEmail()+" not found"));
+		User user = userRepository.findByEmail(authRequest.getEmail())
+				.orElseThrow(() -> new UsernameNotFoundException("email " + authRequest.getEmail() + " not found"));
 
 		user.setLastLogin(LocalDateTime.now());
 		user.setLogout(false);
 		userRepository.save(user);
-
 		return new AuthResponse(token, user.getRole().name());
 	}
 }

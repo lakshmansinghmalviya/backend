@@ -40,66 +40,43 @@ public class UserService {
 	private PasswordEncoder passwordEncoder;
 
 	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
-		try {
-			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-			Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
-			return usersPage.map(user -> {
-				LimitedUsersResponse response = new LimitedUsersResponse();
-				response.setName(user.getName());
-				response.setProfilePic(user.getProfilePic());
-				response.setBio(user.getBio());
-				return response;
-			});
-		} catch (Exception e) {
-			throw new RuntimeException("Error fetching educators: " + e.getMessage(), e);
-		}
+		Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+		Page<User> usersPage = userRepository.findByRole(request.getRole(), pageable);
+		return usersPage.map(user -> {
+			LimitedUsersResponse response = new LimitedUsersResponse();
+			response.setName(user.getName());
+			response.setProfilePic(user.getProfilePic());
+			response.setBio(user.getBio());
+			return response;
+		});
 	}
 
 	public User getUserByEmail(String email) {
-		try {
-			return userRepository.findByEmail(email)
-					.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error fetching user with email: " + email + " " + e.getMessage());
-		}
+		return userRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 	}
 
 	public List<User> getEducators() {
-		try {
-			 Role role = Role.valueOf("Educator");
-			List<User> users = userRepository.findAllByRole(role);
-			if (users.isEmpty())
-				throw new ResourceNotFoundException("No users found with role: ");
-			return users;
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error fetching educators " + e.getMessage());
-		}
+		Role role = Role.valueOf("Educator");
+		return userRepository.findAllByRole(role);
 	}
 
 	public User updateUser(UpdateUserRequest request) {
-		try {
-			User user = getUserInfoUsingTokenInfo();
-			user.setBio(request.getBio());
-			user.setName(request.getName());
-			user.setProfilePic(request.getProfilePic());
-			user.setEducation(request.getEducation());
-			if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
-				user.setPassword(passwordEncoder.encode(request.getPassword()));
-			}
-			return userRepository.save(user);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error updating user " + e.getMessage());
+		User user = getUserInfoUsingTokenInfo();
+		user.setBio(request.getBio());
+		user.setName(request.getName());
+		user.setProfilePic(request.getProfilePic());
+		user.setEducation(request.getEducation());
+		if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+			user.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
+		return userRepository.save(user);
 	}
 
 	public void logout() {
-		try {
-			User user = getUserInfoUsingTokenInfo();
-			user.setLogout(true);
-			userRepository.save(user);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("Error logging out user " + e.getMessage());
-		}
+		User user = getUserInfoUsingTokenInfo();
+		user.setLogout(true);
+		userRepository.save(user);
 	}
 
 	public User getUserInfoUsingTokenInfo() {
@@ -108,14 +85,10 @@ public class UserService {
 	}
 
 	public EducatorProfileDataResponse getEducatorProfileInformation() {
-		try {
-			User creator = getUserInfoUsingTokenInfo();
-			Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
-			Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
-			Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
-			return new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to get the educator profile data : " + e.getMessage());
-		}
+		User creator = getUserInfoUsingTokenInfo();
+		Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
+		Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
+		Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
+		return new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion);
 	}
 }

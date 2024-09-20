@@ -26,102 +26,67 @@ public class QuizService {
 	private UserService userService;
 
 	public MessageResponse createQuiz(QuizRequest request) {
-		try {
-			User creator = userService.getUserInfoUsingTokenInfo();
-			Category category = categoryService.getCategoryById(request.getCategoryId());
-			Quiz quiz = new Quiz();
-			quiz.setTitle(request.getTitle());
-			quiz.setDescription(request.getDescription());
-			quiz.setRandomizeQuestions(request.getRandomizeQuestions());
-			quiz.setTimeLimit(request.getTimeLimit());
-			quiz.setQuizPic(request.getQuizPic());
-			quiz.setCategory(category);
-			quiz.setCreator(creator);
-			quizRepository.save(quiz);
-			return new MessageResponse("Quiz Created Successfully");
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
+		User creator = userService.getUserInfoUsingTokenInfo();
+		Category category = categoryService.getCategoryById(request.getCategoryId());
+		Quiz quiz = new Quiz();
+		quiz.setTitle(request.getTitle());
+		quiz.setDescription(request.getDescription());
+		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
+		quiz.setTimeLimit(request.getTimeLimit());
+		quiz.setQuizPic(request.getQuizPic());
+		quiz.setCategory(category);
+		quiz.setCreator(creator);
+		quizRepository.save(quiz);
+		return new MessageResponse("Quiz Created Successfully");
 	}
 
 	public List<Quiz> getAllQuizByCreatorId(Long creatorId) {
-		try {
-			return quizRepository.findByCreatorId(creatorId);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+		return quizRepository.findByCreatorId(creatorId);
 	}
 
 	public List<Quiz> getAllByCategoryId(Long categoryId) {
-		try {
-			return quizRepository.findByCategoryId(categoryId);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+		return quizRepository.findByCategoryId(categoryId);
 	}
 
 	public void deleteQuizById(Long id) {
-		try {
-			if (quizRepository.existsById(id))
-				quizRepository.deleteById(id);
-			else
-				throw new ResourceNotFoundException("Quiz id not found");
-
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+		if (quizRepository.existsById(id))
+			quizRepository.deleteById(id);
+		else
+			throwException(id);
 	}
 
 	public Quiz updateQuizById(Long id, QuizRequest request) {
-		try {
-			Quiz quiz = quizRepository.findById(id).get();
-			quiz.setTitle(request.getTitle());
-			quiz.setDescription(request.getDescription());
-			quiz.setRandomizeQuestions(request.getRandomizeQuestions());
-			quiz.setTimeLimit(request.getTimeLimit());
-			quiz.setQuizPic(request.getQuizPic());
-			return quizRepository.save(quiz);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+		Quiz quiz = quizRepository.findById(id).orElseThrow(() -> throwException(id));
+		quiz.setTitle(request.getTitle());
+		quiz.setDescription(request.getDescription());
+		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
+		quiz.setTimeLimit(request.getTimeLimit());
+		quiz.setQuizPic(request.getQuizPic());
+		return quizRepository.save(quiz);
 	}
 
 	public Quiz findById(Long id) {
-		return quizRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Quiz not found with the id " + id));
+		return quizRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
 	public List<Quiz> getAllQuiz() {
-		try {
-			return quizRepository.findAll();
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
+		return quizRepository.findAll();
 	}
 
 	public List<Quiz> getAllQuizOfCreator() {
-		try {
-			User user = userService.getUserInfoUsingTokenInfo();
-			return quizRepository.findByCategoryId(user.getId());
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
+		User user = userService.getUserInfoUsingTokenInfo();
+		return quizRepository.findByCategoryId(user.getId());
 	}
 
 	public boolean exist(Long id) {
-		try {
-			return quizRepository.existsById(id);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("Quiz not found " + e.getMessage());
-		}
+		return quizRepository.existsById(id);
 	}
 
 	public List<Quiz> getTop4() {
-		try {
-			return quizRepository.getTop4(4);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("Quizzes are found " + e.getMessage());
-		}
+		return quizRepository.getTop4(4);
 	}
 
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Quiz not found with the id " + id);
+	}
 }

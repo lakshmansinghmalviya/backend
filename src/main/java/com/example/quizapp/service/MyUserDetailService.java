@@ -23,9 +23,9 @@ public class MyUserDetailService implements UserDetailsService {
 	}
 
 	private String[] getRoles(User user) {
-		if (user == null) {
+		if (user == null)
 			return new String[] { "Student" };
-		}
+
 		return user.getRole().name().split(",");
 	}
 }
