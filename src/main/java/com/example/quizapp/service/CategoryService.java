@@ -3,35 +3,29 @@ package com.example.quizapp.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.CategoryUpdateRequest;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.entity.Category;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
-import com.example.quizapp.repository.UserRepository;
 
 @Service
 public class CategoryService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-
+	
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	public MessageResponse createCategory(CategoryRequest request) {
 		try {
-			MyUser creator = userRepository.findById(request.getCreatorId())
-					.orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
+			User creator = userService.getUserInfoUsingTokenInfo();
 			Category category = new Category();
 			category.setName(request.getName());
 			category.setDescription(request.getDescription());
-			category.setActive(true);
 			category.setCategoryPic(request.getCategoryPic());
 			category.setCreator(creator);
 			categoryRepository.save(category);
@@ -41,16 +35,25 @@ public class CategoryService {
 		}
 	}
 
-	@Transactional
+	 
 	public List<Category> getCategoriesByCreatorId(Long creatorId) {
 		try {
-			return categoryRepository.findByCreator_UserId(creatorId);
+			return categoryRepository.findByCreatorId(creatorId);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
 		}
 	}
 
-	@Transactional
+	 
+	public List<Category> getCategoriesOfCreator() {
+		try {
+			User creator = userService.getUserInfoUsingTokenInfo();
+			return categoryRepository.findByCreatorId(creator.getId());
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
+		}
+	}
+
 	public String deleteCategoryById(Long categoryId) {
 		try {
 			if (categoryRepository.existsById(categoryId))
@@ -63,8 +66,7 @@ public class CategoryService {
 		}
 	}
 
-	@Transactional
-	public Category updateCategoryById(Long categoryId, CategoryUpdateRequest request) {
+	public Category updateCategoryById(Long categoryId, CategoryRequest request) {
 		try {
 			Category category = categoryRepository.findById(categoryId)
 					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -84,14 +86,6 @@ public class CategoryService {
 			return category;
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve category: " + e.getMessage());
-		}
-	}
-
-	public Long getTotalCategory(Long id) {
-		try {
-			return categoryRepository.countByCreator_UserId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to fetch total category of the user: " + e.getMessage());
 		}
 	}
 

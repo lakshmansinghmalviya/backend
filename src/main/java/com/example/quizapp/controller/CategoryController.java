@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.CategoryUpdateRequest;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.CategoryService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/categories")
@@ -30,19 +31,19 @@ public class CategoryController {
 
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<MessageResponse> createCategory(@RequestBody CategoryRequest request) {
+	public ResponseEntity<MessageResponse> createCategory(@Valid @RequestBody CategoryRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.createCategory(request));
 	}
 
-	@GetMapping("/creator/{id}")
-	public ResponseEntity<List<Category>> getCategoriesByCreatorId(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesByCreatorId(id));
+	@GetMapping("/ofCreator")
+	public ResponseEntity<List<Category>> getCategoriesOfCreator() {
+		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoriesOfCreator());
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<Category> updateCategoryById(@PathVariable("id") Long id,
-			@RequestBody CategoryUpdateRequest request) {
+			@Valid @RequestBody CategoryRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.updateCategoryById(id, request));
 	}
 
@@ -52,15 +53,6 @@ public class CategoryController {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.deleteCategoryById(id));
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Category> getCategoryById(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(id));
-	}
-
-	@GetMapping("/creator/{id}/{total}")
-	public ResponseEntity<Long> getTotalNumberOfCategories(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(categoryService.getTotalCategory(id));
-	}
 
 	@GetMapping()
 	public ResponseEntity<List<Category>> getCategories() {

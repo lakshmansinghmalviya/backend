@@ -17,6 +17,9 @@ import com.example.quizapp.dto.BookmarkRequest;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.service.BookmarkService;
+import com.example.quizapp.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/bookmarks")
@@ -26,13 +29,16 @@ public class BookmarkController {
 	@Autowired
 	BookmarkService bookmarkService;
 
+	@Autowired
+	UserService userService;
+
 	@PostMapping()
-	public ResponseEntity<MessageResponse> bookmark(@RequestBody BookmarkRequest request) {
+	public ResponseEntity<MessageResponse> bookmark(@Valid @RequestBody BookmarkRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.bookmarkQuiz(request));
 	}
 
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<List<Quiz>> getAllBookmarksOfUser(@PathVariable Long userId) {
-		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.getAllBookmarksOfUser(userId));
+	@GetMapping("/user")
+	public ResponseEntity<List<Quiz>> getAllBookmarksOfUser() {
+		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.getAllBookmarksOfUser());
 	}
 }

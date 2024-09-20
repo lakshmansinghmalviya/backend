@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.QuizRequest;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.service.QuizService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/quizzes")
@@ -28,12 +31,18 @@ public class QuizController {
 
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Quiz> createQuiz(@RequestBody QuizRequest request) {
+	public ResponseEntity<MessageResponse> createQuiz(@Valid @RequestBody QuizRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.createQuiz(request));
 	}
 
 	@GetMapping()
 	public ResponseEntity<List<Quiz>> getAllQuiz() {
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
+	}
+
+	@GetMapping("/ofCreator")
+	@PreAuthorize("hasRole('Educator')")
+	public ResponseEntity<List<Quiz>> getAllQuizOfCreator() {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
 	}
 
@@ -61,13 +70,7 @@ public class QuizController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Quiz> updateQuizById(@PathVariable("id") Long id, @RequestBody QuizRequest request) {
+	public ResponseEntity<Quiz> updateQuizById(@PathVariable("id") Long id, @Valid @RequestBody QuizRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.updateQuizById(id, request));
-	}
-
-	@GetMapping("/creator/{id}/{total}")
-	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Long> getTotalNumberOfQuizzes(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(quizService.getTotalQuiz(id));
 	}
 }

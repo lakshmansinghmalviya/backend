@@ -27,9 +27,8 @@ public class Option {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Boolean isActive;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(nullable = false)
 	private String text;
 
 	@Column(nullable = false)

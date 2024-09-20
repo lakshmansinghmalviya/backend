@@ -32,13 +32,13 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String name;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
 
-	private boolean isActive;
+	private boolean isDeleted;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
@@ -52,7 +52,7 @@ public class Category {
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
 	@JsonBackReference
-	private MyUser creator;
+	private User creator;
 
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
 	@JsonManagedReference

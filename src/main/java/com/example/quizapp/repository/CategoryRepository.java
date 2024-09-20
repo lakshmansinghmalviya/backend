@@ -9,7 +9,7 @@ import com.example.quizapp.entity.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-	List<Category> findByCreator_UserId(Long userId);
+	List<Category> findByCreatorId(Long id);
 
-	Long countByCreator_UserId(Long userId);
+	Long countByCreatorId(Long id);
 }

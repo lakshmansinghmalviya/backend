@@ -19,6 +19,8 @@ import com.example.quizapp.dto.QuestionRequest;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.service.QuestionService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/questions")
 public class QuestionController {
@@ -28,13 +30,13 @@ public class QuestionController {
 
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> createQuestion(@RequestBody QuestionRequest request) {
+	public ResponseEntity<Question> createQuestion(@Valid @RequestBody QuestionRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.create(request));
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> update(@PathVariable("id") Long id, @RequestBody QuestionRequest request) {
+	public ResponseEntity<Question> update(@PathVariable("id") Long id, @Valid @RequestBody QuestionRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.update(id, request));
 	}
 
@@ -45,15 +47,14 @@ public class QuestionController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@GetMapping("/creator/{id}/total")
-	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Long> getTotalQuestionOfTheEducator(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getTotalQuestionsOfTheEducator(id));
-	}
-
 	@GetMapping()
 	public ResponseEntity<List<Question>> getQuestions() {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestion());
+	}
+
+	@GetMapping("/ofCreator")
+	public ResponseEntity<List<Question>> getQuestionsofCreator() {
+		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionsofCreator());
 	}
 
 	@GetMapping("/creator/{id}")

@@ -1,7 +1,7 @@
 package com.example.quizapp.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LimitedUsersRequest {
 
-	@NotNull(message = "role should not be null or blank")
-	private String role;
+    @NotBlank(message = "Role should not be null or blank.")
+    private String role;
 
-	@Size(min = 0, message = "Minimum page should be zero ")
-	private int page;
+    @Min(value = 0, message = "Page number should be zero or greater.")
+    private int page;
 
-	@Size(min = 1, message = "Sie should be zero ")
-	private int size;
+    @Min(value = 1, message = "Size should be at least 1.")
+    private int size;
 }

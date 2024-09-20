@@ -7,5 +7,5 @@ import com.example.quizapp.entity.Feedback;
 
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
-	Feedback findByUser_UserIdAndQuestion_Id(Long userId, Long id);
+	Feedback findByUserIdAndQuestionId(Long userId, Long id);
 }

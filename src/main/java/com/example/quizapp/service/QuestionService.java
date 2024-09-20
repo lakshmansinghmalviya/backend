@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.OptionRequest;
 import com.example.quizapp.dto.QuestionRequest;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.exception.ResourceNotFoundException;
@@ -44,10 +44,10 @@ public class QuestionService {
 	public Question create(QuestionRequest request) {
 		try {
 			Quiz quiz = quizService.findById(request.getQuizId());
-			MyUser creator = userService.getUser(request.getCreatorId());
+			User creator = userService.getUserInfoUsingTokenInfo();
 			Question question = new Question();
 			question.setText(request.getText());
-			question.setIsActive(true);
+			question.setIsDeleted(false);
 			question.setQuestionPic(request.getQuestionPic());
 			question.setQuiz(quiz);
 			question.setCreator(creator);
@@ -76,13 +76,12 @@ public class QuestionService {
 	public Question update(Long id, QuestionRequest request) {
 		try {
 
-			Question question = getQuestionById(request.getId());
+			Question question = getQuestionById(id);
 
 			for (OptionRequest optionReq : request.getOptions())
 				optionService.updateOption(optionReq);
 
 			question.setText(request.getText());
-			question.setIsActive(true);
 			question.setQuestionPic(request.getQuestionPic());
 			question.setQuestionType(request.getQuestionType());
 			question.setMaxScore(request.getMaxScore());
@@ -92,15 +91,7 @@ public class QuestionService {
 			throw new RuntimeException("Failed to update question: " + e.getMessage());
 		}
 	}
-
-	public Long getTotalQuestionsOfTheEducator(Long id) {
-		try {
-			return questionRepository.countByCreator_UserId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
-	}
-
+ 
 	public List<Question> getAllQuestion() {
 		try {
 			return questionRepository.findAll();
@@ -109,9 +100,18 @@ public class QuestionService {
 		}
 	}
 
+	public List<Question> getQuestionsofCreator() {
+		try {
+			User creator = userService.getUserInfoUsingTokenInfo();
+			return questionRepository.findByCreatorId(creator.getId());
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
+		}
+	}
+
 	public List<Question> getAllQuestionByCreatorId(Long id) {
 		try {
-			return questionRepository.findByCreator_UserId(id);
+			return questionRepository.findByCreatorId(id);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
 		}

@@ -49,7 +49,7 @@ public class Result {
 	private Long correctAnswers;
 
 	@Column(nullable = false)
-	private Long incorrectAnswers;;
+	private Long incorrectAnswers;
 
 	@Column(nullable = false)
 	private Long timesTaken;
@@ -57,7 +57,7 @@ public class Result {
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	@JsonBackReference
-	private MyUser user;
+	private User user;
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)

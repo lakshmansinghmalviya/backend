@@ -11,7 +11,6 @@ public class AllowedPaths {
 			"/swagger-ui.html",
 			"/v3/api-docs/**",
 			"/users/top",
-			"/quizzes/top",
-			"/users/byRole/**",
-	  };
+			"/quizzes/top"
+		};
 }

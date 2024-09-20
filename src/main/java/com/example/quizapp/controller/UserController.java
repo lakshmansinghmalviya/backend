@@ -1,5 +1,6 @@
 package com.example.quizapp.controller;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.LimitedUsersRequest;
 import com.example.quizapp.dto.LimitedUsersResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Role;
 import com.example.quizapp.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -26,15 +31,20 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
-
-	@GetMapping("/{id}")
-	public ResponseEntity<MyUser> getUserInformation(@PathVariable Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
+  
+	@GetMapping("/currentUser")
+	public ResponseEntity<User> getUserInformation() {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfoUsingTokenInfo());
 	}
 
-	@GetMapping("/byRole/{role}")
-	public ResponseEntity<List<MyUser>> getUserProfileByRole(@PathVariable("role") String role) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfileByRole(role));
+	@GetMapping("/educatorProfileData")
+	public ResponseEntity<EducatorProfileDataResponse> getEducatorProfileInformation() {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducatorProfileInformation());
+	}
+
+	@GetMapping("/educators")
+	public ResponseEntity<List<User>> getEducators() {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators());
 	}
 
 	@PostMapping("/top")
@@ -42,14 +52,14 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators(request));
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<MyUser> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, request));
+	@PutMapping("/update")
+	public ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request) {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(request));
 	}
 
-	@PutMapping("/logout/{id}")
-	public ResponseEntity<Void> doUserLogout(@PathVariable Long id) {
-		userService.logout(id);
+	@PutMapping("/logout")
+	public ResponseEntity<Void> doUserLogout() {
+		userService.logout();
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

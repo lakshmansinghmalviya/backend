@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.example.quizapp.dto.FeedbackRequest;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.entity.Feedback;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.repository.FeedbackRepository;
 
@@ -23,15 +23,15 @@ public class FeedbackService {
 
 	public MessageResponse submitFeedback(FeedbackRequest request) {
 		try {
-			MyUser user = userService.getUser(request.getUserId());
+			User user = userService.getUserInfoUsingTokenInfo();
 			Question question = questionService.getQuestionById(request.getQuestionId());
-			Feedback feedback  = feedbackRepository.findByUser_UserIdAndQuestion_Id(request.getUserId(), request.getQuestionId());
+			Feedback feedback  = feedbackRepository.findByUserIdAndQuestionId(user.getId(), request.getQuestionId());
 			if(feedback==null) {
 				feedback = new Feedback();
 			}
 			feedback.setUser(user);
 			feedback.setQuestion(question);
-			feedback.setFeebackText(request.getFeebackText());				
+			feedback.setFeebackText(request.getFeedbackText());				
 			feedbackRepository.save(feedback);
 			return new MessageResponse("Feedback submitted");
 		} catch (Exception e) {

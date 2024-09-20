@@ -12,5 +12,5 @@ public interface OptionRepository extends JpaRepository<Option, Long> {
 
 	List<Option> findAllByQuestionId(Long id);
 
-	Integer deleteByQuestion_Id(Long id);
+	Integer deleteByQuestionId(Long id);
 }
