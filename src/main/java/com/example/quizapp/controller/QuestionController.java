@@ -70,7 +70,7 @@ public class QuestionController {
 	}
 
 	@GetMapping("/quiz/{id}")
-	public ResponseEntity<List<Question>> getAllQuestionByQuizId(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<List<Question>>> getAllQuestionByQuizId(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllByQuizId(id));
 	}
 

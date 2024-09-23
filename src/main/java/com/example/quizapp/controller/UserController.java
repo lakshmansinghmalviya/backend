@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.service.UserService;
@@ -30,36 +31,37 @@ public class UserController {
 	UserService userService;
 
 	@GetMapping("/currentUser")
-	public ResponseEntity<User> getUserInformation() {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfoUsingTokenInfo());
+	public ResponseEntity<UnifiedResponse<User>> getUserInformation() {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInformation());
 	}
 
 	@GetMapping("/educatorProfileData")
-	public ResponseEntity<EducatorProfileDataResponse> getEducatorProfileInformation() {
+	public ResponseEntity<UnifiedResponse<EducatorProfileDataResponse>> getEducatorProfileInformation() {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducatorProfileInformation());
 	}
 
-	@GetMapping("/educators")
-	public ResponseEntity<List<User>> getEducators() {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators());
-	}
-
 	@PutMapping("/update")
-	public ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request) {
+	public ResponseEntity<UnifiedResponse<User>> updateUser(@Valid @RequestBody UpdateUserRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(request));
 	}
 
 	@PutMapping("/logout")
-	public ResponseEntity<Void> doUserLogout() {
-//		hello checking
-		userService.logout();
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<UnifiedResponse<Void>> doUserLogout() {
+
+		return ResponseEntity.status(HttpStatus.OK).body(userService.logout());
 	}
 
-	@GetMapping("/public")
-	public ResponseEntity<PageResponse<User>> getEducatorsForPublic(@RequestParam(defaultValue = "0") int page,
+	@GetMapping("/educators")
+	public ResponseEntity<UnifiedResponse<PageResponse<User>>> getEducators(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		return ResponseEntity.ok(userService.getEducatorsForPublic(pageable));
+		return ResponseEntity.ok(userService.getEducators(pageable));
+	}
+
+	@GetMapping("/educators/search")
+	public ResponseEntity<UnifiedResponse<PageResponse<User>>> searchEducators(@RequestParam String query,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(userService.searchEducatorsByQuery(query, pageable));
 	}
 }

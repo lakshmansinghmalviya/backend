@@ -2,8 +2,9 @@ package com.example.quizapp.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,7 +51,7 @@ public class Quiz {
 
 	@ManyToOne()
 	@JoinColumn(name = "categroy_id", nullable = false)
-	@JsonBackReference
+	@JsonIgnoreProperties("quizzes")
 	private Category category;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
@@ -65,9 +66,9 @@ public class Quiz {
 	@JsonBackReference
 	private List<Bookmark> bookmarks;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonBackReference
+	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
+	@JsonBackReference
 	private User creator;
 
 	@Column(name = "created_at", updatable = false)

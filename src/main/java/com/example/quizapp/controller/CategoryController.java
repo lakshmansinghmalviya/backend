@@ -39,14 +39,14 @@ public class CategoryController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Category> updateCategoryById(@PathVariable("id") Long id,
+	public ResponseEntity<UnifiedResponse<Category>> updateCategoryById(@PathVariable("id") Long id,
 			@Valid @RequestBody CategoryRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryService.updateCategoryById(id, request));
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> deleteCategory(@PathVariable("id") Long id) {
 		categoryService.deleteCategoryById(id);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

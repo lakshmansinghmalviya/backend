@@ -9,18 +9,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
+import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class CategoryService {
@@ -34,34 +34,38 @@ public class CategoryService {
 	@Autowired
 	CommonHelper commonHelper;
 
-	public UnifiedResponse<?> createCategory(CategoryRequest request) {
+	@Autowired
+	UserHelper userHelper;
+
+	public UnifiedResponse<Category> createCategory(CategoryRequest request) {
 		Category category = new Category();
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
 		category.setCategoryPic(request.getCategoryPic());
 		category.setCreator(getUser());
 		categoryRepository.save(category);
-		return new UnifiedResponse(HttpStatus.OK.value(), "Category Created Successfully", null);
+		return new UnifiedResponse(Codes.OK, "Category Created Successfully", null);
 	}
 
 	public List<Category> getCategoriesByCreatorId(Long creatorId) {
 		return categoryRepository.findByCreatorId(creatorId);
 	}
 
-	public void deleteCategoryById(Long categoryId) {
+	public UnifiedResponse<Void> deleteCategoryById(Long categoryId) {
 		if (!categoryRepository.existsById(categoryId)) {
 			throwException(categoryId);
 		}
 		categoryRepository.deleteById(categoryId);
+		return new UnifiedResponse(Codes.OK, "Deleted", null);
 	}
 
-	public Category updateCategoryById(Long categoryId, CategoryRequest request) {
+	public UnifiedResponse<Category> updateCategoryById(Long categoryId, CategoryRequest request) {
 
 		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
 		category.setCategoryPic(request.getCategoryPic());
-		return categoryRepository.save(category);
+		return new UnifiedResponse(Codes.OK, "category updated", categoryRepository.save(category));
 	}
 
 	public Category getCategoryById(Long categoryId) {
@@ -105,6 +109,6 @@ public class CategoryService {
 	}
 
 	public User getUser() {
-		return commonHelper.getUser();
+		return userHelper.getUser();
 	}
 }

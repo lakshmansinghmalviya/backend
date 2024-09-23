@@ -1,9 +1,6 @@
 package com.example.quizapp.filter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +13,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.quizapp.service.MyUserDetailService;
 import com.example.quizapp.util.JwtHelper;
 
-import java.io.IOException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
