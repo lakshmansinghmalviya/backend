@@ -12,8 +12,6 @@ import com.example.quizapp.service.UserService;
 
 @Service
 public class CommonHelper {
-	@Autowired
-	UserService userService;
 
 	public <T> UnifiedResponse<PageResponse<T>> getPageResponse(Page<T> page) {
 		PageResponse<T> pageResponse = new PageResponse<>();
@@ -22,10 +20,7 @@ public class CommonHelper {
 		pageResponse.setPageSize(page.getSize());
 		pageResponse.setTotalElements(page.getTotalElements());
 		pageResponse.setTotalPages(page.getTotalPages());
-		return new UnifiedResponse<>(HttpStatus.OK.value(), "Fetched Successfully", pageResponse);
+		return new UnifiedResponse<>(Codes.OK, "Fetched Successfully", pageResponse);
 	}
 
-	public User getUser() {
-		return userService.getUserInfoUsingTokenInfo();
-	}
 }

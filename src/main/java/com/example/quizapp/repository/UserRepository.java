@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Role;
 
@@ -22,5 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Page<User> findByRole(Role role, Pageable pageable);
 
-	List<User> findAllByRole(Role role);
+	Page<User> findAllByRole(Role role,Pageable pageable);
+
+	Page<User> findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(Role role,String name, String bio, Pageable pageable);
 }

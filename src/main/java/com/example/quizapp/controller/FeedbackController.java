@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.FeedbackRequest;
 import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.service.FeedbackService;
 
 import jakarta.validation.Valid;
@@ -22,7 +23,8 @@ public class FeedbackController {
 	FeedbackService feedbackService;
 
 	@PostMapping()
-	public ResponseEntity<MessageResponse> submitFeedback(@Valid @RequestBody FeedbackRequest request) {
+	public ResponseEntity<UnifiedResponse<MessageResponse>> submitFeedback(
+			@Valid @RequestBody FeedbackRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(feedbackService.submitFeedback(request));
 	}
 }

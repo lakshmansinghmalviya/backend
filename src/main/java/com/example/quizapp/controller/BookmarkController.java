@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.BookmarkRequest;
 import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.service.BookmarkService;
 import com.example.quizapp.service.UserService;
@@ -32,12 +33,12 @@ public class BookmarkController {
 	UserService userService;
 
 	@PostMapping()
-	public ResponseEntity<MessageResponse> bookmark(@Valid @RequestBody BookmarkRequest request) {
+	public ResponseEntity<UnifiedResponse<MessageResponse>> bookmark(@Valid @RequestBody BookmarkRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.bookmarkQuiz(request));
 	}
 
 	@GetMapping("/user")
-	public ResponseEntity<List<Quiz>> getAllBookmarksOfUser() {
+	public ResponseEntity<UnifiedResponse<List<Quiz>>> getAllBookmarksOfUser() {
 		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.getAllBookmarksOfUser());
 	}
 }

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -51,7 +51,7 @@ public class Category {
 
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
-	@JsonBackReference
+	@JsonIgnoreProperties({ "categories", "quizzes", "results", "feedbacks", "bookmarks", "questions" })
 	private User creator;
 
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)

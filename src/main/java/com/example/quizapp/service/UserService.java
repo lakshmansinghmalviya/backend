@@ -1,6 +1,7 @@
 package com.example.quizapp.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
+import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Role;
 import com.example.quizapp.exception.ResourceNotFoundException;
@@ -18,6 +21,8 @@ import com.example.quizapp.repository.CategoryRepository;
 import com.example.quizapp.repository.QuestionRepository;
 import com.example.quizapp.repository.QuizRepository;
 import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.util.Codes;
+import com.example.quizapp.util.CommonHelper;
 
 @Service
 public class UserService {
@@ -37,11 +42,13 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public PageResponse<User> getEducatorsForPublic(Pageable pageable) {
+	@Autowired
+	private CommonHelper commonHelper;
+
+	public UnifiedResponse<PageResponse<User>> getEducators(Pageable pageable) {
 		Role role = Role.valueOf("Educator");
 		Page<User> userPage = userRepository.findByRole(role, pageable);
-		return new PageResponse<>(userPage.getContent(), userPage.getNumber(), userPage.getSize(),
-				userPage.getTotalElements(), userPage.getTotalPages());
+		return commonHelper.getPageResponse(userPage);
 	}
 
 	public User getUserByEmail(String email) {
@@ -49,12 +56,7 @@ public class UserService {
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 	}
 
-	public List<User> getEducators() {
-		Role role = Role.valueOf("Educator");
-		return userRepository.findAllByRole(role);
-	}
-
-	public User updateUser(UpdateUserRequest request) {
+	public UnifiedResponse<User> updateUser(UpdateUserRequest request) {
 		User user = getUserInfoUsingTokenInfo();
 		user.setBio(request.getBio());
 		user.setName(request.getName());
@@ -63,13 +65,13 @@ public class UserService {
 		if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
 			user.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
-		return userRepository.save(user);
+		return new UnifiedResponse(Codes.OK, "updated user", userRepository.save(user));
 	}
 
-	public void logout() {
+	public UnifiedResponse<Void> logout() {
 		User user = getUserInfoUsingTokenInfo();
 		user.setLogout(true);
-		userRepository.save(user);
+		return new UnifiedResponse(Codes.OK, "logged out", userRepository.save(user));
 	}
 
 	public User getUserInfoUsingTokenInfo() {
@@ -77,11 +79,22 @@ public class UserService {
 		return getUserByEmail(username);
 	}
 
-	public EducatorProfileDataResponse getEducatorProfileInformation() {
+	public UnifiedResponse<User> getUserInformation() {
+		return new UnifiedResponse(Codes.OK, "Fetched user", getUserInfoUsingTokenInfo());
+	}
+
+	public UnifiedResponse<EducatorProfileDataResponse> getEducatorProfileInformation() {
 		User creator = getUserInfoUsingTokenInfo();
 		Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
 		Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
 		Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
-		return new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion);
+		return new UnifiedResponse(Codes.OK, "Fetched user",
+				new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion));
+	}
+
+	public UnifiedResponse<PageResponse<User>> searchEducatorsByQuery(String query, Pageable pageable) {
+		Page<User> educators = userRepository.findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(Role.valueOf("Educator"),query, query,
+				pageable);
+		return commonHelper.getPageResponse(educators);
 	}
 }

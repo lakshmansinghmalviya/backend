@@ -10,16 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuizRequest;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
-import com.example.quizapp.entity.User;
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
 import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class QuizService {
@@ -35,6 +35,9 @@ public class QuizService {
 
 	@Autowired
 	CommonHelper commonHelper;
+
+	@Autowired
+	UserHelper userHelper;
 
 	public UnifiedResponse<?> createQuiz(QuizRequest request) {
 		User creator = userService.getUserInfoUsingTokenInfo();
@@ -76,8 +79,8 @@ public class QuizService {
 		return quizRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
-	public List<Quiz> getAllQuiz() {
-		return quizRepository.findAll();
+	public UnifiedResponse<PageResponse<Quiz>> getAllQuiz(Pageable pageable) {
+		return commonHelper.getPageResponse(quizRepository.findAll(pageable));
 	}
 
 	public UnifiedResponse<PageResponse<Quiz>> getAllQuizOfCreator(Pageable pageable) {
@@ -112,6 +115,6 @@ public class QuizService {
 	}
 
 	public User getUser() {
-		return commonHelper.getUser();
+		return userHelper.getUser();
 	}
 }

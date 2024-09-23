@@ -1,0 +1,14 @@
+{
+	"properties": [
+		{
+			"name": "jwt.secret",
+			"type": "java.lang.String",
+			"description": "This is for the Secret key will use this"
+		},
+		{
+			"name": "token.validity",
+			"type": "java.lang.long",
+			"description": "This is for the validity of the token"
+		}
+	]
+}

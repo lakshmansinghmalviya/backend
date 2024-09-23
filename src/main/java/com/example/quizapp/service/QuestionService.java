@@ -3,6 +3,7 @@ package com.example.quizapp.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,12 +13,14 @@ import com.example.quizapp.dto.OptionRequest;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuestionRequest;
 import com.example.quizapp.dto.UnifiedResponse;
-import com.example.quizapp.entity.User;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuestionRepository;
+import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 import jakarta.transaction.Transactional;
 
@@ -39,9 +42,12 @@ public class QuestionService {
 	@Autowired
 	CommonHelper commonHelper;
 
-	public List<Question> getAllByQuizId(Long id) {
+	@Autowired
+	UserHelper userHelper;
+
+	public UnifiedResponse<List<Question>> getAllByQuizId(Long id) {
 		quizService.exist(id);
-		return questionRepository.findAllByQuizId(id);
+		return new UnifiedResponse(Codes.OK, "fetched", questionRepository.findAllByQuizId(id));
 	}
 
 	@Transactional
@@ -127,7 +133,7 @@ public class QuestionService {
 	}
 
 	public User getUser() {
-		return commonHelper.getUser();
+		return userHelper.getUser();
 	}
 
 }

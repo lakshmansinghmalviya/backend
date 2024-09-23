@@ -3,6 +3,7 @@ package com.example.quizapp.service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,12 +11,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.AuthResponse;
+import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.SignupRequest;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.JwtHelper;
 
 @Service
@@ -36,7 +39,7 @@ public class AuthService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public AuthResponse register(SignupRequest registerUser) {
+	public UnifiedResponse<AuthResponse> register(SignupRequest registerUser) {
 
 		if (userRepository.existsByEmail(registerUser.getEmail())) {
 			throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
@@ -54,7 +57,7 @@ public class AuthService {
 		return login(new LoginRequest(registerUser.getEmail(), registerUser.getPassword()));
 	}
 
-	public AuthResponse login(LoginRequest authRequest) {
+	public UnifiedResponse<AuthResponse> login(LoginRequest authRequest) {
 
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -67,6 +70,6 @@ public class AuthService {
 		user.setLastLogin(LocalDateTime.now());
 		user.setLogout(false);
 		userRepository.save(user);
-		return new AuthResponse(token, user.getRole().name());
+		return new UnifiedResponse(Codes.OK, "Auth Success", new AuthResponse(token, user.getRole().name()));
 	}
 }

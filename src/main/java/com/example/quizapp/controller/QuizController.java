@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuizRequest;
 import com.example.quizapp.dto.UnifiedResponse;
-import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.service.QuizService;
 
@@ -59,9 +57,11 @@ public class QuizController {
 		return ResponseEntity.status(HttpStatus.OK).body(quizService.updateQuizById(id, request));
 	}
 
-	@GetMapping()
-	public ResponseEntity<List<Quiz>> getAllQuiz() {
-		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz());
+	@GetMapping("/public")
+	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> getAllQuiz(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuiz(pageable));
 	}
 
 	@GetMapping("/ofCreator")
