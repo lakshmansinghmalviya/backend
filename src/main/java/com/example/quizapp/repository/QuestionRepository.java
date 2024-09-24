@@ -17,9 +17,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	Long countByCreatorId(Long id);
 
-	List<Question> findByCreatorId(Long id);
-
-	List<Question> findAllByQuizId(Long id);
+	Page<Question> findByQuizId(Long id,Pageable pageable);
 
 	boolean existsById(Long id);
 

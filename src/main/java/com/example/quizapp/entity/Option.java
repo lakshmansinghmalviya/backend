@@ -38,7 +38,7 @@ public class Option {
 	@Column(name = "option_pic", columnDefinition = "TEXT")
 	private String optionPic;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "question_id", nullable = false)
 	@JsonBackReference
 	private Question question;

@@ -3,7 +3,6 @@ package com.example.quizapp.service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,6 +51,8 @@ public class AuthService {
 		user.setRole(registerUser.getRole());
 		user.setProfilePic(registerUser.getProfilePic());
 		user.setBio(registerUser.getBio());
+		user.setLogout(false);
+		user.setLastLogin(LocalDateTime.now());
 		user.setEducation(registerUser.getEducation());
 		userRepository.save(user);
 		return login(new LoginRequest(registerUser.getEmail(), registerUser.getPassword()));

@@ -1,10 +1,6 @@
 package com.example.quizapp.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +16,7 @@ import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.service.UserService;
+import com.example.quizapp.util.CommonHelper;
 
 import jakarta.validation.Valid;
 
@@ -29,6 +26,9 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	CommonHelper commonHelper;
 
 	@GetMapping("/currentUser")
 	public ResponseEntity<UnifiedResponse<User>> getUserInformation() {
@@ -54,14 +54,13 @@ public class UserController {
 	@GetMapping("/educators")
 	public ResponseEntity<UnifiedResponse<PageResponse<User>>> getEducators(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return ResponseEntity.ok(userService.getEducators(pageable));
+		return ResponseEntity.ok(userService.getEducators(commonHelper.makePageReq(page, size)));
 	}
 
 	@GetMapping("/educators/search")
 	public ResponseEntity<UnifiedResponse<PageResponse<User>>> searchEducators(@RequestParam String query,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return ResponseEntity.status(HttpStatus.OK).body(userService.searchEducatorsByQuery(query, pageable));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(userService.searchEducatorsByQuery(query, commonHelper.makePageReq(page, size)));
 	}
 }

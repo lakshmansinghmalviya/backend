@@ -37,7 +37,7 @@ public class Feedback {
 	@JsonBackReference
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "question_id", nullable = false)
 	@JsonBackReference
 	private Question question;

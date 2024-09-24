@@ -2,7 +2,6 @@ package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +17,7 @@ import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
+import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -39,7 +39,7 @@ public class QuizService {
 	@Autowired
 	UserHelper userHelper;
 
-	public UnifiedResponse<?> createQuiz(QuizRequest request) {
+	public UnifiedResponse<Quiz> createQuiz(QuizRequest request) {
 		User creator = userService.getUserInfoUsingTokenInfo();
 		Category category = categoryService.getCategoryById(request.getCategoryId());
 		Quiz quiz = new Quiz();
@@ -54,27 +54,33 @@ public class QuizService {
 		return new UnifiedResponse(HttpStatus.OK.value(), "Quiz Created Successfully", null);
 	}
 
-	public List<Quiz> getAllByCategoryId(Long categoryId) {
-		return quizRepository.findByCategoryId(categoryId);
+	public UnifiedResponse<PageResponse<Quiz>> getAllByCategoryId(Long categoryId, Pageable pageable) {
+		return commonHelper.getPageResponse(quizRepository.findByCategoryId(categoryId, pageable));
 	}
 
-	public void deleteQuizById(Long id) {
-		if (quizRepository.existsById(id))
+	public UnifiedResponse<PageResponse<Quiz>> getAllByCreatorId(Long creatorId, Pageable pageable) {
+		return commonHelper.getPageResponse(quizRepository.findByCreatorId(creatorId, pageable));
+	}
+
+	public UnifiedResponse<Void> deleteQuizById(Long id) {
+		if (quizRepository.existsById(id)) {
 			quizRepository.deleteById(id);
-		else
+			return new UnifiedResponse(HttpStatus.OK.value(), "Quiz Deleted Successfully with id "+id, null);
+		} else
 			throwException(id);
+		return new UnifiedResponse(HttpStatus.OK.value(), "Quiz Not Deleted", null);
 	}
 
-	public Quiz updateQuizById(Long id, QuizRequest request) {
+	public UnifiedResponse<Quiz> updateQuizById(Long id, QuizRequest request) {
 		Quiz quiz = quizRepository.findById(id).orElseThrow(() -> throwException(id));
 		quiz.setTitle(request.getTitle());
 		quiz.setDescription(request.getDescription());
 		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
 		quiz.setTimeLimit(request.getTimeLimit());
 		quiz.setQuizPic(request.getQuizPic());
-		return quizRepository.save(quiz);
+		return new UnifiedResponse(Codes.OK,"udpated",quizRepository.save(quiz));
 	}
-
+	
 	public Quiz findById(Long id) {
 		return quizRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
@@ -103,6 +109,12 @@ public class QuizService {
 		Page<Quiz> quizzes = quizRepository
 				.findByCreatorIdAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(getUser().getId(), query,
 						query, pageable);
+		return commonHelper.getPageResponse(quizzes);
+	}
+
+	public UnifiedResponse<PageResponse<Quiz>> searchQuizzesByQueryForStudent(String query, Pageable pageable) {
+		Page<Quiz> quizzes = quizRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query,
+				query, pageable);
 		return commonHelper.getPageResponse(quizzes);
 	}
 

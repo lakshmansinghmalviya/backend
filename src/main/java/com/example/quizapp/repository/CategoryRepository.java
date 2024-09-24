@@ -15,8 +15,6 @@ import com.example.quizapp.entity.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-	List<Category> findByCreatorId(Long id);
-
 	Long countByCreatorId(Long id);
 
 	Page<Category> findByCreatorId(Long id, Pageable pageable);
@@ -27,4 +25,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	Page<Category> findByCreatorIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(Long creatorId,
 			String name, String description, Pageable pageable);
+
+	Page<Category> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description, Pageable pageable);
 }

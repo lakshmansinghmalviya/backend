@@ -1,14 +1,12 @@
 package com.example.quizapp.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
-import com.example.quizapp.entity.User;
-import com.example.quizapp.service.UserService;
 
 @Service
 public class CommonHelper {
@@ -23,4 +21,7 @@ public class CommonHelper {
 		return new UnifiedResponse<>(Codes.OK, "Fetched Successfully", pageResponse);
 	}
 
+	public Pageable makePageReq(int page, int size) {
+		return PageRequest.of(page, size);
+	}
 }

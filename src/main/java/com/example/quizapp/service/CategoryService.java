@@ -6,9 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.CategoryRequest;
@@ -47,10 +45,6 @@ public class CategoryService {
 		return new UnifiedResponse(Codes.OK, "Category Created Successfully", null);
 	}
 
-	public List<Category> getCategoriesByCreatorId(Long creatorId) {
-		return categoryRepository.findByCreatorId(creatorId);
-	}
-
 	public UnifiedResponse<Void> deleteCategoryById(Long categoryId) {
 		if (!categoryRepository.existsById(categoryId)) {
 			throwException(categoryId);
@@ -72,11 +66,8 @@ public class CategoryService {
 		return categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 	}
 
-	public UnifiedResponse<PageResponse<Category>> getCategories() {
-		int page = 0;
-		int size = Integer.MAX_VALUE;
-		PageRequest pageRequest = PageRequest.of(page, size);
-		Page<Category> categoryPage = categoryRepository.findAll(pageRequest);
+	public UnifiedResponse<PageResponse<Category>> getCategories(Pageable pageable) {
+		Page<Category> categoryPage = categoryRepository.findAll(pageable);
 		return commonHelper.getPageResponse(categoryPage);
 	}
 
@@ -105,6 +96,12 @@ public class CategoryService {
 		Page<Category> categories = categoryRepository
 				.findByCreatorIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(getUser().getId(), query,
 						query, pageable);
+		return commonHelper.getPageResponse(categories);
+	}
+
+	public UnifiedResponse<PageResponse<Category>> searchCategoriesForStudent(String query, Pageable pageable) {
+		Page<Category> categories = categoryRepository
+				.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query, pageable);
 		return commonHelper.getPageResponse(categories);
 	}
 

@@ -45,13 +45,13 @@ public class QuestionService {
 	@Autowired
 	UserHelper userHelper;
 
-	public UnifiedResponse<List<Question>> getAllByQuizId(Long id) {
+	public UnifiedResponse<PageResponse<Question>> getAllQuestionQuizId(Long id, Pageable pageable) {
 		quizService.exist(id);
-		return new UnifiedResponse(Codes.OK, "fetched", questionRepository.findAllByQuizId(id));
+		return new UnifiedResponse(Codes.OK, "fetched", questionRepository.findByQuizId(id, pageable));
 	}
 
 	@Transactional
-	public Question create(QuestionRequest request) {
+	public UnifiedResponse<Question> create(QuestionRequest request) {
 		Quiz quiz = quizService.findById(request.getQuizId());
 		User creator = userService.getUserInfoUsingTokenInfo();
 		Question question = new Question();
@@ -66,19 +66,18 @@ public class QuestionService {
 		question = questionRepository.save(question);
 		for (OptionRequest optionReq : request.getOptions())
 			optionService.createOption(optionReq, question);
-		return question;
+		return new UnifiedResponse(Codes.OK, "created", question);
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		if (questionRepository.existsById(id))
 			questionRepository.deleteById(id);
 		else
-			throw new ResourceNotFoundException("Question id not found ");
+			throwException(id);
 	}
 
 	@Transactional
-	public Question update(Long id, QuestionRequest request) {
+	public UnifiedResponse<Question> update(Long id, QuestionRequest request) {
 
 		Question question = getQuestionById(id);
 		for (OptionRequest optionReq : request.getOptions())
@@ -89,25 +88,11 @@ public class QuestionService {
 		question.setQuestionType(request.getQuestionType());
 		question.setMaxScore(request.getMaxScore());
 		question.setRandomizeOptions(request.getRandomizeOptions());
-		return questionRepository.save(question);
-	}
-
-	public List<Question> getAllQuestion() {
-		return questionRepository.findAll();
-	}
-
-	public List<Question> getQuestionsofCreator() {
-		User creator = userService.getUserInfoUsingTokenInfo();
-		return questionRepository.findByCreatorId(creator.getId());
-	}
-
-	public List<Question> getAllQuestionByCreatorId(Long id) {
-		return questionRepository.findByCreatorId(id);
+		return new UnifiedResponse(Codes.OK, "udpated", questionRepository.save(question));
 	}
 
 	public Question getQuestionById(Long id) {
-		return questionRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Question id not found "));
+		return questionRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
 	public UnifiedResponse<PageResponse<Question>> getQuestionsByPagination(Pageable pageable) {
@@ -134,6 +119,10 @@ public class QuestionService {
 
 	public User getUser() {
 		return userHelper.getUser();
+	}
+
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Question not found with the id " + id);
 	}
 
 }

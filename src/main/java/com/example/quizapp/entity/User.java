@@ -42,7 +42,7 @@ public class User {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(nullable = false)
+	@Column()
 	private boolean isLogout;
 
 	@Column(nullable = false)
@@ -74,7 +74,7 @@ public class User {
 	private List<Category> categories;
 
 	@OneToMany(mappedBy = "creator")
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Quiz> quizzes;
 
 	@OneToMany(mappedBy = "user")
