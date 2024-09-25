@@ -8,10 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.quizapp.entity.Bookmark;
+import com.example.quizapp.entity.Category;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 	boolean existsByUserIdAndQuizId(Long userId, Long id);
 
 	Page<Bookmark> findByUserId(Long userId, Pageable pageable);
+
+	Page<Bookmark> findByUserIdAndQuizTitleContainingIgnoreCaseOrQuizDescriptionContainingIgnoreCase(Long userId,
+			String title, String description, Pageable pageable);
 }

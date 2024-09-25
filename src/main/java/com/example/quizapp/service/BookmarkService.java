@@ -10,12 +10,14 @@ import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
+import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.BookmarkRepository;
 import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class BookmarkService {
@@ -31,6 +33,9 @@ public class BookmarkService {
 
 	@Autowired
 	CommonHelper commonHelper;
+
+	@Autowired
+	UserHelper userHelper;
 
 	public UnifiedResponse<MessageResponse> bookmarkQuiz(BookmarkRequest request) {
 		User user = userService.getUserInfoUsingTokenInfo();
@@ -56,10 +61,22 @@ public class BookmarkService {
 			throwException(id);
 		}
 		bookmarkRepository.deleteById(id);
-		return new UnifiedResponse(Codes.OK, "Deleted", null);
+		return new UnifiedResponse(Codes.OK, "Removed", null);
+	}
+
+	public UnifiedResponse<PageResponse<Bookmark>> searchBookmarksByQuery(String query, Pageable pageable) {
+		Page<Bookmark> bookmarks = bookmarkRepository
+				.findByUserIdAndQuizTitleContainingIgnoreCaseOrQuizDescriptionContainingIgnoreCase(getUser().getId(),
+						query, query, pageable);
+		return commonHelper.getPageResponse(bookmarks);
 	}
 
 	public ResourceNotFoundException throwException(Long id) {
 		throw new ResourceNotFoundException("Category not found with the id " + id);
 	}
+
+	public User getUser() {
+		return userHelper.getUser();
+	}
+
 }

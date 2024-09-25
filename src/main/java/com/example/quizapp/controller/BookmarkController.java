@@ -18,6 +18,7 @@ import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
+import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.BookmarkService;
 import com.example.quizapp.service.UserService;
 import com.example.quizapp.util.CommonHelper;
@@ -52,5 +53,12 @@ public class BookmarkController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<UnifiedResponse<Void>> deleteBookmark(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.deleteBookmarkById(id));
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<UnifiedResponse<PageResponse<Bookmark>>> searchBookmarks(@RequestParam String query,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(bookmarkService.searchBookmarksByQuery(query, commonHelper.makePageReq(page, size)));
 	}
 }
