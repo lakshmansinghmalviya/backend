@@ -18,7 +18,6 @@ import com.example.quizapp.repository.CategoryRepository;
 import com.example.quizapp.repository.QuestionRepository;
 import com.example.quizapp.repository.QuizRepository;
 import com.example.quizapp.repository.UserRepository;
-import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
 
 @Service
@@ -62,13 +61,14 @@ public class UserService {
 		if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
 			user.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
-		return new UnifiedResponse(Codes.OK, "updated user", userRepository.save(user));
+		return commonHelper.returnUnifiedOK("Updated user", userRepository.save(user));
 	}
 
 	public UnifiedResponse<Void> logout() {
 		User user = getUserInfoUsingTokenInfo();
 		user.setLogout(true);
-		return new UnifiedResponse(Codes.OK, "logged out", userRepository.save(user));
+		userRepository.save(user);
+		return commonHelper.returnUnifiedOK("Logged out", null);
 	}
 
 	public User getUserInfoUsingTokenInfo() {
@@ -77,7 +77,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<User> getUserInformation() {
-		return new UnifiedResponse(Codes.OK, "Fetched user", getUserInfoUsingTokenInfo());
+		return commonHelper.returnUnifiedOK("Fetched user", getUserInfoUsingTokenInfo());
 	}
 
 	public UnifiedResponse<EducatorProfileDataResponse> getEducatorProfileInformation() {
@@ -85,13 +85,13 @@ public class UserService {
 		Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
 		Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
 		Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
-		return new UnifiedResponse(Codes.OK, "Fetched user",
+		return commonHelper.returnUnifiedOK("Fetched user",
 				new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion));
 	}
 
 	public UnifiedResponse<PageResponse<User>> searchEducatorsByQuery(String query, Pageable pageable) {
-		Page<User> educators = userRepository.findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(Role.valueOf("Educator"),query, query,
-				pageable);
+		Page<User> educators = userRepository.findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(
+				Role.valueOf("Educator"), query, query, pageable);
 		return commonHelper.getPageResponse(educators);
 	}
 }

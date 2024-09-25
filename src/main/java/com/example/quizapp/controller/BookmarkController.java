@@ -18,10 +18,10 @@ import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
-import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.BookmarkService;
 import com.example.quizapp.service.UserService;
 import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.ResponseBuilder;
 
 import jakarta.validation.Valid;
 
@@ -41,24 +41,25 @@ public class BookmarkController {
 
 	@PostMapping()
 	public ResponseEntity<UnifiedResponse<MessageResponse>> bookmark(@Valid @RequestBody BookmarkRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.bookmarkQuiz(request));
+		return ResponseBuilder.buildResponse(HttpStatus.CREATED, bookmarkService.bookmarkQuiz(request));
 	}
 
 	@GetMapping
 	public ResponseEntity<UnifiedResponse<PageResponse<Bookmark>>> getAllBookmarksOfUser(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.getAllBookmarksOfUser(commonHelper.makePageReq(page, size)));
+		return ResponseBuilder
+				.buildOKResponse(bookmarkService.getAllBookmarksOfUser(commonHelper.makePageReq(page, size)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<UnifiedResponse<Void>> deleteBookmark(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.deleteBookmarkById(id));
+		return ResponseBuilder.buildOKResponse(bookmarkService.deleteBookmarkById(id));
 	}
-	
+
 	@GetMapping("/search")
 	public ResponseEntity<UnifiedResponse<PageResponse<Bookmark>>> searchBookmarks(@RequestParam String query,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(bookmarkService.searchBookmarksByQuery(query, commonHelper.makePageReq(page, size)));
+		return ResponseBuilder
+				.buildOKResponse(bookmarkService.searchBookmarksByQuery(query, commonHelper.makePageReq(page, size)));
 	}
 }

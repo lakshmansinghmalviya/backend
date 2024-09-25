@@ -13,7 +13,8 @@ import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.Result;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.repository.ResultRepository;
-import com.example.quizapp.util.Codes;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class ResultService {
@@ -22,13 +23,16 @@ public class ResultService {
 	ResultRepository resultRepository;
 
 	@Autowired
-	UserService userService;
-
-	@Autowired
 	QuizService quizService;
 
+	@Autowired
+	UserHelper userHelper;
+
+	@Autowired
+	CommonHelper commonHelper;
+
 	public UnifiedResponse<MessageResponse> attemptedQuiz(ResultRequest request) {
-		User user = userService.getUserInfoUsingTokenInfo();
+		User user = getUser();
 		Result quizAttemt = resultRepository.findByUserIdAndQuizId(user.getId(), request.getQuizId());
 		if (quizAttemt != null)
 			quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() + 1);
@@ -47,23 +51,26 @@ public class ResultService {
 		quizAttemt.setIncorrectAnswers(request.getIncorrectAnswers());
 		quizAttemt.setTimesTaken(quizAttemt.getTimesTaken() != null ? quizAttemt.getTimesTaken() : 1);
 		resultRepository.save(quizAttemt);
-		return new UnifiedResponse(Codes.OK, "success", new MessageResponse("Result is submitted successfully"));
+		return commonHelper.returnUnifiedCREATED("Result is submitted successfully", null);
 	}
 
 	public UnifiedResponse<List<Result>> getAllQuizResultsOfUser() {
-		User user = userService.getUserInfoUsingTokenInfo();
-		return new UnifiedResponse(Codes.OK, "success",
-				resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(user.getId()));
+		return commonHelper.returnUnifiedOK("Fetched Successfully",
+				resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(getUser().getId()));
 	}
 
 	public UnifiedResponse<StudentProfileDataResponse> getUserProfileData() {
-		User user = userService.getUserInfoUsingTokenInfo();
+		User user = getUser();
 		Long totalCompletedQuizzes = resultRepository.findTotalCompletedQuizzesByUserId(user.getId());
 		Long totalInCompletedQuizzes = resultRepository.findTotalIncompleteQuizzesByUserId(user.getId());
 		Long totalTimeSpent = resultRepository.findTotalTimeSpentByUserId(user.getId());
 		Long totalOfTotalScore = resultRepository.findTotalOfTheTotalScoreByUserId(user.getId());
 		Long totalScore = resultRepository.findTotalScoreByUserId(user.getId());
-		return new UnifiedResponse(Codes.OK, "Fetched", new StudentProfileDataResponse(totalCompletedQuizzes,
+		return commonHelper.returnUnifiedOK("Fetched", new StudentProfileDataResponse(totalCompletedQuizzes,
 				totalInCompletedQuizzes, totalTimeSpent, totalOfTotalScore, totalScore));
+	}
+
+	public User getUser() {
+		return userHelper.getUser();
 	}
 }

@@ -8,7 +8,6 @@ import com.example.quizapp.service.UserService;
 
 @Service
 public class UserHelper {
-
 	@Autowired
 	UserService userService;
 

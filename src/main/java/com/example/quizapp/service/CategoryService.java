@@ -1,8 +1,6 @@
 package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +14,6 @@ import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
-import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -25,9 +22,6 @@ public class CategoryService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	CommonHelper commonHelper;
@@ -42,7 +36,7 @@ public class CategoryService {
 		category.setCategoryPic(request.getCategoryPic());
 		category.setCreator(getUser());
 		categoryRepository.save(category);
-		return new UnifiedResponse(Codes.OK, "Category Created Successfully", null);
+		return commonHelper.returnUnifiedCREATED("Category Created Successfully", null);
 	}
 
 	public UnifiedResponse<Void> deleteCategoryById(Long categoryId) {
@@ -50,7 +44,7 @@ public class CategoryService {
 			throwException(categoryId);
 		}
 		categoryRepository.deleteById(categoryId);
-		return new UnifiedResponse(Codes.OK, "Deleted", null);
+		return commonHelper.returnUnifiedOK("Deleted", null);
 	}
 
 	public UnifiedResponse<Category> updateCategoryById(Long categoryId, CategoryRequest request) {
@@ -59,7 +53,7 @@ public class CategoryService {
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
 		category.setCategoryPic(request.getCategoryPic());
-		return new UnifiedResponse(Codes.OK, "category updated", categoryRepository.save(category));
+		return commonHelper.returnUnifiedOK("Updated", categoryRepository.save(category));
 	}
 
 	public Category getCategoryById(Long categoryId) {
@@ -82,12 +76,9 @@ public class CategoryService {
 
 	public UnifiedResponse<PageResponse<Category>> getCategoriesByPaginationBetweenDates(String startDate,
 			String endDate, Pageable pageable) {
-
-		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		LocalDateTime startDateTime = LocalDateTime.parse(startDate + " 00:00:00", formatter);
-		LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
+		LocalDateTime[] dates = commonHelper.parseDateRange(startDate, endDate);
 		Page<Category> categoryPage = categoryRepository.findCategoriesByCreatorIdAndBetweenDates(getUser().getId(),
-				startDateTime, endDateTime, pageable);
+				dates[0], dates[1], pageable);
 
 		return commonHelper.getPageResponse(categoryPage);
 	}

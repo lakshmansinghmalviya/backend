@@ -8,9 +8,9 @@ import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Feedback;
 import com.example.quizapp.entity.Question;
-import com.example.quizapp.entity.User;
 import com.example.quizapp.repository.FeedbackRepository;
-import com.example.quizapp.util.Codes;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class FeedbackService {
@@ -18,22 +18,25 @@ public class FeedbackService {
 	FeedbackRepository feedbackRepository;
 
 	@Autowired
-	UserService userService;
-
-	@Autowired
 	QuestionService questionService;
 
+	@Autowired
+	UserHelper userHelper;
+
+	@Autowired
+	CommonHelper commonHelper;
+
 	public UnifiedResponse<MessageResponse> submitFeedback(FeedbackRequest request) {
-		User user = userService.getUserInfoUsingTokenInfo();
 		Question question = questionService.getQuestionById(request.getQuestionId());
-		Feedback feedback = feedbackRepository.findByUserIdAndQuestionId(user.getId(), request.getQuestionId());
+		Feedback feedback = feedbackRepository.findByUserIdAndQuestionId(userHelper.getUser().getId(),
+				request.getQuestionId());
 		if (feedback == null) {
 			feedback = new Feedback();
 		}
-		feedback.setUser(user);
+		feedback.setUser(userHelper.getUser());
 		feedback.setQuestion(question);
 		feedback.setFeedbackText(request.getFeedbackText());
 		feedbackRepository.save(feedback);
-		return new UnifiedResponse(Codes.OK, "Sucess", new MessageResponse("Feedback submitted"));
+		return commonHelper.returnUnifiedCREATED("Submitted Successfully", null);
 	}
 }

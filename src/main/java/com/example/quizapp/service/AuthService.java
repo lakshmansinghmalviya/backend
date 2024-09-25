@@ -18,6 +18,7 @@ import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.repository.UserRepository;
 import com.example.quizapp.util.Codes;
+import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.JwtHelper;
 
 @Service
@@ -38,8 +39,10 @@ public class AuthService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public UnifiedResponse<AuthResponse> register(SignupRequest registerUser) {
+	@Autowired
+	private CommonHelper commonHelper;
 
+	public UnifiedResponse<AuthResponse> register(SignupRequest registerUser) {
 		if (userRepository.existsByEmail(registerUser.getEmail())) {
 			throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
 		}
@@ -66,11 +69,11 @@ public class AuthService {
 		String token = jwtHelper.generateToken(userDetails);
 
 		User user = userRepository.findByEmail(authRequest.getEmail())
-				.orElseThrow(() -> new UsernameNotFoundException("email " + authRequest.getEmail() + " not found"));
+				.orElseThrow(() -> new UsernameNotFoundException("Email " + authRequest.getEmail() + " not found"));
 
 		user.setLastLogin(LocalDateTime.now());
 		user.setLogout(false);
 		userRepository.save(user);
-		return new UnifiedResponse(Codes.OK, "Auth Success", new AuthResponse(token, user.getRole().name()));
+		return commonHelper.returnUnifiedOK("Auth Success", new AuthResponse(token, user.getRole().name()));
 	}
 }

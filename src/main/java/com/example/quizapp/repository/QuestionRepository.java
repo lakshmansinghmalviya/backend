@@ -1,7 +1,6 @@
 package com.example.quizapp.repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	Long countByCreatorId(Long id);
 
-	Page<Question> findByQuizId(Long id,Pageable pageable);
+	Page<Question> findByQuizId(Long id, Pageable pageable);
 
 	boolean existsById(Long id);
 

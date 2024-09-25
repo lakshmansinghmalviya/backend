@@ -3,7 +3,6 @@ package com.example.quizapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +17,7 @@ import com.example.quizapp.dto.StudentProfileDataResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Result;
 import com.example.quizapp.service.ResultService;
+import com.example.quizapp.util.ResponseBuilder;
 
 import jakarta.validation.Valid;
 
@@ -31,16 +31,16 @@ public class ResultController {
 
 	@PostMapping()
 	public ResponseEntity<UnifiedResponse<MessageResponse>> submitResult(@Valid @RequestBody ResultRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(resultService.attemptedQuiz(request));
+		return ResponseBuilder.buildOKResponse(resultService.attemptedQuiz(request));
 	}
 
 	@GetMapping("/QuizResultsOfUser")
 	public ResponseEntity<UnifiedResponse<List<Result>>> getAllQuizResultsOfUser() {
-		return ResponseEntity.status(HttpStatus.OK).body(resultService.getAllQuizResultsOfUser());
+		return ResponseBuilder.buildOKResponse(resultService.getAllQuizResultsOfUser());
 	}
 
 	@GetMapping("/userProfileData")
 	public ResponseEntity<UnifiedResponse<StudentProfileDataResponse>> getUserProfileData() {
-		return ResponseEntity.status(HttpStatus.OK).body(resultService.getUserProfileData());
+		return ResponseBuilder.buildOKResponse(resultService.getUserProfileData());
 	}
 }

@@ -13,6 +13,7 @@ import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.SignupRequest;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.service.AuthService;
+import com.example.quizapp.util.ResponseBuilder;
 
 import jakarta.validation.Valid;
 
@@ -24,11 +25,11 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public ResponseEntity<UnifiedResponse<AuthResponse>> register(@Valid @RequestBody SignupRequest registerUser) {
-		return ResponseEntity.status(HttpStatus.OK).body(authService.register(registerUser));
+		return ResponseBuilder.buildResponse(HttpStatus.CREATED, authService.register(registerUser));
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<UnifiedResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest authRequest) {
-		return ResponseEntity.status(HttpStatus.OK).body(authService.login(authRequest));
+		return ResponseBuilder.buildOKResponse(authService.login(authRequest));
 	}
 }

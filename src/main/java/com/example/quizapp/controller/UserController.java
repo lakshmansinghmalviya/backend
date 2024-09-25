@@ -1,7 +1,6 @@
 package com.example.quizapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +16,7 @@ import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.service.UserService;
 import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.ResponseBuilder;
 
 import jakarta.validation.Valid;
 
@@ -32,35 +32,34 @@ public class UserController {
 
 	@GetMapping("/currentUser")
 	public ResponseEntity<UnifiedResponse<User>> getUserInformation() {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInformation());
+		return ResponseBuilder.buildOKResponse(userService.getUserInformation());
 	}
 
 	@GetMapping("/educatorProfileData")
 	public ResponseEntity<UnifiedResponse<EducatorProfileDataResponse>> getEducatorProfileInformation() {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducatorProfileInformation());
+		return ResponseBuilder.buildOKResponse(userService.getEducatorProfileInformation());
 	}
 
 	@PutMapping("/update")
 	public ResponseEntity<UnifiedResponse<User>> updateUser(@Valid @RequestBody UpdateUserRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(request));
+		return ResponseBuilder.buildOKResponse(userService.updateUser(request));
 	}
 
 	@PutMapping("/logout")
 	public ResponseEntity<UnifiedResponse<Void>> doUserLogout() {
-
-		return ResponseEntity.status(HttpStatus.OK).body(userService.logout());
+		return ResponseBuilder.buildOKResponse(userService.logout());
 	}
 
 	@GetMapping("/educators")
 	public ResponseEntity<UnifiedResponse<PageResponse<User>>> getEducators(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(userService.getEducators(commonHelper.makePageReq(page, size)));
+		return ResponseBuilder.buildOKResponse(userService.getEducators(commonHelper.makePageReq(page, size)));
 	}
 
 	@GetMapping("/educators/search")
 	public ResponseEntity<UnifiedResponse<PageResponse<User>>> searchEducators(@RequestParam String query,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(userService.searchEducatorsByQuery(query, commonHelper.makePageReq(page, size)));
+		return ResponseBuilder
+				.buildOKResponse(userService.searchEducatorsByQuery(query, commonHelper.makePageReq(page, size)));
 	}
 }
