@@ -71,5 +71,4 @@ public class BookmarkService {
 	public User getUser() {
 		return userHelper.getUser();
 	}
-
 }

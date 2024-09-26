@@ -3,9 +3,11 @@ package com.example.quizapp.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.ResultRequest;
 import com.example.quizapp.dto.StudentProfileDataResponse;
 import com.example.quizapp.dto.UnifiedResponse;
@@ -54,9 +56,8 @@ public class ResultService {
 		return commonHelper.returnUnifiedCREATED("Result is submitted successfully", null);
 	}
 
-	public UnifiedResponse<List<Result>> getAllQuizResultsOfUser() {
-		return commonHelper.returnUnifiedOK("Fetched Successfully",
-				resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(getUser().getId()));
+	public UnifiedResponse<PageResponse<Result>> getAllQuizResultsOfUser(Pageable pageable) {
+		return commonHelper.getPageResponse(resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(getUser().getId(),pageable));
 	}
 
 	public UnifiedResponse<StudentProfileDataResponse> getUserProfileData() {

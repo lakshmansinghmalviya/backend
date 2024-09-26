@@ -2,6 +2,8 @@ package com.example.quizapp.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +19,7 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 	Result findByUserIdAndQuizId(Long userId, Long id);
 
 	@Query("SELECT r FROM Result r WHERE r.user.id = :id ORDER BY r.updatedAt DESC")
-	List<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id);
+	Page<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id,Pageable pageable);
 
 	@Query("SELECT SUM(r.score) FROM Result r WHERE r.user.id = :id")
 	Long findTotalScoreByUserId(@Param("id") Long id);

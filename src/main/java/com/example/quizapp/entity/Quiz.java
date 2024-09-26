@@ -59,7 +59,7 @@ public class Quiz {
 	private List<Question> questions;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Result> results;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
