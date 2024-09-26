@@ -3,6 +3,7 @@ package com.example.quizapp.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.ResultRequest;
 import com.example.quizapp.dto.StudentProfileDataResponse;
 import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.Result;
 import com.example.quizapp.entity.User;
@@ -57,7 +59,8 @@ public class ResultService {
 	}
 
 	public UnifiedResponse<PageResponse<Result>> getAllQuizResultsOfUser(Pageable pageable) {
-		return commonHelper.getPageResponse(resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(getUser().getId(),pageable));
+		return commonHelper.getPageResponse(
+				resultRepository.findResultsByUserIdOrderedByUpdatedAtDesc(getUser().getId(), pageable));
 	}
 
 	public UnifiedResponse<StudentProfileDataResponse> getUserProfileData() {
@@ -69,6 +72,11 @@ public class ResultService {
 		Long totalScore = resultRepository.findTotalScoreByUserId(user.getId());
 		return commonHelper.returnUnifiedOK("Fetched", new StudentProfileDataResponse(totalCompletedQuizzes,
 				totalInCompletedQuizzes, totalTimeSpent, totalOfTotalScore, totalScore));
+	}
+
+	public UnifiedResponse<PageResponse<Result>> searchResultsByQuery(String query, Pageable pageable) {
+		Page<Result> results = resultRepository.searchResults(getUser().getId(), query, pageable);
+		return commonHelper.getPageResponse(results);
 	}
 
 	public User getUser() {

@@ -36,8 +36,7 @@ public class Bookmark {
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@JsonBackReference
-//	@JsonIgnoreProperties("bookmarks")
+	@JsonIgnoreProperties({ "categories", "quizzes", "results", "feedbacks", "bookmarks" })
 	private Quiz quiz;
 
 	@Column(name = "created_at", updatable = false)

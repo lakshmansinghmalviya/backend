@@ -17,6 +17,7 @@ import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.ResultRequest;
 import com.example.quizapp.dto.StudentProfileDataResponse;
 import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.Result;
 import com.example.quizapp.service.ResultService;
 import com.example.quizapp.util.CommonHelper;
@@ -44,6 +45,12 @@ public class ResultController {
 	public ResponseEntity<UnifiedResponse<PageResponse<Result>>> getAllQuizResultsOfUser(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(resultService.getAllQuizResultsOfUser(commonHelper.makePageReq(page, size)));
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<UnifiedResponse<PageResponse<Result>>> searchResults(@RequestParam String query,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		return ResponseBuilder.buildOKResponse(resultService.searchResultsByQuery(query, commonHelper.makePageReq(page, size)));
 	}
 
 	@GetMapping("/userProfileData")

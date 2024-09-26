@@ -19,7 +19,7 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 	Result findByUserIdAndQuizId(Long userId, Long id);
 
 	@Query("SELECT r FROM Result r WHERE r.user.id = :id ORDER BY r.updatedAt DESC")
-	Page<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id,Pageable pageable);
+	Page<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id, Pageable pageable);
 
 	@Query("SELECT SUM(r.score) FROM Result r WHERE r.user.id = :id")
 	Long findTotalScoreByUserId(@Param("id") Long id);
@@ -35,4 +35,16 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
 	@Query("SELECT COUNT(r) FROM Result r WHERE r.user.id = :id AND r.isCompleted = false")
 	Long findTotalIncompleteQuizzesByUserId(@Param("id") Long id);
+
+	@Query("SELECT r FROM Result r JOIN r.quiz q " + "WHERE r.user.id = :id AND ("
+			+ "LOWER(q.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) "
+			+ "OR STR(r.score) LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR STR(r.totalScore) LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR STR(r.timeSpent) LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR CASE WHEN r.isCompleted = true THEN 'Yes' ELSE 'No' END LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR STR(r.correctAnswers) LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR STR(r.incorrectAnswers) LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR STR(r.totalQuestion) LIKE CONCAT('%', :searchTerm, '%') "
+			+ "OR STR(r.timesTaken) LIKE CONCAT('%', :searchTerm, '%'))")
+	Page<Result> searchResults(@Param("id") Long id, @Param("searchTerm") String searchTerm, Pageable pageable);
 }
