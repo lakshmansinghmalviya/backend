@@ -1,6 +1,5 @@
 package com.example.quizapp.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -23,7 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Page<User> findByRole(Role role, Pageable pageable);
 
-	Page<User> findAllByRole(Role role,Pageable pageable);
-
-	Page<User> findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(Role role,String name, String bio, Pageable pageable);
+	Page<User> findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(Role role, String name, String bio,
+			Pageable pageable);
 }

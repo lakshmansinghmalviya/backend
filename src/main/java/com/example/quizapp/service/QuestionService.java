@@ -2,7 +2,6 @@ package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,48 +36,44 @@ public class QuestionService {
 	private OptionService optionService;
 
 	@Autowired
-	private UserService userService;
-
-	@Autowired
 	CommonHelper commonHelper;
 
 	@Autowired
 	UserHelper userHelper;
 
-	public UnifiedResponse<List<Question>> getAllByQuizId(Long id) {
+	public UnifiedResponse<PageResponse<Question>> getAllQuestionQuizId(Long id, Pageable pageable) {
 		quizService.exist(id);
-		return new UnifiedResponse(Codes.OK, "fetched", questionRepository.findAllByQuizId(id));
+		return commonHelper.getPageResponse(questionRepository.findByQuizId(id, pageable));
 	}
 
 	@Transactional
-	public Question create(QuestionRequest request) {
+	public UnifiedResponse<Question> create(QuestionRequest request) {
 		Quiz quiz = quizService.findById(request.getQuizId());
-		User creator = userService.getUserInfoUsingTokenInfo();
 		Question question = new Question();
 		question.setText(request.getText());
 		question.setIsDeleted(false);
 		question.setQuestionPic(request.getQuestionPic());
 		question.setQuiz(quiz);
-		question.setCreator(creator);
+		question.setCreator(getUser());
 		question.setQuestionType(request.getQuestionType());
 		question.setMaxScore(request.getMaxScore());
 		question.setRandomizeOptions(request.getRandomizeOptions());
 		question = questionRepository.save(question);
 		for (OptionRequest optionReq : request.getOptions())
 			optionService.createOption(optionReq, question);
-		return question;
+		return commonHelper.returnUnifiedCREATED("Created", question);
 	}
 
-	@Transactional
-	public void delete(Long id) {
+	public UnifiedResponse<Void> delete(Long id) {
 		if (questionRepository.existsById(id))
 			questionRepository.deleteById(id);
 		else
-			throw new ResourceNotFoundException("Question id not found ");
+			throwException(id);
+		return commonHelper.returnUnifiedOK("Deleted", null);
 	}
 
 	@Transactional
-	public Question update(Long id, QuestionRequest request) {
+	public UnifiedResponse<Question> update(Long id, QuestionRequest request) {
 
 		Question question = getQuestionById(id);
 		for (OptionRequest optionReq : request.getOptions())
@@ -89,25 +84,11 @@ public class QuestionService {
 		question.setQuestionType(request.getQuestionType());
 		question.setMaxScore(request.getMaxScore());
 		question.setRandomizeOptions(request.getRandomizeOptions());
-		return questionRepository.save(question);
-	}
-
-	public List<Question> getAllQuestion() {
-		return questionRepository.findAll();
-	}
-
-	public List<Question> getQuestionsofCreator() {
-		User creator = userService.getUserInfoUsingTokenInfo();
-		return questionRepository.findByCreatorId(creator.getId());
-	}
-
-	public List<Question> getAllQuestionByCreatorId(Long id) {
-		return questionRepository.findByCreatorId(id);
+		return commonHelper.returnUnifiedOK("Udpated", questionRepository.save(question));
 	}
 
 	public Question getQuestionById(Long id) {
-		return questionRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Question id not found "));
+		return questionRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
 	public UnifiedResponse<PageResponse<Question>> getQuestionsByPagination(Pageable pageable) {
@@ -117,11 +98,9 @@ public class QuestionService {
 
 	public UnifiedResponse<PageResponse<Question>> getQuestionsByPaginationBetweenDates(String startDate,
 			String endDate, Pageable pageable) {
-		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		LocalDateTime startDateTime = LocalDateTime.parse(startDate + " 00:00:00", formatter);
-		LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
-		Page<Question> questions = questionRepository.findByCreatorIdAndDateBetween(getUser().getId(), startDateTime,
-				endDateTime, pageable);
+		LocalDateTime[] dates = commonHelper.parseDateRange(startDate, endDate);
+		Page<Question> questions = questionRepository.findByCreatorIdAndDateBetween(getUser().getId(), dates[0],
+				dates[1], pageable);
 		return commonHelper.getPageResponse(questions);
 	}
 
@@ -134,6 +113,10 @@ public class QuestionService {
 
 	public User getUser() {
 		return userHelper.getUser();
+	}
+
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Question not found with the id " + id);
 	}
 
 }

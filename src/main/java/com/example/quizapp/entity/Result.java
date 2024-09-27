@@ -3,6 +3,7 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -61,7 +62,7 @@ public class Result {
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@JsonManagedReference
+	@JsonIgnoreProperties("results")
 	private Quiz quiz;
 
 	@Column(name = "created_at", updatable = false)

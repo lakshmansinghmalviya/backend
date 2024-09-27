@@ -1,14 +1,15 @@
 package com.example.quizapp.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
-import com.example.quizapp.entity.User;
-import com.example.quizapp.service.UserService;
 
 @Service
 public class CommonHelper {
@@ -23,4 +24,22 @@ public class CommonHelper {
 		return new UnifiedResponse<>(Codes.OK, "Fetched Successfully", pageResponse);
 	}
 
+	public <T> UnifiedResponse<T> returnUnifiedOK(String message, T data) {
+		return new UnifiedResponse<>(Codes.OK, message, data);
+	}
+
+	public <T> UnifiedResponse<T> returnUnifiedCREATED(String message, T data) {
+		return new UnifiedResponse<>(Codes.CREATED, message, data);
+	}
+
+	public Pageable makePageReq(int page, int size) {
+		return PageRequest.of(page, size);
+	}
+
+	public LocalDateTime[] parseDateRange(String startDate, String endDate) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		LocalDateTime startDateTime = LocalDateTime.parse(startDate + " 00:00:00", formatter);
+		LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
+		return new LocalDateTime[] { startDateTime, endDateTime };
+	}
 }

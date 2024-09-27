@@ -42,7 +42,7 @@ public class User {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(nullable = false)
+	@Column()
 	private boolean isLogout;
 
 	@Column(nullable = false)

@@ -12,6 +12,7 @@ import com.example.quizapp.dto.FeedbackRequest;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.service.FeedbackService;
+import com.example.quizapp.util.ResponseBuilder;
 
 import jakarta.validation.Valid;
 
@@ -25,6 +26,6 @@ public class FeedbackController {
 	@PostMapping()
 	public ResponseEntity<UnifiedResponse<MessageResponse>> submitFeedback(
 			@Valid @RequestBody FeedbackRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(feedbackService.submitFeedback(request));
+		return ResponseBuilder.buildResponse(HttpStatus.CREATED, feedbackService.submitFeedback(request));
 	}
 }

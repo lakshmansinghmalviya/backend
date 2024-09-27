@@ -1,20 +1,21 @@
 package com.example.quizapp.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.BookmarkRequest;
 import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.BookmarkRepository;
-import com.example.quizapp.util.Codes;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class BookmarkService {
@@ -23,28 +24,51 @@ public class BookmarkService {
 	BookmarkRepository bookmarkRepository;
 
 	@Autowired
-	UserService userService;
-
-	@Autowired
 	QuizService quizService;
 
+	@Autowired
+	CommonHelper commonHelper;
+
+	@Autowired
+	UserHelper userHelper;
+
 	public UnifiedResponse<MessageResponse> bookmarkQuiz(BookmarkRequest request) {
-		User user = userService.getUserInfoUsingTokenInfo();
-		if (bookmarkRepository.existsByUserIdAndQuizId(user.getId(), request.getQuizId())) {
-			return new UnifiedResponse(Codes.OK, "Already bookmarked please bookmark other one", null);
+		if (bookmarkRepository.existsByUserIdAndQuizId(getUser().getId(), request.getQuizId())) {
+			return commonHelper.returnUnifiedCREATED("Already bookmarked please bookmark other one", null);
 		}
 		Quiz quiz = quizService.findById(request.getQuizId());
 		Bookmark bookmark = new Bookmark();
 		bookmark.setQuiz(quiz);
-		bookmark.setUser(user);
+		bookmark.setUser(getUser());
 		bookmarkRepository.save(bookmark);
-		return new UnifiedResponse(Codes.OK, "bookmarked", null);
+		return commonHelper.returnUnifiedOK("Bookmarked", null);
 	}
 
-	public UnifiedResponse<List<Quiz>> getAllBookmarksOfUser() {
-		User user = userService.getUserInfoUsingTokenInfo();
-		List<Bookmark> bookmarks = bookmarkRepository.findAllByUserId(user.getId());
-		return new UnifiedResponse(Codes.OK, "success",
-				bookmarks.stream().map(Bookmark::getQuiz).collect(Collectors.toList()));
+	public UnifiedResponse<PageResponse<Bookmark>> getAllBookmarksOfUser(Pageable pageable) {
+		Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(getUser().getId(), pageable);
+		return commonHelper.getPageResponse(bookmarks);
+	}
+
+	public UnifiedResponse<Void> deleteBookmarkById(Long id) {
+		if (!bookmarkRepository.existsById(id)) {
+			throwException(id);
+		}
+		bookmarkRepository.deleteById(id);
+		return commonHelper.returnUnifiedOK("Removed", null);
+	}
+
+	public UnifiedResponse<PageResponse<Bookmark>> searchBookmarksByQuery(String query, Pageable pageable) {
+		Page<Bookmark> bookmarks = bookmarkRepository
+				.findByUserIdAndQuizTitleContainingIgnoreCaseOrQuizDescriptionContainingIgnoreCase(getUser().getId(),
+						query, query, pageable);
+		return commonHelper.getPageResponse(bookmarks);
+	}
+
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Quiz not found with the id " + id);
+	}
+
+	public User getUser() {
+		return userHelper.getUser();
 	}
 }
