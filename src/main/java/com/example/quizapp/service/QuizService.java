@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
@@ -16,6 +17,7 @@ import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
+import com.example.quizapp.specification.QuizSpecification;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -117,5 +119,12 @@ public class QuizService {
 
 	public User getUser() {
 		return userHelper.getUser();
+	}
+
+	public UnifiedResponse<PageResponse<Quiz>> filterQuizzes(String title, String description,
+			Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, Pageable pageable) {
+		Specification<Quiz> spec = QuizSpecification.filterQuizzes(title, description, timeLimit,
+				randomizeQuestions, categoryId, creatorId);
+		return commonHelper.getPageResponse(quizRepository.findAll(spec, pageable));
 	}
 }

@@ -1,6 +1,7 @@
 package com.example.quizapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -102,5 +103,15 @@ public class QuizController {
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(
 				quizService.searchQuizzesByQueryForStudent(query, commonHelper.makePageReq(page, size)));
+	}
+
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> filterQuizzes(
+			@RequestParam(required = false) String title, @RequestParam(required = false) String description,
+			@RequestParam(required = false) Long timeLimit, @RequestParam(required = false) Boolean randomizeQuestions,
+			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,
+			Pageable pageable) {
+		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(title, description, timeLimit,
+				randomizeQuestions, categoryId, creatorId, pageable));
 	}
 }
