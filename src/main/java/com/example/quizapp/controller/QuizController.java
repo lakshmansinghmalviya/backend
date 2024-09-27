@@ -38,7 +38,7 @@ public class QuizController {
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<UnifiedResponse<Quiz>> createQuiz(@Valid @RequestBody QuizRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(quizService.createQuiz(request));
+		return ResponseBuilder.buildResponse(HttpStatus.CREATED, quizService.createQuiz(request));
 	}
 
 	@GetMapping("/category/{categoryId}")
