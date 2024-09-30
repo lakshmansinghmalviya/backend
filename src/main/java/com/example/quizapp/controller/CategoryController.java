@@ -53,39 +53,13 @@ public class CategoryController {
 		return ResponseBuilder.buildOKResponse(categoryService.deleteCategoryById(id));
 	}
 
-	@GetMapping("/student")
-	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategories(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(categoryService.getCategories(commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/ofCreator")
-	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesByPagination(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder
-				.buildOKResponse(categoryService.getCategoriesByPagination(commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/ofCreator/betweenDates/{start}/{end}")
-	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> getCategoriesBetweenDates(@PathVariable String start,
-			@PathVariable String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(categoryService.getCategoriesByPaginationBetweenDates(start, end,
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> filterQuizzes(
+			@RequestParam(required = false) String query, @RequestParam(required = false) Long creatorId,
+			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
+			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(categoryService.filterCategories(query, start, end, creatorId, sort,
 				commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> searchCategories(@RequestParam String query,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder
-				.buildOKResponse(categoryService.searchCategoriesByQuery(query, commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/student/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> searchCategoriesForStudent(
-			@RequestParam String query, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(
-				categoryService.searchCategoriesForStudent(query, commonHelper.makePageReq(page, size)));
 	}
 }

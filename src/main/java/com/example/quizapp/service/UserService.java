@@ -11,7 +11,6 @@ import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
-import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Role;
 import com.example.quizapp.exception.ResourceNotFoundException;

@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
@@ -41,5 +42,23 @@ public class CommonHelper {
 		LocalDateTime startDateTime = LocalDateTime.parse(startDate + " 00:00:00", formatter);
 		LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
 		return new LocalDateTime[] { startDateTime, endDateTime };
+	}
+	
+	public Sort parseSortString(String sort) {
+		if (sort == null || sort.isEmpty()) {
+			return Sort.unsorted();
+		}
+
+		String[] sortingFields = sort.split(",");
+		Sort finalSort = Sort.unsorted();
+
+		for (String field : sortingFields) {
+			String[] fieldAndDirection = field.split(":");
+			String fieldName = fieldAndDirection[0];
+			String direction = fieldAndDirection.length > 1 ? fieldAndDirection[1].toLowerCase() : "asc";
+			Sort.Order order = direction.equals("desc") ? Sort.Order.desc(fieldName) : Sort.Order.asc(fieldName);
+			finalSort = finalSort.and(Sort.by(order));
+		}
+		return finalSort;
 	}
 }

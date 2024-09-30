@@ -1,11 +1,12 @@
 package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.OptionRequest;
@@ -17,7 +18,6 @@ import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuestionRepository;
-import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -40,11 +40,6 @@ public class QuestionService {
 
 	@Autowired
 	UserHelper userHelper;
-
-	public UnifiedResponse<PageResponse<Question>> getAllQuestionQuizId(Long id, Pageable pageable) {
-		quizService.exist(id);
-		return commonHelper.getPageResponse(questionRepository.findByQuizId(id, pageable));
-	}
 
 	@Transactional
 	public UnifiedResponse<Question> create(QuestionRequest request) {
@@ -91,23 +86,25 @@ public class QuestionService {
 		return questionRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
-	public UnifiedResponse<PageResponse<Question>> getQuestionsByPagination(Pageable pageable) {
-		Page<Question> questions = questionRepository.findByCreatorId(getUser().getId(), pageable);
-		return commonHelper.getPageResponse(questions);
-	}
+	public UnifiedResponse<PageResponse<Question>> findQuestionsByFilters(Long creatorId, Long quizId, String startDate,
+			String endDate, String query, Boolean randomizeOptions, String questionType, String sort,
+			Pageable pageable) {
 
-	public UnifiedResponse<PageResponse<Question>> getQuestionsByPaginationBetweenDates(String startDate,
-			String endDate, Pageable pageable) {
-		LocalDateTime[] dates = commonHelper.parseDateRange(startDate, endDate);
-		Page<Question> questions = questionRepository.findByCreatorIdAndDateBetween(getUser().getId(), dates[0],
-				dates[1], pageable);
-		return commonHelper.getPageResponse(questions);
-	}
+		if (getUser().getRole().toString().equals("Educator"))
+			creatorId = getUser().getId();
 
-	public UnifiedResponse<PageResponse<Question>> searchQuestionsByQuery(String query, Pageable pageable) {
-		Page<Question> questions = questionRepository
-				.findByCreatorIdAndTextContainingIgnoreCaseOrQuestionTypeContainingIgnoreCase(getUser().getId(), query,
-						query, pageable);
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+		Page<Question> questions = questionRepository.findQuestionsByFilters(creatorId, quizId, dates[0], dates[1],
+				query, randomizeOptions, questionType, pageable);
 		return commonHelper.getPageResponse(questions);
 	}
 

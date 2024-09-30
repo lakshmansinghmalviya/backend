@@ -16,15 +16,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	Long countByCreatorId(Long id);
 
-	Page<Category> findByCreatorId(Long id, Pageable pageable);
-
-	@Query("SELECT c FROM Category c WHERE c.creator.id = :creatorId AND c.createdAt BETWEEN :startDate AND :endDate")
-	Page<Category> findCategoriesByCreatorIdAndBetweenDates(@Param("creatorId") Long creatorId,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
-
-	Page<Category> findByCreatorIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(Long creatorId,
-			String name, String description, Pageable pageable);
-
-	Page<Category> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description,
-			Pageable pageable);
+	@Query("SELECT c FROM Category c " + "WHERE (:creatorId IS NULL OR c.creator.id = :creatorId) "
+			+ "AND (:startDate IS NULL OR c.createdAt >= :startDate) "
+			+ "AND (:endDate IS NULL OR c.createdAt <= :endDate)"
+			+ "AND (:query IS NULL OR (LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) "
+			+ "OR LOWER(c.description) LIKE LOWER(CONCAT('%', :query, '%'))))")
+	Page<Category> findCategoriesByFilters(@Param("creatorId") Long creatorId,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+			@Param("query") String query, Pageable pageable);
 }

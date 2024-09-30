@@ -1,7 +1,5 @@
 package com.example.quizapp.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +15,6 @@ import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.ResultRequest;
 import com.example.quizapp.dto.StudentProfileDataResponse;
 import com.example.quizapp.dto.UnifiedResponse;
-import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.Result;
 import com.example.quizapp.service.ResultService;
 import com.example.quizapp.util.CommonHelper;

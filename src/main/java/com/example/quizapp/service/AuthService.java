@@ -3,7 +3,6 @@ package com.example.quizapp.service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +17,6 @@ import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.repository.UserRepository;
-import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.JwtHelper;
 

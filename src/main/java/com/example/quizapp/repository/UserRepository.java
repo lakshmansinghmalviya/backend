@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Role;
 
