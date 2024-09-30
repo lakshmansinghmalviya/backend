@@ -15,18 +15,17 @@ import com.example.quizapp.entity.Question;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	Long countByCreatorId(Long id);
-
-	Page<Question> findByQuizId(Long id, Pageable pageable);
-
+	
 	boolean existsById(Long id);
 
-	Page<Question> findByCreatorId(Long creatorId, Pageable pageable);
-
-	@Query("SELECT q FROM Question q WHERE q.creator.id = :creatorId AND q.createdAt BETWEEN :startDate AND :endDate")
-	Page<Question> findByCreatorIdAndDateBetween(@Param("creatorId") Long creatorId,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
-
-	Page<Question> findByCreatorIdAndTextContainingIgnoreCaseOrQuestionTypeContainingIgnoreCase(Long creatorId,
-			String text, String questionType, Pageable pageable);
-
+	@Query("SELECT q FROM Question q " + "WHERE (:creatorId IS NULL OR q.creator.id = :creatorId) "
+			+ "AND (:quizId IS NULL OR q.quiz.id = :quizId) " + "AND (:startDate IS NULL OR q.createdAt >= :startDate) "
+			+ "AND (:endDate IS NULL OR q.createdAt <= :endDate) "
+			+ "AND (:query IS NULL OR (LOWER(q.text) LIKE LOWER(CONCAT('%', :query, '%')))) "
+			+ "AND (:randomizeOptions IS NULL OR q.randomizeOptions = :randomizeOptions) "
+			+ "AND (:questionType IS NULL OR q.questionType = :questionType) " + "AND q.isDeleted = false")
+	Page<Question> findQuestionsByFilters(@Param("creatorId") Long creatorId, @Param("quizId") Long quizId,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+			@Param("query") String query, @Param("randomizeOptions") Boolean randomizeOptions,
+			@Param("questionType") String questionType, Pageable pageable);
 }

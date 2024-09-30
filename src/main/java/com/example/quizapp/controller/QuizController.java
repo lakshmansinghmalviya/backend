@@ -1,7 +1,6 @@
 package com.example.quizapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,22 +40,6 @@ public class QuizController {
 		return ResponseBuilder.buildResponse(HttpStatus.CREATED, quizService.createQuiz(request));
 	}
 
-	@GetMapping("/category/{categoryId}")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> getAllByCategoryId(
-			@PathVariable("categoryId") Long categoryId, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder
-				.buildOKResponse(quizService.getAllByCategoryId(categoryId, commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/creator/{creatorId}")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> getAllByCreatorId(
-			@PathVariable("creatorId") Long creatorId, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder
-				.buildOKResponse(quizService.getAllByCreatorId(creatorId, commonHelper.makePageReq(page, size)));
-	}
-
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<UnifiedResponse<Void>> deleteQuizById(@PathVariable("id") Long id) {
@@ -70,48 +53,14 @@ public class QuizController {
 		return ResponseBuilder.buildOKResponse(quizService.updateQuizById(id, request));
 	}
 
-	@GetMapping("/public")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> getAllQuiz(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder.buildOKResponse(quizService.getAllQuiz(commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/ofCreator")
-	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> getAllQuizOfCreator(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder.buildOKResponse(quizService.getAllQuizOfCreator(commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/ofCreator/betweenDates/{start}/{end}")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> getQuizzesBetweenDates(@PathVariable String start,
-			@PathVariable String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(
-				quizService.getQuizzesByPaginationBetweenDates(start, end, commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> searchQuizzes(@RequestParam String query,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder
-				.buildOKResponse(quizService.searchQuizzesByQuery(query, commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/student/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> searchQuizzesForStudent(@RequestParam String query,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(
-				quizService.searchQuizzesByQueryForStudent(query, commonHelper.makePageReq(page, size)));
-	}
-
 	@GetMapping("/filters")
 	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> filterQuizzes(
-			@RequestParam(required = false) String title, @RequestParam(required = false) String description,
-			@RequestParam(required = false) Long timeLimit, @RequestParam(required = false) Boolean randomizeQuestions,
-			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,
-			Pageable pageable) {
-		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(title, description, timeLimit,
-				randomizeQuestions, categoryId, creatorId, pageable));
+			@RequestParam(required = false) String query, @RequestParam(required = false) Long timeLimit,
+			@RequestParam(required = false) Boolean randomizeQuestions, @RequestParam(required = false) Long categoryId,
+			@RequestParam(required = false) Long creatorId, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(query, start, end, timeLimit,
+				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}
 }

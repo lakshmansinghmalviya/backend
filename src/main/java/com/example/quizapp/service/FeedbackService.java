@@ -1,7 +1,6 @@
 package com.example.quizapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.FeedbackRequest;
@@ -9,7 +8,6 @@ import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Feedback;
 import com.example.quizapp.entity.Question;
-import com.example.quizapp.entity.User;
 import com.example.quizapp.repository.FeedbackRepository;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;

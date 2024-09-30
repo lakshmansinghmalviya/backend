@@ -1,12 +1,12 @@
 package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
@@ -17,7 +17,6 @@ import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
-import com.example.quizapp.specification.QuizSpecification;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -50,14 +49,6 @@ public class QuizService {
 		return commonHelper.returnUnifiedCREATED("Quiz Created Successfully", null);
 	}
 
-	public UnifiedResponse<PageResponse<Quiz>> getAllByCategoryId(Long categoryId, Pageable pageable) {
-		return commonHelper.getPageResponse(quizRepository.findByCategoryId(categoryId, pageable));
-	}
-
-	public UnifiedResponse<PageResponse<Quiz>> getAllByCreatorId(Long creatorId, Pageable pageable) {
-		return commonHelper.getPageResponse(quizRepository.findByCreatorId(creatorId, pageable));
-	}
-
 	public UnifiedResponse<Void> deleteQuizById(Long id) {
 		if (!quizRepository.existsById(id))
 			throwException(id);
@@ -79,36 +70,6 @@ public class QuizService {
 		return quizRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
-	public UnifiedResponse<PageResponse<Quiz>> getAllQuiz(Pageable pageable) {
-		return commonHelper.getPageResponse(quizRepository.findAll(pageable));
-	}
-
-	public UnifiedResponse<PageResponse<Quiz>> getAllQuizOfCreator(Pageable pageable) {
-		Page<Quiz> page = quizRepository.findByCreatorId(getUser().getId(), pageable);
-		return commonHelper.getPageResponse(page);
-	}
-
-	public UnifiedResponse<PageResponse<Quiz>> getQuizzesByPaginationBetweenDates(String start, String end,
-			Pageable pageable) {
-		LocalDateTime[] dates = commonHelper.parseDateRange(start, end);
-		Page<Quiz> quizzes = quizRepository.findQuizzesByCreatorIdAndBetweenDates(getUser().getId(), dates[0], dates[1],
-				pageable);
-		return commonHelper.getPageResponse(quizzes);
-	}
-
-	public UnifiedResponse<PageResponse<Quiz>> searchQuizzesByQuery(String query, Pageable pageable) {
-		Page<Quiz> quizzes = quizRepository
-				.findByCreatorIdAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(getUser().getId(), query,
-						query, pageable);
-		return commonHelper.getPageResponse(quizzes);
-	}
-
-	public UnifiedResponse<PageResponse<Quiz>> searchQuizzesByQueryForStudent(String query, Pageable pageable) {
-		Page<Quiz> quizzes = quizRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query,
-				query, pageable);
-		return commonHelper.getPageResponse(quizzes);
-	}
-
 	public boolean exist(Long id) {
 		return quizRepository.existsById(id);
 	}
@@ -121,10 +82,27 @@ public class QuizService {
 		return userHelper.getUser();
 	}
 
-	public UnifiedResponse<PageResponse<Quiz>> filterQuizzes(String title, String description,
-			Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, Pageable pageable) {
-		Specification<Quiz> spec = QuizSpecification.filterQuizzes(title, description, timeLimit,
-				randomizeQuestions, categoryId, creatorId);
-		return commonHelper.getPageResponse(quizRepository.findAll(spec, pageable));
+	public UnifiedResponse<PageResponse<Quiz>> filterQuizzes(String query, String startDate, String endDate,
+			Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, String sort,
+			Pageable pageable) {
+
+		if (getUser().getRole().toString().equals("Educator"))
+			creatorId = getUser().getId();
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<Quiz> quizzes = quizRepository.findQuizzesByFilters(creatorId, dates[0], dates[1], query, categoryId,
+				timeLimit, randomizeQuestions, pageable);
+		return commonHelper.getPageResponse(quizzes);
 	}
+
 }

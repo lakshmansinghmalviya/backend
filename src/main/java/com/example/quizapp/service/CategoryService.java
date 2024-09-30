@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.CategoryRequest;
@@ -14,7 +16,6 @@ import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
-import com.example.quizapp.util.Codes;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -61,43 +62,32 @@ public class CategoryService {
 		return categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 	}
 
-	public UnifiedResponse<PageResponse<Category>> getCategories(Pageable pageable) {
-		Page<Category> categoryPage = categoryRepository.findAll(pageable);
-		return commonHelper.getPageResponse(categoryPage);
-	}
-
 	public ResourceNotFoundException throwException(Long id) {
 		throw new ResourceNotFoundException("Category not found with the id " + id);
 	}
 
-	public UnifiedResponse<PageResponse<Category>> getCategoriesByPagination(Pageable pageable) {
-		Page<Category> categoryPage = categoryRepository.findByCreatorId(getUser().getId(), pageable);
-		return commonHelper.getPageResponse(categoryPage);
-	}
-
-	public UnifiedResponse<PageResponse<Category>> getCategoriesByPaginationBetweenDates(String startDate,
-			String endDate, Pageable pageable) {
-		LocalDateTime[] dates = commonHelper.parseDateRange(startDate, endDate);
-		Page<Category> categoryPage = categoryRepository.findCategoriesByCreatorIdAndBetweenDates(getUser().getId(),
-				dates[0], dates[1], pageable);
-
-		return commonHelper.getPageResponse(categoryPage);
-	}
-
-	public UnifiedResponse<PageResponse<Category>> searchCategoriesByQuery(String query, Pageable pageable) {
-		Page<Category> categories = categoryRepository
-				.findByCreatorIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(getUser().getId(), query,
-						query, pageable);
-		return commonHelper.getPageResponse(categories);
-	}
-
-	public UnifiedResponse<PageResponse<Category>> searchCategoriesForStudent(String query, Pageable pageable) {
-		Page<Category> categories = categoryRepository
-				.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query, pageable);
-		return commonHelper.getPageResponse(categories);
-	}
-
 	public User getUser() {
 		return userHelper.getUser();
+	}
+
+	public UnifiedResponse<PageResponse<Category>> filterCategories(String query, String startDate, String endDate,
+			Long creatorId, String sort, Pageable pageable) {
+
+		if (getUser().getRole().toString().equals("Educator"))
+			creatorId = getUser().getId();
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<Category> categories = categoryRepository.findCategoriesByFilters(creatorId, dates[0], dates[1], query, pageable);
+		return commonHelper.getPageResponse(categories);
 	}
 }

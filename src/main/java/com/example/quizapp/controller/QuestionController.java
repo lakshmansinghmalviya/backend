@@ -53,32 +53,14 @@ public class QuestionController {
 		return ResponseBuilder.buildOKResponse(questionService.delete(id));
 	}
 
-	@GetMapping("/quiz/{id}")
-	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> getAllQuestionByQuizId(@PathVariable("id") Long id,
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> findQuestionsByFilters(
+			@RequestParam(required = false) String query, @RequestParam(required = false) Boolean randomizeOptions,
+			@RequestParam(required = false) String questionType, @RequestParam(required = false) Long quizId,
+			@RequestParam(required = false) Long creatorId, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder
-				.buildOKResponse(questionService.getAllQuestionQuizId(id, commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/ofCreator")
-	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> getQuestionsByPagination(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder
-				.buildOKResponse(questionService.getQuestionsByPagination(commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/ofCreator/betweenDates/{start}/{end}")
-	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> getQuestionsBetweenDates(@PathVariable String start,
-			@PathVariable String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(
-				questionService.getQuestionsByPaginationBetweenDates(start, end, commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> searchQuestions(@RequestParam String query,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder
-				.buildOKResponse(questionService.searchQuestionsByQuery(query, commonHelper.makePageReq(page, size)));
+		return ResponseBuilder.buildOKResponse(questionService.findQuestionsByFilters(creatorId, quizId, start, end,
+				query, randomizeOptions, questionType, sort, commonHelper.makePageReq(page, size)));
 	}
 }
