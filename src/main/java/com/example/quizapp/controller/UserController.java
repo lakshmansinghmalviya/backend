@@ -50,16 +50,12 @@ public class UserController {
 		return ResponseBuilder.buildOKResponse(userService.logout());
 	}
 
-	@GetMapping("/educators")
-	public ResponseEntity<UnifiedResponse<PageResponse<User>>> getEducators(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder.buildOKResponse(userService.getEducators(commonHelper.makePageReq(page, size)));
-	}
-
-	@GetMapping("/educators/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<User>>> searchEducators(@RequestParam String query,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		return ResponseBuilder
-				.buildOKResponse(userService.searchEducatorsByQuery(query, commonHelper.makePageReq(page, size)));
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<User>>> filterEducators(
+			@RequestParam(required = false) String query, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(
+				userService.filterEducators(query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}
 }

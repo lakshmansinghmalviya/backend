@@ -16,6 +16,7 @@ import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuestionRepository;
 import com.example.quizapp.util.CommonHelper;
@@ -43,6 +44,10 @@ public class QuestionService {
 
 	@Transactional
 	public UnifiedResponse<Question> create(QuestionRequest request) {
+		if (questionRepository.existsByTextAndQuizId(request.getText(), request.getQuizId())) {
+			throw new ResourceAlreadyExistsException("Question already exits in the same quiz");
+		}
+
 		Quiz quiz = quizService.findById(request.getQuizId());
 		Question question = new Question();
 		question.setText(request.getText());
@@ -115,5 +120,4 @@ public class QuestionService {
 	public ResourceNotFoundException throwException(Long id) {
 		throw new ResourceNotFoundException("Question not found with the id " + id);
 	}
-
 }
