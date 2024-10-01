@@ -68,7 +68,7 @@ public class Quiz {
 
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
-	@JsonBackReference
+	@JsonIgnoreProperties("quizzes")
 	private User creator;
 
 	@Column(name = "created_at", updatable = false)

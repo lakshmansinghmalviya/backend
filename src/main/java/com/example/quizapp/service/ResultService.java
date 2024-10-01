@@ -1,8 +1,13 @@
 package com.example.quizapp.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.MessageResponse;
@@ -71,12 +76,31 @@ public class ResultService {
 				totalInCompletedQuizzes, totalTimeSpent, totalOfTotalScore, totalScore));
 	}
 
-	public UnifiedResponse<PageResponse<Result>> searchResultsByQuery(String query, Pageable pageable) {
-		Page<Result> results = resultRepository.searchResults(getUser().getId(), query, pageable);
-		return commonHelper.getPageResponse(results);
-	}
-
 	public User getUser() {
 		return userHelper.getUser();
+	}
+
+	public UnifiedResponse<PageResponse<Result>> filterResults(Long quizId, String query, Long score, Long totalScore,
+			Long timeSpent, Boolean isCompleted, Long correctAnswers, Long totalQuestion, Long timesTaken,
+			String startDate, String endDate, Long timeLimit, String sort, Pageable pageable) {
+
+		Long userId = null;
+		if (getUser().getRole().toString().equals("Student"))
+			userId = getUser().getId();
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<Result> results = resultRepository.searchResultsByFilters(userId, query, score, totalScore, timeSpent,
+				isCompleted, correctAnswers, totalQuestion, timesTaken, dates[0], dates[1], timeLimit, pageable);
+		return commonHelper.getPageResponse(results);
 	}
 }

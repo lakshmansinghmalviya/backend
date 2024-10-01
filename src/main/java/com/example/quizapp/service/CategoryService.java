@@ -73,9 +73,6 @@ public class CategoryService {
 	public UnifiedResponse<PageResponse<Category>> filterCategories(String query, String startDate, String endDate,
 			Long creatorId, String sort, Pageable pageable) {
 
-		if (getUser().getRole().toString().equals("Educator"))
-			creatorId = getUser().getId();
-
 		LocalDateTime[] dates = { null, null };
 
 		if (startDate != null && endDate != null) {
@@ -87,7 +84,8 @@ public class CategoryService {
 			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
 		}
 
-		Page<Category> categories = categoryRepository.findCategoriesByFilters(creatorId, dates[0], dates[1], query, pageable);
+		Page<Category> categories = categoryRepository.findCategoriesByFilters(creatorId, dates[0], dates[1], query,
+				pageable);
 		return commonHelper.getPageResponse(categories);
 	}
 }

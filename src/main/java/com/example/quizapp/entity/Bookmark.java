@@ -28,7 +28,7 @@ public class Bookmark {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+   
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	@JsonBackReference
@@ -44,6 +44,9 @@ public class Bookmark {
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+
+	@Column(name = "is_bookmarked")
+	private Boolean isBookmarked;
 
 	@PrePersist
 	protected void onCreate() {

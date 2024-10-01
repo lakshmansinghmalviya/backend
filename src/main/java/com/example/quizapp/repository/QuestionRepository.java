@@ -15,8 +15,10 @@ import com.example.quizapp.entity.Question;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	Long countByCreatorId(Long id);
-	
+
 	boolean existsById(Long id);
+
+	boolean existsByTextAndQuizId(String text, Long quizId);
 
 	@Query("SELECT q FROM Question q " + "WHERE (:creatorId IS NULL OR q.creator.id = :creatorId) "
 			+ "AND (:quizId IS NULL OR q.quiz.id = :quizId) " + "AND (:startDate IS NULL OR q.createdAt >= :startDate) "

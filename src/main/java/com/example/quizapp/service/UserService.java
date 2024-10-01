@@ -1,8 +1,12 @@
 package com.example.quizapp.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -89,9 +93,21 @@ public class UserService {
 				new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion));
 	}
 
-	public UnifiedResponse<PageResponse<User>> searchEducatorsByQuery(String query, Pageable pageable) {
-		Page<User> educators = userRepository.findByRoleAndNameContainingIgnoreCaseOrBioContainingIgnoreCase(
-				Role.valueOf("Educator"), query, query, pageable);
+	public UnifiedResponse<PageResponse<User>> filterEducators(String query, String startDate, String endDate,
+			String sort, Pageable pageable) {
+
+		Role role = Role.valueOf("Educator");
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null)
+			dates = commonHelper.parseDateRange(startDate, endDate);
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<User> educators = userRepository.findEducatorsByFilters(role, dates[0], dates[1], query, pageable);
 		return commonHelper.getPageResponse(educators);
 	}
 }

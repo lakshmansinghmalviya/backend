@@ -1,8 +1,12 @@
 package com.example.quizapp.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.BookmarkRequest;
@@ -44,11 +48,6 @@ public class BookmarkService {
 		return commonHelper.returnUnifiedOK("Bookmarked", null);
 	}
 
-	public UnifiedResponse<PageResponse<Bookmark>> getAllBookmarksOfUser(Pageable pageable) {
-		Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(getUser().getId(), pageable);
-		return commonHelper.getPageResponse(bookmarks);
-	}
-
 	public UnifiedResponse<Void> deleteBookmarkById(Long id) {
 		if (!bookmarkRepository.existsById(id)) {
 			throwException(id);
@@ -57,18 +56,33 @@ public class BookmarkService {
 		return commonHelper.returnUnifiedOK("Removed", null);
 	}
 
-	public UnifiedResponse<PageResponse<Bookmark>> searchBookmarksByQuery(String query, Pageable pageable) {
-		Page<Bookmark> bookmarks = bookmarkRepository
-				.findByUserIdAndQuizTitleContainingIgnoreCaseOrQuizDescriptionContainingIgnoreCase(getUser().getId(),
-						query, query, pageable);
-		return commonHelper.getPageResponse(bookmarks);
-	}
-
 	public ResourceNotFoundException throwException(Long id) {
 		throw new ResourceNotFoundException("Quiz not found with the id " + id);
 	}
 
 	public User getUser() {
 		return userHelper.getUser();
+	}
+
+	public UnifiedResponse<PageResponse<Bookmark>> findBookmarksByFilters(String startDate, String endDate,
+			String query, Long categoryId, Long timeLimit, Boolean randomizeQuestions, String sort, Pageable pageable) {
+		Long userId = null;
+		if (getUser().getRole().toString().equals("Student"))
+			userId = getUser().getId();
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<Bookmark> bookmarks = bookmarkRepository.findBookmarksByFilters(userId, dates[0], dates[1], query,
+				categoryId, timeLimit, randomizeQuestions, pageable);
+		return commonHelper.getPageResponse(bookmarks);
 	}
 }
