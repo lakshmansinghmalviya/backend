@@ -44,22 +44,19 @@ public class BookmarkController {
 		return ResponseBuilder.buildResponse(HttpStatus.CREATED, bookmarkService.bookmarkQuiz(request));
 	}
 
-	@GetMapping
-	public ResponseEntity<UnifiedResponse<PageResponse<Bookmark>>> getAllBookmarksOfUser(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder
-				.buildOKResponse(bookmarkService.getAllBookmarksOfUser(commonHelper.makePageReq(page, size)));
-	}
-
 	@DeleteMapping("/{id}")
 	public ResponseEntity<UnifiedResponse<Void>> deleteBookmark(@PathVariable("id") Long id) {
 		return ResponseBuilder.buildOKResponse(bookmarkService.deleteBookmarkById(id));
 	}
 
-	@GetMapping("/search")
-	public ResponseEntity<UnifiedResponse<PageResponse<Bookmark>>> searchBookmarks(@RequestParam String query,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder
-				.buildOKResponse(bookmarkService.searchBookmarksByQuery(query, commonHelper.makePageReq(page, size)));
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<Bookmark>>> filterBookmarks(
+			@RequestParam(required = false) String query, @RequestParam(required = false) Long timeLimit,
+			@RequestParam(required = false) Boolean randomizeQuestions, @RequestParam(required = false) Long categoryId,
+			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
+			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(bookmarkService.findBookmarksByFilters(start, end,query,categoryId, timeLimit,
+				randomizeQuestions, sort, commonHelper.makePageReq(page, size)));
 	}
 }

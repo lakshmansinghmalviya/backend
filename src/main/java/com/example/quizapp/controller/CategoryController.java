@@ -54,7 +54,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/filters")
-	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> filterQuizzes(
+	public ResponseEntity<UnifiedResponse<PageResponse<Category>>> filterCategories(
 			@RequestParam(required = false) String query, @RequestParam(required = false) Long creatorId,
 			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,

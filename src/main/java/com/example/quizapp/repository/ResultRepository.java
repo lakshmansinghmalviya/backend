@@ -1,5 +1,7 @@
 package com.example.quizapp.repository;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,15 +36,22 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 	@Query("SELECT COUNT(r) FROM Result r WHERE r.user.id = :id AND r.isCompleted = false")
 	Long findTotalIncompleteQuizzesByUserId(@Param("id") Long id);
 
-	@Query("SELECT r FROM Result r JOIN r.quiz q " + "WHERE r.user.id = :id AND ("
-			+ "LOWER(q.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) "
-			+ "OR STR(r.score) LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR STR(r.totalScore) LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR STR(r.timeSpent) LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR CASE WHEN r.isCompleted = true THEN 'Yes' ELSE 'No' END LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR STR(r.correctAnswers) LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR STR(r.incorrectAnswers) LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR STR(r.totalQuestion) LIKE CONCAT('%', :searchTerm, '%') "
-			+ "OR STR(r.timesTaken) LIKE CONCAT('%', :searchTerm, '%'))")
-	Page<Result> searchResults(@Param("id") Long id, @Param("searchTerm") String searchTerm, Pageable pageable);
+	@Query("SELECT r FROM Result r JOIN r.quiz q " + "WHERE (:userId IS NULL OR r.user.id = :userId) "
+			+ "AND (:query IS NULL OR LOWER(q.title) LIKE LOWER(CONCAT('%', :query, '%'))) "
+			+ "AND (:score IS NULL OR r.score = :score) " + "AND (:totalScore IS NULL OR r.totalScore = :totalScore) "
+			+ "AND (:timeSpent IS NULL OR r.timeSpent = :timeSpent) "
+			+ "AND (:isCompleted IS NULL OR r.isCompleted = :isCompleted) "
+			+ "AND (:correctAnswers IS NULL OR r.correctAnswers = :correctAnswers) "
+			+ "AND (:totalQuestion IS NULL OR r.totalQuestion = :totalQuestion) "
+			+ "AND (:timesTaken IS NULL OR r.timesTaken = :timesTaken) "
+			+ "AND (:startDate IS NULL OR r.createdAt >= :startDate) "
+			+ "AND (:endDate IS NULL OR r.createdAt <= :endDate) "
+			+ "AND (:timeLimit IS NULL OR q.timeLimit <= :timeLimit)")
+	Page<Result> searchResultsByFilters(@Param("userId") Long userId, @Param("query") String query,
+			@Param("score") Long score, @Param("totalScore") Long totalScore, @Param("timeSpent") Long timeSpent,
+			@Param("isCompleted") Boolean isCompleted, @Param("correctAnswers") Long correctAnswers,
+			@Param("totalQuestion") Long totalQuestion, @Param("timesTaken") Long timesTaken,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+			@Param("timeLimit") Long timeLimit, Pageable pageable);
+
 }
