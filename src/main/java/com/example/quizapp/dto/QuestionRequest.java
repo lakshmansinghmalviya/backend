@@ -2,8 +2,10 @@ package com.example.quizapp.dto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,24 +15,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuestionRequest {
 
-	@NotNull(message = "The quizId should not be null")
 	private Long quizId;
 
-	@NotNull(message = "The creatorId should not be null")
-	private Long creatorId;
-
-	private Long id;
-
-	@NotBlank(message = "questionType can't be blank")
+	@NotBlank(message = "Question type cannot be blank.")
 	private String questionType;
 
-	@NotBlank(message = "text can't be blank")
+	@NotBlank(message = "Text cannot be blank.")
+	@Size(min = 3, max = 300, message = "Question text should be between 3 and 300 characters.")
 	private String text;
 
-	@NotBlank(message = "maxScore can't be blank")
+	@NotNull(message = "Max score should not be null.")
+	@Min(value = 1, message = "Max score must be at least 1.")
 	private Long maxScore;
 
 	private String questionPic;
+
 	private Boolean randomizeOptions;
+
+	@Size(min = 2, message = "At least two options must be provided.")
 	private List<OptionRequest> options;
 }

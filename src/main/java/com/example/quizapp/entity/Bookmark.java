@@ -3,7 +3,7 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,16 +28,15 @@ public class Bookmark {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private boolean isActive;
-
+   
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	@JsonBackReference
-	private MyUser user;
+	private User user;
 
 	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@JsonManagedReference
+	@JsonIgnoreProperties({ "categories", "quizzes", "results", "feedbacks", "bookmarks" })
 	private Quiz quiz;
 
 	@Column(name = "created_at", updatable = false)
@@ -46,11 +45,13 @@ public class Bookmark {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+	@Column(name = "is_bookmarked")
+	private Boolean isBookmarked;
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
-		this.isActive = true;
 	}
 
 	@PreUpdate

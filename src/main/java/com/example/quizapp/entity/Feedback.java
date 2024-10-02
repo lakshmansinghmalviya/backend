@@ -28,20 +28,18 @@ public class Feedback {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String feebackText;
+	@Column(nullable = false)
+	private String feedbackText;
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	@JsonBackReference
-	private MyUser user;
+	private User user;
 
 	@ManyToOne()
 	@JoinColumn(name = "question_id", nullable = false)
 	@JsonBackReference
 	private Question question;
-
-	private boolean isActive;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;

@@ -1,7 +1,9 @@
 package com.example.quizapp.repository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,14 +14,20 @@ import com.example.quizapp.entity.Quiz;
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
-	List<Quiz> findByCreator_UserId(Long userId);
-
-	List<Quiz> findByCategory_Id(Long id);
-
-	Long countByCreator_UserId(Long userId);
+	Long countByCreatorId(Long id);
 
 	boolean existsById(Long id);
-
-	@Query(nativeQuery = true, value = "SELECT * FROM quizzes q  ORDER BY created_at DESC LIMIT :limit")
-	List<Quiz> getTop4(@Param("limit") int limit);
+	
+	@Query("SELECT q FROM Quiz q " + "WHERE (:creatorId IS NULL OR q.creator.id = :creatorId) "
+			+ "AND (:startDate IS NULL OR q.createdAt >= :startDate) "
+			+ "AND (:endDate IS NULL OR q.createdAt <= :endDate) "
+			+ "AND (:query IS NULL OR (LOWER(q.title) LIKE LOWER(CONCAT('%', :query, '%')) "
+			+ "OR LOWER(q.description) LIKE LOWER(CONCAT('%', :query, '%'))))"
+			+ "AND (:categoryId IS NULL OR q.category.id = :categoryId) "
+			+ "AND (:timeLimit IS NULL OR q.timeLimit <= :timeLimit) "
+			+ "AND (:randomizeQuestions IS NULL OR q.randomizeQuestions = :randomizeQuestions)")
+	Page<Quiz> findQuizzesByFilters(@Param("creatorId") Long creatorId, @Param("startDate") LocalDateTime startDate,
+			@Param("endDate") LocalDateTime endDate, @Param("query") String query, @Param("categoryId") Long categoryId,
+			@Param("timeLimit") Long timeLimit, @Param("randomizeQuestions") Boolean randomizeQuestions,
+			Pageable pageable);
 }

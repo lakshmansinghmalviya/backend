@@ -1,5 +1,7 @@
 package com.example.quizapp.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LimitedUsersResponse {
-	private Long userId;
-	private String name;
-	private String profilePic;
-	private String bio;
-	private String education;
+public class UnifiedResponse<T> implements Serializable {
+	private Integer code;
+	private String msg;
+	private T data;
 }
-

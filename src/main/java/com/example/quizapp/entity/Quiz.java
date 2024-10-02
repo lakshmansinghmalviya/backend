@@ -2,12 +2,14 @@ package com.example.quizapp.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,10 +33,10 @@ public class Quiz {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String title;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(nullable = false)
 	private String description;
 
 	@Column(name = "quiz_pic", columnDefinition = "TEXT")
@@ -45,31 +47,29 @@ public class Quiz {
 
 	private Boolean randomizeQuestions;
 
-	private Long attemptedTimes;
+	private Boolean isDeleted;
 
-	private Boolean isActive;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "categroy_id", nullable = false)
-	@JsonBackReference
+	@ManyToOne()
+	@JoinColumn(name = "category_id", nullable = false)
+	@JsonIgnoreProperties("quizzes")
 	private Category category;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Question> questions;
 
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Result> results;
 
-	@OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Bookmark> bookmarks;
 
-	@JsonBackReference
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
-	private MyUser creator;
+	@JsonIgnoreProperties("quizzes")
+	private User creator;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;

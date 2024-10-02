@@ -1,18 +1,23 @@
 package com.example.quizapp.service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.CategoryUpdateRequest;
-import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
-import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class CategoryService {
@@ -21,85 +26,66 @@ public class CategoryService {
 	private CategoryRepository categoryRepository;
 
 	@Autowired
-	private UserRepository userRepository;
+	CommonHelper commonHelper;
 
-	public MessageResponse createCategory(CategoryRequest request) {
-		try {
-			MyUser creator = userRepository.findById(request.getCreatorId())
-					.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+	@Autowired
+	UserHelper userHelper;
 
-			Category category = new Category();
-			category.setName(request.getName());
-			category.setDescription(request.getDescription());
-			category.setActive(true);
-			category.setCategoryPic(request.getCategoryPic());
-			category.setCreator(creator);
-			categoryRepository.save(category);
-			return new MessageResponse("Category Created");
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create category: " + e.getMessage());
-		}
+	public UnifiedResponse<Category> createCategory(CategoryRequest request) {
+		Category category = new Category();
+		category.setName(request.getName());
+		category.setDescription(request.getDescription());
+		category.setCategoryPic(request.getCategoryPic());
+		category.setCreator(getUser());
+		categoryRepository.save(category);
+		return commonHelper.returnUnifiedCREATED("Category Created Successfully", null);
 	}
 
-	@Transactional
-	public List<Category> getCategoriesByCreatorId(Long creatorId) {
-		try {
-			return categoryRepository.findByCreator_UserId(creatorId);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
+	public UnifiedResponse<Void> deleteCategoryById(Long categoryId) {
+		if (!categoryRepository.existsById(categoryId)) {
+			throwException(categoryId);
 		}
+		categoryRepository.deleteById(categoryId);
+		return commonHelper.returnUnifiedOK("Deleted", null);
 	}
 
-	@Transactional
-	public String deleteCategoryById(Long categoryId) {
-		try {
-			if (categoryRepository.existsById(categoryId))
-				categoryRepository.deleteById(categoryId);
+	public UnifiedResponse<Category> updateCategoryById(Long categoryId, CategoryRequest request) {
 
-			return "Deleted the category Successfully";
-
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to delete category: " + e.getMessage());
-		}
-	}
-
-	@Transactional
-	public Category updateCategoryById(Long categoryId, CategoryUpdateRequest request) {
-		try {
-			Category category = categoryRepository.findById(categoryId)
-					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-			category.setName(request.getName());
-			category.setDescription(request.getDescription());
-			category.setCategoryPic(request.getCategoryPic());
-			return categoryRepository.save(category);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to update category: " + e.getMessage());
-		}
+		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
+		category.setName(request.getName());
+		category.setDescription(request.getDescription());
+		category.setCategoryPic(request.getCategoryPic());
+		return commonHelper.returnUnifiedOK("Updated", categoryRepository.save(category));
 	}
 
 	public Category getCategoryById(Long categoryId) {
-		try {
-			Category category = categoryRepository.findById(categoryId)
-					.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-			return category;
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve category: " + e.getMessage());
-		}
+		return categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 	}
 
-	public Long getTotalCategory(Long id) {
-		try {
-			return categoryRepository.countByCreator_UserId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to fetch total category of the user: " + e.getMessage());
-		}
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Category not found with the id " + id);
 	}
 
-	public List<Category> getCategories() {
-		try {
-			return categoryRepository.findAll();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve categories: " + e.getMessage());
+	public User getUser() {
+		return userHelper.getUser();
+	}
+
+	public UnifiedResponse<PageResponse<Category>> filterCategories(String query, String startDate, String endDate,
+			Long creatorId, String sort, Pageable pageable) {
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
 		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<Category> categories = categoryRepository.findCategoriesByFilters(creatorId, dates[0], dates[1], query,
+				pageable);
+		return commonHelper.getPageResponse(categories);
 	}
 }

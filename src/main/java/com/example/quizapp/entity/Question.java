@@ -3,14 +3,13 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,9 +32,10 @@ public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Boolean isActive;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	private Boolean isDeleted;
+
+	@Column(nullable = false, unique = true)
 	private String text;
 
 	@Column(name = "question_type", nullable = false)
@@ -50,21 +50,21 @@ public class Question {
 	@Column(name = "maxscore", nullable = false)
 	private Long maxScore;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@JsonBackReference
+	@JsonIgnoreProperties({ "categories", "quizzes", "results", "feedbacks", "bookmarks", "questions" })
 	private Quiz quiz;
 
 	@ManyToOne()
 	@JoinColumn(name = "creator_id", nullable = false)
 	@JsonBackReference
-	private MyUser creator;
+	private User creator;
 
-	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Option> options;
 
-	@OneToMany(mappedBy = "question")
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Feedback> feedbacks;
 

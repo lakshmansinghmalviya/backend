@@ -2,12 +2,15 @@ package com.example.quizapp.exception;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import com.example.quizapp.dto.MessageResponse;
 
 @ControllerAdvice
@@ -36,14 +39,20 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<MessageResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+		MessageResponse errorResponse = new MessageResponse(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 
-	@ExceptionHandler(ResourceAlreadyExits.class)
-	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExits ex) {
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExistsException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
 	}

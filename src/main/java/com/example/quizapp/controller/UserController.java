@@ -1,55 +1,61 @@
 package com.example.quizapp.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.LimitedUsersRequest;
-import com.example.quizapp.dto.LimitedUsersResponse;
+import com.example.quizapp.dto.EducatorProfileDataResponse;
+import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
 import com.example.quizapp.service.UserService;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.ResponseBuilder;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-	
+
 	@Autowired
 	UserService userService;
 
-	@GetMapping("/{id}")
-	public ResponseEntity<MyUser> getUserInformation(@PathVariable Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
+	@Autowired
+	CommonHelper commonHelper;
+
+	@GetMapping("/currentUser")
+	public ResponseEntity<UnifiedResponse<User>> getUserInformation() {
+		return ResponseBuilder.buildOKResponse(userService.getUserInformation());
 	}
 
-	@GetMapping("/byRole/{role}")
-	public ResponseEntity<List<MyUser>> getUserProfileByRole(@PathVariable("role") String role) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfileByRole(role));
+	@GetMapping("/educatorProfileData")
+	public ResponseEntity<UnifiedResponse<EducatorProfileDataResponse>> getEducatorProfileInformation() {
+		return ResponseBuilder.buildOKResponse(userService.getEducatorProfileInformation());
 	}
 
-	@PostMapping("/top")
-	public ResponseEntity<Page<LimitedUsersResponse>> getLimitedUsersByRole(@RequestBody LimitedUsersRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getEducators(request));
+	@PutMapping("/update")
+	public ResponseEntity<UnifiedResponse<User>> updateUser(@Valid @RequestBody UpdateUserRequest request) {
+		return ResponseBuilder.buildOKResponse(userService.updateUser(request));
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<MyUser> updateUserById(@PathVariable("id") Long id, @RequestBody UpdateUserRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, request));
+	@PutMapping("/logout")
+	public ResponseEntity<UnifiedResponse<Void>> doUserLogout() {
+		return ResponseBuilder.buildOKResponse(userService.logout());
 	}
 
-	@PutMapping("/logout/{id}")
-	public ResponseEntity<Void> doUserLogout(@PathVariable Long id) {
-		userService.logout(id);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<User>>> filterEducators(
+			@RequestParam(required = false) String query, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(
+				userService.filterEducators(query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}
 }

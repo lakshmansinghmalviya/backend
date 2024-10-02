@@ -14,28 +14,20 @@ public class OptionService {
 	OptionRepository optionRepository;
 
 	public Option createOption(OptionRequest request, Question question) {
-		try {
-			Option option = new Option();
-			option.setOptionPic(request.getOptionPic());
-			option.setText(request.getText());
-			option.setIsCorrect(request.getIsCorrect());
-			option.setQuestion(question);
-			return optionRepository.save(option);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create option " + e.getMessage());
-		}
+		Option option = new Option();
+		option.setOptionPic(request.getOptionPic());
+		option.setText(request.getText());
+		option.setIsCorrect(request.getIsCorrect());
+		option.setQuestion(question);
+		return optionRepository.save(option);
 	}
 
 	public Option updateOption(OptionRequest request) {
-		try {
-			Option option = optionRepository.findById(request.getId())
-					.orElseThrow(() -> new RuntimeException("Option not found with id: " + request.getId()));
-			option.setText(request.getText());
-			option.setOptionPic(request.getOptionPic());
-			option.setIsCorrect(request.getIsCorrect());
-			return optionRepository.save(option);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to update question: " + e.getMessage());
-		}
+		Option option = optionRepository.findById(request.getId())
+				.orElseThrow(() -> new RuntimeException("Option not found with id: " + request.getId()));
+		option.setText(request.getText());
+		option.setOptionPic(request.getOptionPic());
+		option.setIsCorrect(request.getIsCorrect());
+		return optionRepository.save(option);
 	}
 }

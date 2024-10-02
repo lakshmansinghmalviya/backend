@@ -1,26 +1,34 @@
 package com.example.quizapp.repository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.quizapp.dto.LimitedUsersResponse;
-import com.example.quizapp.entity.*;
+import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Role;
 
 @Repository
-public interface UserRepository extends JpaRepository<MyUser, Long> {
-   
-	Optional<MyUser> findByUsername(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
 
-	boolean existsByUsername(String myUserRepo);
+	Optional<User> findByEmail(String email);
 
-	MyUser findByUserId(Long userId);
+	boolean existsByEmail(String email);
 
-	Page<MyUser> findByRole(String role, Pageable pageable);
+	Optional<User> findById(Long id);
 
-	List<MyUser> findByRole(String role);
+	Page<User> findByRole(Role role, Pageable pageable);
+
+	@Query("SELECT u FROM User u " + "WHERE u.role = :role " + "AND (:startDate IS NULL OR u.createdAt >= :startDate) "
+			+ "AND (:endDate IS NULL OR u.createdAt <= :endDate) "
+			+ "AND (:query IS NULL OR (LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) "
+			+ "OR LOWER(u.education) LIKE LOWER(CONCAT('%', :query, '%')) "
+			+ "OR LOWER(u.bio) LIKE LOWER(CONCAT('%', :query, '%'))))")
+	Page<User> findEducatorsByFilters(@Param("role") Role role, @Param("startDate") LocalDateTime startDate,
+			@Param("endDate") LocalDateTime endDate, @Param("query") String query, Pageable pageable);
 }

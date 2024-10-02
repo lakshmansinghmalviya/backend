@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorResponse {
-	private int status;
-	private String message;
+public class EducatorProfileDataResponse {
+	private Long totalCategory;
+	private Long totalQuiz;
+	private Long totalQuestion;
 }

@@ -1,43 +1,49 @@
 package com.example.quizapp.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.quizapp.enums.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyUser {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userId;
+	private Long id;
 
 	@Column(nullable = false, unique = true)
-	private String username;
+	private String email;
 
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(nullable = false)
-	private boolean logout;
+	@Column()
+	private boolean isLogout;
 
 	@Column(nullable = false)
 	private String name;
@@ -52,10 +58,8 @@ public class MyUser {
 	private String education;
 
 	@Column(nullable = false)
-	private String role;
-
-	@Column(nullable = true)
-	private String token;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
@@ -64,14 +68,13 @@ public class MyUser {
 	private LocalDateTime updatedAt;
 
 	private String bio;
-	private boolean isActive;
 
-	@OneToMany(mappedBy = "creator")
+	@OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Category> categories;
 
 	@OneToMany(mappedBy = "creator")
-	@JsonBackReference
+	@JsonManagedReference
 	private List<Quiz> quizzes;
 
 	@OneToMany(mappedBy = "user")
@@ -94,7 +97,6 @@ public class MyUser {
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
-		this.isActive = true;
 	}
 
 	@PreUpdate

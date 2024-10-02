@@ -1,18 +1,26 @@
 package com.example.quizapp.service;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.OptionRequest;
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuestionRequest;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.entity.User;
+import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuestionRepository;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 import jakarta.transaction.Transactional;
 
@@ -29,104 +37,87 @@ public class QuestionService {
 	private OptionService optionService;
 
 	@Autowired
-	private UserService userService;
+	CommonHelper commonHelper;
 
-	public List<Question> getAllByQuizId(Long id) {
-		try {
-			quizService.exist(id);
-			return questionRepository.findAllByQuizId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
-	}
+	@Autowired
+	UserHelper userHelper;
 
 	@Transactional
-	public Question create(QuestionRequest request) {
-		try {
-			Quiz quiz = quizService.findById(request.getQuizId());
-			MyUser creator = userService.getUser(request.getCreatorId());
-			Question question = new Question();
-			question.setText(request.getText());
-			question.setIsActive(true);
-			question.setQuestionPic(request.getQuestionPic());
-			question.setQuiz(quiz);
-			question.setCreator(creator);
-			question.setQuestionType(request.getQuestionType());
-			question.setMaxScore(request.getMaxScore());
-			question.setRandomizeOptions(request.getRandomizeOptions());
-			question = questionRepository.save(question);
-			for (OptionRequest optionReq : request.getOptions())
-				optionService.createOption(optionReq, question);
-			return question;
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create question: " + e.getMessage());
+	public UnifiedResponse<Question> create(QuestionRequest request) {
+		if (questionRepository.existsByTextAndQuizId(request.getText(), request.getQuizId())) {
+			throw new ResourceAlreadyExistsException("Question already exits in the same quiz");
 		}
+
+		Quiz quiz = quizService.findById(request.getQuizId());
+		Question question = new Question();
+		question.setText(request.getText());
+		question.setIsDeleted(false);
+		question.setQuestionPic(request.getQuestionPic());
+		question.setQuiz(quiz);
+		question.setCreator(getUser());
+		question.setQuestionType(request.getQuestionType());
+		question.setMaxScore(request.getMaxScore());
+		question.setRandomizeOptions(request.getRandomizeOptions());
+		question = questionRepository.save(question);
+		for (OptionRequest optionReq : request.getOptions())
+			optionService.createOption(optionReq, question);
+		return commonHelper.returnUnifiedCREATED("Created", question);
 	}
 
-	@Transactional
-	public void delete(Long id) {
-		try {
+	public UnifiedResponse<Void> delete(Long id) {
+		if (questionRepository.existsById(id))
 			questionRepository.deleteById(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to delete question: " + e.getMessage());
-		}
+		else
+			throwException(id);
+		return commonHelper.returnUnifiedOK("Deleted", null);
 	}
 
 	@Transactional
-	public Question update(Long id, QuestionRequest request) {
-		try {
+	public UnifiedResponse<Question> update(Long id, QuestionRequest request) {
 
-			Question question = getQuestionById(request.getId());
+		Question question = getQuestionById(id);
+		for (OptionRequest optionReq : request.getOptions())
+			optionService.updateOption(optionReq);
 
-			for (OptionRequest optionReq : request.getOptions())
-				optionService.updateOption(optionReq);
-
-			question.setText(request.getText());
-			question.setIsActive(true);
-			question.setQuestionPic(request.getQuestionPic());
-			question.setQuestionType(request.getQuestionType());
-			question.setMaxScore(request.getMaxScore());
-			question.setRandomizeOptions(request.getRandomizeOptions());
-			return questionRepository.save(question);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to update question: " + e.getMessage());
-		}
-	}
-
-	public Long getTotalQuestionsOfTheEducator(Long id) {
-		try {
-			return questionRepository.countByCreator_UserId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
-	}
-
-	public List<Question> getAllQuestion() {
-		try {
-			return questionRepository.findAll();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
-		}
-	}
-
-	public List<Question> getAllQuestionByCreatorId(Long id) {
-		try {
-			return questionRepository.findByCreator_UserId(id);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve questions : " + e.getMessage());
-		}
+		question.setText(request.getText());
+		question.setQuestionPic(request.getQuestionPic());
+		question.setQuestionType(request.getQuestionType());
+		question.setMaxScore(request.getMaxScore());
+		question.setRandomizeOptions(request.getRandomizeOptions());
+		return commonHelper.returnUnifiedOK("Udpated", questionRepository.save(question));
 	}
 
 	public Question getQuestionById(Long id) {
-		try {
-			Optional<Question> question = questionRepository.findById(id);
-			if (question.isPresent())
-				return question.get();
-			else
-				throw new ResourceNotFoundException("Question not found");
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to retrieve question"+e.getMessage());
-		}
+		return questionRepository.findById(id).orElseThrow(() -> throwException(id));
 	}
 
+	public UnifiedResponse<PageResponse<Question>> findQuestionsByFilters(Long creatorId, Long quizId, String startDate,
+			String endDate, String query, Boolean randomizeOptions, String questionType, String sort,
+			Pageable pageable) {
+
+		if (getUser().getRole().toString().equals("Educator"))
+			creatorId = getUser().getId();
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+		Page<Question> questions = questionRepository.findQuestionsByFilters(creatorId, quizId, dates[0], dates[1],
+				query, randomizeOptions, questionType, pageable);
+		return commonHelper.getPageResponse(questions);
+	}
+
+	public User getUser() {
+		return userHelper.getUser();
+	}
+
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Question not found with the id " + id);
+	}
 }

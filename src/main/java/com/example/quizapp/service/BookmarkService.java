@@ -1,18 +1,25 @@
 package com.example.quizapp.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.BookmarkRequest;
 import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
-import com.example.quizapp.entity.MyUser;
 import com.example.quizapp.entity.Quiz;
-import com.example.quizapp.exception.ResourceAlreadyExits;
+import com.example.quizapp.entity.User;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.BookmarkRepository;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.UserHelper;
 
 @Service
 public class BookmarkService {
@@ -21,36 +28,61 @@ public class BookmarkService {
 	BookmarkRepository bookmarkRepository;
 
 	@Autowired
-	UserService userService;
-
-	@Autowired
 	QuizService quizService;
 
-	public MessageResponse bookmarkQuiz(BookmarkRequest request) {
-		try {
+	@Autowired
+	CommonHelper commonHelper;
 
-			if (bookmarkRepository.existsByUser_UserIdAndQuiz_Id(request.getUserId(), request.getQuizId())) {
-				return new MessageResponse("Already bookmarked please bookmark other one");
-			}
+	@Autowired
+	UserHelper userHelper;
 
-			MyUser user = userService.getUser(request.getUserId());
-			Quiz quiz = quizService.findById(request.getQuizId());
-			Bookmark bookmark = new Bookmark();
-			bookmark.setQuiz(quiz);
-			bookmark.setUser(user);
-			bookmarkRepository.save(bookmark);
-			return new MessageResponse("bookmarked");
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to bookmark quiz : " + e.getMessage());
+	public UnifiedResponse<MessageResponse> bookmarkQuiz(BookmarkRequest request) {
+		if (bookmarkRepository.existsByUserIdAndQuizId(getUser().getId(), request.getQuizId())) {
+			return commonHelper.returnUnifiedCREATED("Already bookmarked please bookmark other one", null);
 		}
+		Quiz quiz = quizService.findById(request.getQuizId());
+		Bookmark bookmark = new Bookmark();
+		bookmark.setQuiz(quiz);
+		bookmark.setUser(getUser());
+		bookmarkRepository.save(bookmark);
+		return commonHelper.returnUnifiedOK("Bookmarked", null);
 	}
 
-	public List<Quiz> getAllBookmarksOfUser(Long userId) {
-		try {
-			List<Bookmark> bookmarks = bookmarkRepository.findAllByUser_UserId(userId);
-			return bookmarks.stream().map(Bookmark::getQuiz).collect(Collectors.toList());
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to fetch quiz : " + e.getMessage());
+	public UnifiedResponse<Void> deleteBookmarkById(Long id) {
+		if (!bookmarkRepository.existsById(id)) {
+			throwException(id);
 		}
+		bookmarkRepository.deleteById(id);
+		return commonHelper.returnUnifiedOK("Removed", null);
+	}
+
+	public ResourceNotFoundException throwException(Long id) {
+		throw new ResourceNotFoundException("Quiz not found with the id " + id);
+	}
+
+	public User getUser() {
+		return userHelper.getUser();
+	}
+
+	public UnifiedResponse<PageResponse<Bookmark>> findBookmarksByFilters(String startDate, String endDate,
+			String query, Long categoryId, Long timeLimit, Boolean randomizeQuestions, String sort, Pageable pageable) {
+		Long userId = null;
+		if (getUser().getRole().toString().equals("Student"))
+			userId = getUser().getId();
+
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null) {
+			dates = commonHelper.parseDateRange(startDate, endDate);
+		}
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
+		}
+
+		Page<Bookmark> bookmarks = bookmarkRepository.findBookmarksByFilters(userId, dates[0], dates[1], query,
+				categoryId, timeLimit, randomizeQuestions, pageable);
+		return commonHelper.getPageResponse(bookmarks);
 	}
 }

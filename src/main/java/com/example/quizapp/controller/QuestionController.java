@@ -1,7 +1,5 @@
 package com.example.quizapp.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +11,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuestionRequest;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.service.QuestionService;
+import com.example.quizapp.util.CommonHelper;
+import com.example.quizapp.util.ResponseBuilder;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/questions")
@@ -26,50 +31,36 @@ public class QuestionController {
 	@Autowired
 	QuestionService questionService;
 
+	@Autowired
+	CommonHelper commonHelper;
+
 	@PostMapping()
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> createQuestion(@RequestBody QuestionRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.create(request));
+	public ResponseEntity<UnifiedResponse<Question>> createQuestion(@Valid @RequestBody QuestionRequest request) {
+		return ResponseBuilder.buildResponse(HttpStatus.CREATED, questionService.create(request));
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> update(@PathVariable("id") Long id, @RequestBody QuestionRequest request) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.update(id, request));
+	public ResponseEntity<UnifiedResponse<Question>> update(@PathVariable("id") Long id,
+			@Valid @RequestBody QuestionRequest request) {
+		return ResponseBuilder.buildResponse(HttpStatus.OK, questionService.update(id, request));
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> delete(@PathVariable("id") Long id) {
-		questionService.delete(id);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<UnifiedResponse<Void>> delete(@PathVariable("id") Long id) {
+		return ResponseBuilder.buildOKResponse(questionService.delete(id));
 	}
 
-	@GetMapping("/creator/{id}/total")
-	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Long> getTotalQuestionOfTheEducator(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getTotalQuestionsOfTheEducator(id));
-	}
-
-	@GetMapping()
-	public ResponseEntity<List<Question>> getQuestions() {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestion());
-	}
-
-	@GetMapping("/creator/{id}")
-	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<List<Question>> getQuestionsByCreatorId(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllQuestionByCreatorId(id));
-	}
-
-	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<Question> getQuestionById(@PathVariable("id") Long id) {
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestionById(id));
-	}
-	
-	@GetMapping("/quiz/{id}")
-	public ResponseEntity<List<Question> > getAllQuestionByQuizId(@PathVariable("id") Long id){
-		return ResponseEntity.status(HttpStatus.OK).body(questionService.getAllByQuizId(id));
+	@GetMapping("/filters")
+	public ResponseEntity<UnifiedResponse<PageResponse<Question>>> findQuestionsByFilters(
+			@RequestParam(required = false) String query, @RequestParam(required = false) Boolean randomizeOptions,
+			@RequestParam(required = false) String questionType, @RequestParam(required = false) Long quizId,
+			@RequestParam(required = false) Long creatorId, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(questionService.findQuestionsByFilters(creatorId, quizId, start, end,
+				query, randomizeOptions, questionType, sort, commonHelper.makePageReq(page, size)));
 	}
 }

@@ -1,86 +1,113 @@
 package com.example.quizapp.service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.LimitedUsersRequest;
-import com.example.quizapp.dto.LimitedUsersResponse;
+import com.example.quizapp.dto.EducatorProfileDataResponse;
+import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
-import com.example.quizapp.entity.MyUser;
+import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Role;
 import com.example.quizapp.exception.ResourceNotFoundException;
+import com.example.quizapp.repository.CategoryRepository;
+import com.example.quizapp.repository.QuestionRepository;
+import com.example.quizapp.repository.QuizRepository;
 import com.example.quizapp.repository.UserRepository;
+import com.example.quizapp.util.CommonHelper;
 
 @Service
 public class UserService {
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private QuizRepository quizRepository;
+
+	@Autowired
+	private QuestionRepository questionRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public Page<LimitedUsersResponse> getEducators(LimitedUsersRequest request) {
-		try {
-			Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-			Page<MyUser> usersPage = userRepository.findByRole(request.getRole(), pageable);
-			return usersPage.map(user -> {
-				LimitedUsersResponse response = new LimitedUsersResponse();
-				response.setUserId(user.getUserId());
-				response.setName(user.getName());
-				response.setProfilePic(user.getProfilePic());
-				response.setBio(user.getBio());
-				return response;
-			});
-		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong " + e.getMessage());
-		}
+	@Autowired
+	private CommonHelper commonHelper;
+
+	public UnifiedResponse<PageResponse<User>> getEducators(Pageable pageable) {
+		Role role = Role.valueOf("Educator");
+		Page<User> userPage = userRepository.findByRole(role, pageable);
+		return commonHelper.getPageResponse(userPage);
 	}
 
-	public MyUser getUser(Long id) {
-		try {
-			return userRepository.findByUserId(id);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("User Not Found" + e.getMessage());
-		}
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 	}
 
-	public List<MyUser> getUserProfileByRole(String role) {
-		try {
-			return userRepository.findByRole(role);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException(e.getMessage() + " Educators not found");
+	public UnifiedResponse<User> updateUser(UpdateUserRequest request) {
+		User user = getUserInfoUsingTokenInfo();
+		user.setBio(request.getBio());
+		user.setName(request.getName());
+		user.setProfilePic(request.getProfilePic());
+		user.setEducation(request.getEducation());
+		if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+			user.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
+		return commonHelper.returnUnifiedOK("Updated user", userRepository.save(user));
 	}
 
-	public MyUser updateUserById(Long id, UpdateUserRequest request) {
-		try {
-			MyUser user = userRepository.findByUserId(id);
-			user.setBio(request.getBio());
-			user.setName(request.getName());
-			user.setProfilePic(request.getProfilePic());
-			user.setEducation(request.getEducation());
-			user.setUsername(request.getUsername());
-			if (!request.getPassword().trim().isEmpty())
-				user.setPassword(passwordEncoder.encode(request.getPassword()));
-			return userRepository.save(user);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("User Not Found" + e.getMessage());
-		}
+	public UnifiedResponse<Void> logout() {
+		User user = getUserInfoUsingTokenInfo();
+		user.setLogout(true);
+		userRepository.save(user);
+		return commonHelper.returnUnifiedOK("Logged out", null);
 	}
 
-	public void logout(Long id) {
-		try {
-			MyUser user = userRepository.findByUserId(id);
-			user.setToken(null);
-			userRepository.save(user);
-		} catch (Exception e) {
-			throw new ResourceNotFoundException("User Not Found" + e.getMessage());
+	public User getUserInfoUsingTokenInfo() {
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return getUserByEmail(username);
+	}
+
+	public UnifiedResponse<User> getUserInformation() {
+		return commonHelper.returnUnifiedOK("Fetched user", getUserInfoUsingTokenInfo());
+	}
+
+	public UnifiedResponse<EducatorProfileDataResponse> getEducatorProfileInformation() {
+		User creator = getUserInfoUsingTokenInfo();
+		Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
+		Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
+		Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
+		return commonHelper.returnUnifiedOK("Fetched user",
+				new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion));
+	}
+
+	public UnifiedResponse<PageResponse<User>> filterEducators(String query, String startDate, String endDate,
+			String sort, Pageable pageable) {
+
+		Role role = Role.valueOf("Educator");
+		LocalDateTime[] dates = { null, null };
+
+		if (startDate != null && endDate != null)
+			dates = commonHelper.parseDateRange(startDate, endDate);
+
+		if (sort != null) {
+			Sort sorting = commonHelper.parseSortString(sort);
+			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
 		}
+
+		Page<User> educators = userRepository.findEducatorsByFilters(role, dates[0], dates[1], query, pageable);
+		return commonHelper.getPageResponse(educators);
 	}
 }

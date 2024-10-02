@@ -3,9 +3,9 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,9 +27,8 @@ public class Option {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Boolean isActive;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(nullable = false)
 	private String text;
 
 	@Column(nullable = false)
@@ -38,8 +37,8 @@ public class Option {
 	@Column(name = "option_pic", columnDefinition = "TEXT")
 	private String optionPic;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_id", nullable =false)
+	@ManyToOne()
+	@JoinColumn(name = "question_id", nullable = false)
 	@JsonBackReference
 	private Question question;
 

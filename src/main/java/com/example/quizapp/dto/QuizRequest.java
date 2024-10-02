@@ -1,6 +1,9 @@
 package com.example.quizapp.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,22 +14,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuizRequest {
 
-	@Size(min = 3, message = "Title should have at least 3 characters")
+	@NotBlank(message = "title is required.")
+	@Size(min = 3, max = 100, message = "title should have between 3 and 100 characters.")
+	@Pattern(regexp = "^[A-Za-z][A-Za-z0-9 ]*$", message = "title should start with a letter and contain only letters, numbers, and spaces.")
 	private String title;
 
-	@Size(min = 6, message = "description should have at least 6 characters")
+	@NotBlank(message = "Description is required.")
+	@Size(min = 10, max = 500, message = "Description should have between 10 and 500 characters.")
 	private String description;
 
 	private String quizPic;
 
-	@NotNull(message = "There should be some time for every quiz")
+	@NotNull(message = "Time limit should not be null.")
+	@Min(value = 1, message = "Time limit should be greater than 0.")
 	private Long timeLimit;
 
 	private Boolean randomizeQuestions;
 
-	@NotNull(message = "The categoryId should not be null")
 	private Long categoryId;
-
-	@NotNull(message = "The creatorId should not be null")
-	private Long creatorId;
 }

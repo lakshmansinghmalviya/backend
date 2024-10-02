@@ -24,7 +24,7 @@ import com.example.quizapp.service.MyUserDetailService;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-	
+
 	@Autowired
 	private MyUserDetailService userDetailService;
 
