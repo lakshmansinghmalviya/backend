@@ -45,7 +45,9 @@ public class CategoryService {
 		if (!categoryRepository.existsById(categoryId)) {
 			throwException(categoryId);
 		}
-		categoryRepository.deleteById(categoryId);
+		Category category = getCategoryById(categoryId);
+		category.setDeleted(true);
+		categoryRepository.save(category);
 		return commonHelper.returnUnifiedOK("Deleted", null);
 	}
 

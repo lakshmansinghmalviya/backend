@@ -14,6 +14,7 @@ import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.dto.UpdateUserRequest;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Role;
 import com.example.quizapp.service.UserService;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.ResponseBuilder;
@@ -51,11 +52,12 @@ public class UserController {
 	}
 
 	@GetMapping("/filters")
-	public ResponseEntity<UnifiedResponse<PageResponse<User>>> filterEducators(
+	public ResponseEntity<UnifiedResponse<PageResponse<User>>> findUsersByFilters(
 			@RequestParam(required = false) String query, @RequestParam(required = false) String sort,
-			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(required = false) Role role, @RequestParam(required = false) String start,
+			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
 		return ResponseBuilder.buildOKResponse(
-				userService.filterEducators(query, start, end, sort, commonHelper.makePageReq(page, size)));
+				userService.findUsersByFilters(role,query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}
 }

@@ -27,8 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("SELECT u FROM User u " + "WHERE u.role = :role " + "AND (:startDate IS NULL OR u.createdAt >= :startDate) "
 			+ "AND (:endDate IS NULL OR u.createdAt <= :endDate) "
 			+ "AND (:query IS NULL OR (LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) "
+			+ "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.education) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.bio) LIKE LOWER(CONCAT('%', :query, '%'))))")
-	Page<User> findEducatorsByFilters(@Param("role") Role role, @Param("startDate") LocalDateTime startDate,
+	Page<User> findUsersByFilters(@Param("role") Role role, @Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate, @Param("query") String query, Pageable pageable);
 }

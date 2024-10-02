@@ -35,20 +35,20 @@ public class CategoryController {
 	CommonHelper commonHelper;
 
 	@PostMapping()
-	@PreAuthorize("hasRole('Educator')")
+	@PreAuthorize("hasRole('Admin')")
 	public ResponseEntity<UnifiedResponse<Category>> createCategory(@Valid @RequestBody CategoryRequest request) {
 		return ResponseBuilder.buildResponse(HttpStatus.CREATED, categoryService.createCategory(request));
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('Educator')")
+	@PreAuthorize("hasRole('Admin')")
 	public ResponseEntity<UnifiedResponse<Category>> updateCategoryById(@PathVariable("id") Long id,
 			@Valid @RequestBody CategoryRequest request) {
 		return ResponseBuilder.buildOKResponse(categoryService.updateCategoryById(id, request));
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('Educator')")
+	@PreAuthorize("hasRole('Admin')")
 	public ResponseEntity<UnifiedResponse<Void>> deleteCategory(@PathVariable("id") Long id) {
 		return ResponseBuilder.buildOKResponse(categoryService.deleteCategoryById(id));
 	}

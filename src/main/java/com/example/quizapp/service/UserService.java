@@ -93,10 +93,9 @@ public class UserService {
 				new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion));
 	}
 
-	public UnifiedResponse<PageResponse<User>> filterEducators(String query, String startDate, String endDate,
-			String sort, Pageable pageable) {
+	public UnifiedResponse<PageResponse<User>> findUsersByFilters(Role role, String query, String startDate,
+			String endDate, String sort, Pageable pageable) {
 
-		Role role = Role.valueOf("Educator");
 		LocalDateTime[] dates = { null, null };
 
 		if (startDate != null && endDate != null)
@@ -107,7 +106,7 @@ public class UserService {
 			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
 		}
 
-		Page<User> educators = userRepository.findEducatorsByFilters(role, dates[0], dates[1], query, pageable);
+		Page<User> educators = userRepository.findUsersByFilters(role, dates[0], dates[1], query, pageable);
 		return commonHelper.getPageResponse(educators);
 	}
 }
