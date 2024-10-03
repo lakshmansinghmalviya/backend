@@ -41,7 +41,13 @@ public class User {
 
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
+  
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
+	@Column(name = "is_active")
+	private Boolean isActive;
+	
 	@Column()
 	private boolean isLogout;
 

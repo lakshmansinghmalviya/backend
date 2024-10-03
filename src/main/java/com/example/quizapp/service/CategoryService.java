@@ -37,6 +37,7 @@ public class CategoryService {
 		category.setDescription(request.getDescription());
 		category.setCategoryPic(request.getCategoryPic());
 		category.setCreator(getUser());
+		category.setIsDeleted(false);
 		categoryRepository.save(category);
 		return commonHelper.returnUnifiedCREATED("Category Created Successfully", null);
 	}
@@ -46,7 +47,7 @@ public class CategoryService {
 			throwException(categoryId);
 		}
 		Category category = getCategoryById(categoryId);
-		category.setDeleted(true);
+		category.setIsDeleted(true);
 		categoryRepository.save(category);
 		return commonHelper.returnUnifiedOK("Deleted", null);
 	}

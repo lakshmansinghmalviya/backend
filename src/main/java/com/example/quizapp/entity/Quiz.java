@@ -47,6 +47,7 @@ public class Quiz {
 
 	private Boolean randomizeQuestions;
 
+	@Column(name = "is_deleted")
 	private Boolean isDeleted;
 
 	@ManyToOne()

@@ -2,13 +2,17 @@ package com.example.quizapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quizapp.dto.AdminProfileDataResponse;
 import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
@@ -37,13 +41,25 @@ public class UserController {
 	}
 
 	@GetMapping("/educatorProfileData")
+	@PreAuthorize("hasRole('Educator')")
 	public ResponseEntity<UnifiedResponse<EducatorProfileDataResponse>> getEducatorProfileInformation() {
 		return ResponseBuilder.buildOKResponse(userService.getEducatorProfileInformation());
 	}
 
-	@PutMapping("/update")
-	public ResponseEntity<UnifiedResponse<User>> updateUser(@Valid @RequestBody UpdateUserRequest request) {
-		return ResponseBuilder.buildOKResponse(userService.updateUser(request));
+	@GetMapping("/adminProfileData")
+	@PreAuthorize("hasRole('Admin')")
+	public ResponseEntity<UnifiedResponse<AdminProfileDataResponse>> getAdminProfileInformation() {
+		return ResponseBuilder.buildOKResponse(userService.getAdminProfileInformation());
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<UnifiedResponse<User>> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserRequest request) {
+		return ResponseBuilder.buildOKResponse(userService.updateUser(id,request));
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<UnifiedResponse<Void>> deleteUser(@PathVariable("id") Long id) {
+		return ResponseBuilder.buildOKResponse(userService.deleteUser(id));
 	}
 
 	@PutMapping("/logout")
@@ -58,6 +74,6 @@ public class UserController {
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
 		return ResponseBuilder.buildOKResponse(
-				userService.findUsersByFilters(role,query, start, end, sort, commonHelper.makePageReq(page, size)));
+				userService.findUsersByFilters(role, query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}
 }

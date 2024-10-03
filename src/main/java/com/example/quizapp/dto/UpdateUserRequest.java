@@ -1,5 +1,10 @@
 package com.example.quizapp.dto;
 
+import com.example.quizapp.enums.Role;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -24,4 +29,7 @@ public class UpdateUserRequest {
 	private String education;
 
 	private String bio;
+	
+	@Enumerated(EnumType.STRING)
+	private Role role;
 }

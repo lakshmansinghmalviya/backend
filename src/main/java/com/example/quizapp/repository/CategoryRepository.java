@@ -14,7 +14,8 @@ import com.example.quizapp.entity.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-	Long countByCreatorId(Long id);
+	@Query("SELECT COUNT(c) FROM Category c WHERE c.isDeleted = false")
+	Long countTotalCategory();
 
 	@Query("SELECT c FROM Category c " + "WHERE (:creatorId IS NULL OR c.creator.id = :creatorId) "
 			+ "AND (:startDate IS NULL OR c.createdAt >= :startDate) "

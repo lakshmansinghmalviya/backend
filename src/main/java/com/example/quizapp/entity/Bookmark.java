@@ -45,8 +45,8 @@ public class Bookmark {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	@Column(name = "is_bookmarked")
-	private Boolean isBookmarked;
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
 	@PrePersist
 	protected void onCreate() {

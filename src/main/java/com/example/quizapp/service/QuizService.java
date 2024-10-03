@@ -39,6 +39,7 @@ public class QuizService {
 		Category category = categoryService.getCategoryById(request.getCategoryId());
 		Quiz quiz = new Quiz();
 		quiz.setTitle(request.getTitle());
+		quiz.setIsDeleted(false);
 		quiz.setDescription(request.getDescription());
 		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
 		quiz.setTimeLimit(request.getTimeLimit());

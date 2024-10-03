@@ -30,6 +30,9 @@ public class Result {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
+	
 	@Column(nullable = false)
 	private Long score;
 

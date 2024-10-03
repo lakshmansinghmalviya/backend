@@ -30,6 +30,9 @@ public class Feedback {
 
 	@Column(nullable = false)
 	private String feedbackText;
+	
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)

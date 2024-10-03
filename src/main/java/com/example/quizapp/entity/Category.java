@@ -38,7 +38,8 @@ public class Category {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
 
-	private boolean isDeleted;
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;

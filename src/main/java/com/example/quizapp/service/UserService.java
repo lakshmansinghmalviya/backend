@@ -1,6 +1,8 @@
 package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.quizapp.dto.AdminProfileDataResponse;
 import com.example.quizapp.dto.EducatorProfileDataResponse;
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
@@ -45,19 +48,17 @@ public class UserService {
 	@Autowired
 	private CommonHelper commonHelper;
 
-	public UnifiedResponse<PageResponse<User>> getEducators(Pageable pageable) {
-		Role role = Role.valueOf("Educator");
-		Page<User> userPage = userRepository.findByRole(role, pageable);
-		return commonHelper.getPageResponse(userPage);
-	}
-
 	public User getUserByEmail(String email) {
 		return userRepository.findByEmail(email)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 	}
 
-	public UnifiedResponse<User> updateUser(UpdateUserRequest request) {
-		User user = getUserInfoUsingTokenInfo();
+	public UnifiedResponse<User> updateUser(Long id, UpdateUserRequest request) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+		if (request.getRole().name() != null)
+			user.setRole(Role.valueOf(request.getRole().name()));
+
 		user.setBio(request.getBio());
 		user.setName(request.getName());
 		user.setProfilePic(request.getProfilePic());
@@ -75,6 +76,14 @@ public class UserService {
 		return commonHelper.returnUnifiedOK("Logged out", null);
 	}
 
+	public UnifiedResponse<Void> deleteUser(Long id) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+		user.setIsDeleted(true);
+		userRepository.save(user);
+		return commonHelper.returnUnifiedOK("Deleted user", null);
+	}
+
 	public User getUserInfoUsingTokenInfo() {
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return getUserByEmail(username);
@@ -86,18 +95,26 @@ public class UserService {
 
 	public UnifiedResponse<EducatorProfileDataResponse> getEducatorProfileInformation() {
 		User creator = getUserInfoUsingTokenInfo();
-		Long totalCategory = categoryRepository.countByCreatorId(creator.getId());
 		Long totalQuiz = quizRepository.countByCreatorId(creator.getId());
 		Long totalQuestion = questionRepository.countByCreatorId(creator.getId());
-		return commonHelper.returnUnifiedOK("Fetched user",
-				new EducatorProfileDataResponse(totalCategory, totalQuiz, totalQuestion));
+		return commonHelper.returnUnifiedOK("Fetched data", new EducatorProfileDataResponse(totalQuiz, totalQuestion));
+	}
+
+	public UnifiedResponse<AdminProfileDataResponse> getAdminProfileInformation() {
+		Long totalCategory = categoryRepository.countTotalCategory();
+		Long totalUsers = userRepository.countTotalUsers();
+		return commonHelper.returnUnifiedOK("Fetched data", new AdminProfileDataResponse(totalUsers, totalCategory));
 	}
 
 	public UnifiedResponse<PageResponse<User>> findUsersByFilters(Role role, String query, String startDate,
 			String endDate, String sort, Pageable pageable) {
 
 		LocalDateTime[] dates = { null, null };
-
+		List<Role> roles = new ArrayList<>();
+		if (role == null) {
+			roles.add(Role.valueOf("Educator"));
+			roles.add(Role.valueOf("Student"));
+		}
 		if (startDate != null && endDate != null)
 			dates = commonHelper.parseDateRange(startDate, endDate);
 
@@ -106,7 +123,7 @@ public class UserService {
 			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
 		}
 
-		Page<User> educators = userRepository.findUsersByFilters(role, dates[0], dates[1], query, pageable);
+		Page<User> educators = userRepository.findUsersByFilters(roles, dates[0], dates[1], query, pageable);
 		return commonHelper.getPageResponse(educators);
 	}
 }

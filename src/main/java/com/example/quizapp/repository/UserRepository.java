@@ -1,6 +1,7 @@
 package com.example.quizapp.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -22,14 +23,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findById(Long id);
 
-	Page<User> findByRole(Role role, Pageable pageable);
+	@Query("SELECT COUNT(u) FROM User u WHERE (u.isDeleted = false OR u.isDeleted IS NULL) AND u.role IN ('Educator', 'Student')")
+	Long countTotalUsers();
 
-	@Query("SELECT u FROM User u " + "WHERE u.role = :role " + "AND (:startDate IS NULL OR u.createdAt >= :startDate) "
+	@Query("SELECT u FROM User u " + "WHERE u.role IN (:roles) " + " AND (u.isDeleted = false OR u.isDeleted IS NULL)"
+			+ "AND (:startDate IS NULL OR u.createdAt >= :startDate) "
 			+ "AND (:endDate IS NULL OR u.createdAt <= :endDate) "
 			+ "AND (:query IS NULL OR (LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.education) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.bio) LIKE LOWER(CONCAT('%', :query, '%'))))")
-	Page<User> findUsersByFilters(@Param("role") Role role, @Param("startDate") LocalDateTime startDate,
+	Page<User> findUsersByFilters(@Param("roles") List<Role> roles, @Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate, @Param("query") String query, Pageable pageable);
 }

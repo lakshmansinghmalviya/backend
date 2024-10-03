@@ -54,6 +54,7 @@ public class AuthService {
 		user.setProfilePic(registerUser.getProfilePic());
 		user.setBio(registerUser.getBio());
 		user.setLogout(false);
+		user.setIsDeleted(false);
 		user.setLastLogin(LocalDateTime.now());
 		user.setEducation(registerUser.getEducation());
 		userRepository.save(user);

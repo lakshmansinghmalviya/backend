@@ -33,6 +33,7 @@ public class Question {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "is_deleted")
 	private Boolean isDeleted;
 
 	@Column(nullable = false, unique = true)

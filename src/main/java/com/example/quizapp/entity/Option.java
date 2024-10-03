@@ -30,6 +30,9 @@ public class Option {
 
 	@Column(nullable = false)
 	private String text;
+	
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
 	@Column(nullable = false)
 	private Boolean isCorrect;
