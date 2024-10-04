@@ -29,7 +29,9 @@ public class UpdateUserRequest {
 	private String education;
 
 	private String bio;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
+	private Boolean isApproved;
 }

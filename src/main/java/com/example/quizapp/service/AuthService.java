@@ -74,6 +74,6 @@ public class AuthService {
 		user.setLastLogin(LocalDateTime.now());
 		user.setLogout(false);
 		userRepository.save(user);
-		return commonHelper.returnUnifiedOK("Auth Success", new AuthResponse(token, user.getRole().name()));
+		return commonHelper.returnUnifiedOK("Auth Success", new AuthResponse(token, user.getRole().name(),user.getIsApproved()));
 	}
 }

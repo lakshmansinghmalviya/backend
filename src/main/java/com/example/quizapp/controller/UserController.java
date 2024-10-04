@@ -76,4 +76,14 @@ public class UserController {
 		return ResponseBuilder.buildOKResponse(
 				userService.findUsersByFilters(role, query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}
+
+	@GetMapping("/filters/public")
+	public ResponseEntity<UnifiedResponse<PageResponse<User>>> findUsersByFiltersForPublic(
+			@RequestParam(required = false) String query, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) Role role, @RequestParam(required = false) String start,
+			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(
+				userService.findUsersByFilters(role, query, start, end, sort, commonHelper.makePageReq(page, size)));
+	}
 }

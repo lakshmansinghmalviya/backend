@@ -65,4 +65,16 @@ public class QuizController {
 		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(query, severity, start, end, timeLimit,
 				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}
+	
+	@GetMapping("/filters/public")
+	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> filterQuizzesForPublic(
+			@RequestParam(required = false) String query, @RequestParam(required = false) Severity severity,
+			@RequestParam(required = false) Long timeLimit, @RequestParam(required = false) Boolean randomizeQuestions,
+			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,
+			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
+			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(query, severity, start, end, timeLimit,
+				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
+	}
 }

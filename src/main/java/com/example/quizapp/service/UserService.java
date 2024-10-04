@@ -61,6 +61,7 @@ public class UserService {
 
 		user.setBio(request.getBio());
 		user.setName(request.getName());
+		user.setIsApproved(request.getIsApproved());
 		user.setProfilePic(request.getProfilePic());
 		user.setEducation(request.getEducation());
 		if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {

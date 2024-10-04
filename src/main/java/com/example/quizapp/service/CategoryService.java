@@ -14,6 +14,7 @@ import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.CategoryRepository;
 import com.example.quizapp.util.CommonHelper;
@@ -32,6 +33,9 @@ public class CategoryService {
 	UserHelper userHelper;
 
 	public UnifiedResponse<Category> createCategory(CategoryRequest request) {
+		if (categoryRepository.existsByName(request.getName())) {
+			throw new ResourceAlreadyExistsException("Category already exists. Please try with other name.");
+		}
 		Category category = new Category();
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
@@ -53,7 +57,9 @@ public class CategoryService {
 	}
 
 	public UnifiedResponse<Category> updateCategoryById(Long categoryId, CategoryRequest request) {
-
+		if (categoryRepository.existsByName(request.getName())) {
+			throw new ResourceAlreadyExistsException("Category already exists. Please try with other name.");
+		}
 		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());

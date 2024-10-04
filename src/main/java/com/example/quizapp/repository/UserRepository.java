@@ -17,7 +17,8 @@ import com.example.quizapp.enums.Role;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByEmail(String email);
+	@Query("SELECT u FROM User u WHERE u.email = :email AND (u.isDeleted = false OR u.isDeleted IS NULL)")
+	Optional<User> findByEmail(@Param("email") String email);
 
 	boolean existsByEmail(String email);
 
