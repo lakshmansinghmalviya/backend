@@ -15,6 +15,7 @@ import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Severity;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
 import com.example.quizapp.util.CommonHelper;
@@ -40,6 +41,7 @@ public class QuizService {
 		Quiz quiz = new Quiz();
 		quiz.setTitle(request.getTitle());
 		quiz.setIsDeleted(false);
+		quiz.setSeverity(request.getSeverity());
 		quiz.setDescription(request.getDescription());
 		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
 		quiz.setTimeLimit(request.getTimeLimit());
@@ -53,13 +55,15 @@ public class QuizService {
 	public UnifiedResponse<Void> deleteQuizById(Long id) {
 		if (!quizRepository.existsById(id))
 			throwException(id);
-		quizRepository.deleteById(id);
+		Quiz quiz = findById(id);
+		quiz.setIsDeleted(true);
 		return commonHelper.returnUnifiedOK("Quiz Deleted Successfully with id " + id, null);
 	}
 
 	public UnifiedResponse<Quiz> updateQuizById(Long id, QuizRequest request) {
 		Quiz quiz = quizRepository.findById(id).orElseThrow(() -> throwException(id));
 		quiz.setTitle(request.getTitle());
+		quiz.setSeverity(request.getSeverity());
 		quiz.setDescription(request.getDescription());
 		quiz.setRandomizeQuestions(request.getRandomizeQuestions());
 		quiz.setTimeLimit(request.getTimeLimit());
@@ -83,8 +87,8 @@ public class QuizService {
 		return userHelper.getUser();
 	}
 
-	public UnifiedResponse<PageResponse<Quiz>> filterQuizzes(String query, String startDate, String endDate,
-			Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, String sort,
+	public UnifiedResponse<PageResponse<Quiz>> filterQuizzes(String query, Severity severity, String startDate,
+			String endDate, Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, String sort,
 			Pageable pageable) {
 
 		if (getUser().getRole().toString().equals("Educator"))
@@ -101,8 +105,8 @@ public class QuizService {
 			pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sorting);
 		}
 
-		Page<Quiz> quizzes = quizRepository.findQuizzesByFilters(creatorId, dates[0], dates[1], query, categoryId,
-				timeLimit, randomizeQuestions, pageable);
+		Page<Quiz> quizzes = quizRepository.findQuizzesByFilters(creatorId, severity, dates[0], dates[1], query,
+				categoryId, timeLimit, randomizeQuestions, pageable);
 		return commonHelper.getPageResponse(quizzes);
 	}
 

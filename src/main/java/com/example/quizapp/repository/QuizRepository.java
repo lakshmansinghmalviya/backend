@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.quizapp.entity.Quiz;
+import com.example.quizapp.enums.Severity;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
@@ -17,17 +18,18 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 	Long countByCreatorId(Long id);
 
 	boolean existsById(Long id);
-	
+
 	@Query("SELECT q FROM Quiz q " + "WHERE (:creatorId IS NULL OR q.creator.id = :creatorId) "
+			+ "AND (q.isDeleted IS NULL OR q.isDeleted = false) " + "AND (:severity IS NULL OR q.severity = :severity) "
 			+ "AND (:startDate IS NULL OR q.createdAt >= :startDate) "
 			+ "AND (:endDate IS NULL OR q.createdAt <= :endDate) "
 			+ "AND (:query IS NULL OR (LOWER(q.title) LIKE LOWER(CONCAT('%', :query, '%')) "
-			+ "OR LOWER(q.description) LIKE LOWER(CONCAT('%', :query, '%'))))"
+			+ "OR LOWER(q.description) LIKE LOWER(CONCAT('%', :query, '%')))) "
 			+ "AND (:categoryId IS NULL OR q.category.id = :categoryId) "
 			+ "AND (:timeLimit IS NULL OR q.timeLimit <= :timeLimit) "
 			+ "AND (:randomizeQuestions IS NULL OR q.randomizeQuestions = :randomizeQuestions)")
-	Page<Quiz> findQuizzesByFilters(@Param("creatorId") Long creatorId, @Param("startDate") LocalDateTime startDate,
-			@Param("endDate") LocalDateTime endDate, @Param("query") String query, @Param("categoryId") Long categoryId,
-			@Param("timeLimit") Long timeLimit, @Param("randomizeQuestions") Boolean randomizeQuestions,
-			Pageable pageable);
+	Page<Quiz> findQuizzesByFilters(@Param("creatorId") Long creatorId, @Param("severity") Severity severity,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+			@Param("query") String query, @Param("categoryId") Long categoryId, @Param("timeLimit") Long timeLimit,
+			@Param("randomizeQuestions") Boolean randomizeQuestions, Pageable pageable);
 }

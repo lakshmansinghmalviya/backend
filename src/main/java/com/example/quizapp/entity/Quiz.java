@@ -3,6 +3,8 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.quizapp.enums.Role;
+import com.example.quizapp.enums.Severity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,6 +53,10 @@ public class Quiz {
 
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Severity severity;
 
 	@ManyToOne()
 	@JoinColumn(name = "category_id", nullable = false)

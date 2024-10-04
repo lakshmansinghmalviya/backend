@@ -111,10 +111,13 @@ public class UserService {
 
 		LocalDateTime[] dates = { null, null };
 		List<Role> roles = new ArrayList<>();
+
 		if (role == null) {
 			roles.add(Role.valueOf("Educator"));
 			roles.add(Role.valueOf("Student"));
-		}
+		} else
+			roles.add(role);
+
 		if (startDate != null && endDate != null)
 			dates = commonHelper.parseDateRange(startDate, endDate);
 
