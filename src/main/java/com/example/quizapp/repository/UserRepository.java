@@ -22,6 +22,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	boolean existsByEmail(String email);
 
+	@Query("SELECT CASE WHEN u.isApproved = true THEN true ELSE false END FROM User u WHERE u.email = :email AND (u.isDeleted = false OR u.isDeleted IS NULL)")
+	boolean isApprovedByEmail(@Param("email") String email);
+
 	Optional<User> findById(Long id);
 
 	@Query("SELECT COUNT(u) FROM User u WHERE (u.isDeleted = false OR u.isDeleted IS NULL) AND u.role IN ('Educator', 'Student')")

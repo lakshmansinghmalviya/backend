@@ -18,6 +18,8 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
 	Result findByUserIdAndQuizId(Long userId, Long id);
 
+	Long countByQuizId(Long quizId);
+
 	@Query("SELECT r FROM Result r WHERE r.user.id = :id ORDER BY r.updatedAt DESC")
 	Page<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id, Pageable pageable);
 
@@ -53,5 +55,4 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 			@Param("totalQuestion") Long totalQuestion, @Param("timesTaken") Long timesTaken,
 			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
 			@Param("timeLimit") Long timeLimit, Pageable pageable);
-
 }

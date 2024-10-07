@@ -33,9 +33,10 @@ public class CategoryService {
 	UserHelper userHelper;
 
 	public UnifiedResponse<Category> createCategory(CategoryRequest request) {
-		if (categoryRepository.existsByName(request.getName())) {
-			throw new ResourceAlreadyExistsException("Category already exists. Please try with other name.");
-		}
+
+		if (categoryRepository.existsByName(request.getName()))
+			throwException("Category already exists. Please try with other name.");
+
 		Category category = new Category();
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
@@ -57,9 +58,10 @@ public class CategoryService {
 	}
 
 	public UnifiedResponse<Category> updateCategoryById(Long categoryId, CategoryRequest request) {
-		if (categoryRepository.existsByName(request.getName())) {
-			throw new ResourceAlreadyExistsException("Category already exists. Please try with other name.");
-		}
+
+		if (categoryRepository.existsByName(request.getName()))
+			throwException("Category already exists with the same name");
+
 		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
@@ -73,6 +75,10 @@ public class CategoryService {
 
 	public ResourceNotFoundException throwException(Long id) {
 		throw new ResourceNotFoundException("Category not found with the id " + id);
+	}
+
+	public ResourceAlreadyExistsException throwException(String message) {
+		throw new ResourceAlreadyExistsException(message);
 	}
 
 	public User getUser() {

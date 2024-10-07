@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuizRequest;
+import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.enums.Severity;
@@ -55,7 +56,7 @@ public class QuizController {
 	}
 
 	@GetMapping("/filters")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> filterQuizzes(
+	public ResponseEntity<UnifiedResponse<PageResponse<QuizResponse>>> filterQuizzes(
 			@RequestParam(required = false) String query, @RequestParam(required = false) Severity severity,
 			@RequestParam(required = false) Long timeLimit, @RequestParam(required = false) Boolean randomizeQuestions,
 			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,
@@ -65,9 +66,9 @@ public class QuizController {
 		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(query, severity, start, end, timeLimit,
 				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}
-	
+
 	@GetMapping("/filters/public")
-	public ResponseEntity<UnifiedResponse<PageResponse<Quiz>>> filterQuizzesForPublic(
+	public ResponseEntity<UnifiedResponse<PageResponse<QuizResponse>>> filterQuizzesForPublic(
 			@RequestParam(required = false) String query, @RequestParam(required = false) Severity severity,
 			@RequestParam(required = false) Long timeLimit, @RequestParam(required = false) Boolean randomizeQuestions,
 			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,

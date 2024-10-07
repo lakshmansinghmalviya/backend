@@ -2,6 +2,7 @@ package com.example.quizapp.dto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +26,8 @@ public class QuestionRequest {
 	private String text;
 
 	@NotNull(message = "Max score should not be null.")
-	@Min(value = 1, message = "Max score must be at least 1.")
+	@Min(value = 1, message = "Max score must be at least 1 and max 10")
+	@Max(value = 10, message = "Max score must be less than 11")
 	private Long maxScore;
 
 	private String questionPic;

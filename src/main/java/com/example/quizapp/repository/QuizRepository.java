@@ -19,6 +19,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
 	boolean existsById(Long id);
 
+	boolean existsByTitle(String title);
+
 	@Query("SELECT q FROM Quiz q " + "WHERE (:creatorId IS NULL OR q.creator.id = :creatorId) "
 			+ "AND (q.isDeleted IS NULL OR q.isDeleted = false) " + "AND (:severity IS NULL OR q.severity = :severity) "
 			+ "AND (:startDate IS NULL OR q.createdAt >= :startDate) "

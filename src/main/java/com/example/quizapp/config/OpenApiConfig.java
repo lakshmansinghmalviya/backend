@@ -15,5 +15,4 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @SecuritySchemes({
 		@SecurityScheme(name = "Token based Authorization", description = "JWT Auth description", scheme = "bearer", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", in = SecuritySchemeIn.HEADER) })
 
-public class OpenApiConfig {
-}
+public class OpenApiConfig {}

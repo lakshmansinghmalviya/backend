@@ -1,6 +1,8 @@
 package com.example.quizapp.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,13 +13,16 @@ import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
 import com.example.quizapp.dto.QuizRequest;
+import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
+import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Severity;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.QuizRepository;
+import com.example.quizapp.repository.ResultRepository;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.UserHelper;
 
@@ -26,6 +31,9 @@ public class QuizService {
 
 	@Autowired
 	private QuizRepository quizRepository;
+
+	@Autowired
+	private ResultRepository resultRepository;
 
 	@Autowired
 	private CategoryService categoryService;
@@ -87,7 +95,7 @@ public class QuizService {
 		return userHelper.getUser();
 	}
 
-	public UnifiedResponse<PageResponse<Quiz>> filterQuizzes(String query, Severity severity, String startDate,
+	public UnifiedResponse<PageResponse<QuizResponse>> filterQuizzes(String query, Severity severity, String startDate,
 			String endDate, Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, String sort,
 			Pageable pageable) {
 
@@ -107,7 +115,20 @@ public class QuizService {
 
 		Page<Quiz> quizzes = quizRepository.findQuizzesByFilters(creatorId, severity, dates[0], dates[1], query,
 				categoryId, timeLimit, randomizeQuestions, pageable);
-		return commonHelper.getPageResponse(quizzes);
+
+		List<QuizResponse> quizResponses = quizzes.stream().map(quiz -> {
+			QuizResponse response = mapToQuizResponse(quiz);
+			Long attemptedUserCount = resultRepository.countByQuizId(quiz.getId());
+			response.setAttemptedUserCount(attemptedUserCount);
+			return response;
+		}).collect(Collectors.toList());
+
+		return commonHelper.getPageResponse(quizzes, quizResponses);
 	}
 
+	private QuizResponse mapToQuizResponse(Quiz quiz) {
+		return new QuizResponse(quiz.getId(), quiz.getTitle(), quiz.getDescription(), quiz.getQuizPic(),
+				quiz.getTimeLimit(), quiz.getRandomizeQuestions(), quiz.getSeverity(), quiz.getCategory(),
+				quiz.getCreator(), quiz.getQuestions(), quiz.getCreatedAt(), 0l);
+	}
 }

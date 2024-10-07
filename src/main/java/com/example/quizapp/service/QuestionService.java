@@ -44,10 +44,8 @@ public class QuestionService {
 
 	@Transactional
 	public UnifiedResponse<Question> create(QuestionRequest request) {
-		if (questionRepository.existsByTextAndQuizId(request.getText(), request.getQuizId())) {
-			throw new ResourceAlreadyExistsException("Question already exits in the same quiz");
-		}
 
+		checkExistance(request.getText(), request.getQuizId());
 		Quiz quiz = quizService.findById(request.getQuizId());
 		Question question = new Question();
 		question.setText(request.getText());
@@ -74,6 +72,8 @@ public class QuestionService {
 
 	@Transactional
 	public UnifiedResponse<Question> update(Long id, QuestionRequest request) {
+
+		checkExistance(request.getText(), request.getQuizId());
 
 		Question question = getQuestionById(id);
 		for (OptionRequest optionReq : request.getOptions())
@@ -119,5 +119,14 @@ public class QuestionService {
 
 	public ResourceNotFoundException throwException(Long id) {
 		throw new ResourceNotFoundException("Question not found with the id " + id);
+	}
+
+	public ResourceAlreadyExistsException throwException(String message) {
+		throw new ResourceNotFoundException(message);
+	}
+
+	public void checkExistance(String text, Long id) {
+		if (questionRepository.existsByTextAndQuizId(text, id))
+			throwException("Question already exits in the same quiz with same text");
 	}
 }

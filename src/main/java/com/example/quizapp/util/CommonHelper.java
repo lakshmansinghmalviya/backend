@@ -2,6 +2,7 @@ package com.example.quizapp.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.quizapp.dto.PageResponse;
+import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 
 @Service
@@ -18,6 +20,16 @@ public class CommonHelper {
 	public <T> UnifiedResponse<PageResponse<T>> getPageResponse(Page<T> page) {
 		PageResponse<T> pageResponse = new PageResponse<>();
 		pageResponse.setContent(page.getContent());
+		pageResponse.setPageNumber(page.getNumber());
+		pageResponse.setPageSize(page.getSize());
+		pageResponse.setTotalElements(page.getTotalElements());
+		pageResponse.setTotalPages(page.getTotalPages());
+		return new UnifiedResponse<>(Codes.OK, "Fetched Successfully", pageResponse);
+	}
+
+	public <T> UnifiedResponse<PageResponse<T>> getPageResponse(Page<?> page, List<T> list) {
+		PageResponse<T> pageResponse = new PageResponse<>();
+		pageResponse.setContent(list);
 		pageResponse.setPageNumber(page.getNumber());
 		pageResponse.setPageSize(page.getSize());
 		pageResponse.setTotalElements(page.getTotalElements());
@@ -43,7 +55,7 @@ public class CommonHelper {
 		LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
 		return new LocalDateTime[] { startDateTime, endDateTime };
 	}
-	
+
 	public Sort parseSortString(String sort) {
 		if (sort == null || sort.isEmpty()) {
 			return Sort.unsorted();

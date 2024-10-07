@@ -2,9 +2,6 @@ package com.example.quizapp.dto;
 
 import com.example.quizapp.enums.Severity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

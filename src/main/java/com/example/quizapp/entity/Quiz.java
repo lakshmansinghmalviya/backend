@@ -3,7 +3,6 @@ package com.example.quizapp.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.quizapp.enums.Role;
 import com.example.quizapp.enums.Severity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

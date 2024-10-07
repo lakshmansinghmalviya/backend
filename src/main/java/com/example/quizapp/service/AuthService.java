@@ -15,6 +15,7 @@ import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.SignupRequest;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.exception.ApprovalPendingException;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
 import com.example.quizapp.repository.UserRepository;
 import com.example.quizapp.util.CommonHelper;
@@ -63,17 +64,26 @@ public class AuthService {
 
 	public UnifiedResponse<AuthResponse> login(LoginRequest authRequest) {
 
+		if (findUserByEmail(authRequest.getEmail()).getRole().name().equals("Educator")
+				&& (!userRepository.isApprovedByEmail(authRequest.getEmail())))
+			throw new ApprovalPendingException("Approval is pending from the admin side please wait");
+
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
 		String token = jwtHelper.generateToken(userDetails);
 
-		User user = userRepository.findByEmail(authRequest.getEmail())
-				.orElseThrow(() -> new UsernameNotFoundException("Email " + authRequest.getEmail() + " not found"));
-
+		User user = findUserByEmail(authRequest.getEmail());
 		user.setLastLogin(LocalDateTime.now());
 		user.setLogout(false);
 		userRepository.save(user);
-		return commonHelper.returnUnifiedOK("Auth Success", new AuthResponse(token, user.getRole().name(),user.getIsApproved()));
+
+		return commonHelper.returnUnifiedOK("Logged in successfully",
+				new AuthResponse(token, user.getRole().name(), user.getIsApproved()));
+	}
+
+	public User findUserByEmail(String email) {
+		return userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Email " + email + " not found"));
 	}
 }

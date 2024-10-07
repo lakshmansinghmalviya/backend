@@ -51,9 +51,10 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 
-	@ExceptionHandler(ResourceAlreadyExistsException.class)
-	public ResponseEntity<MessageResponse> handleAlreadyExitsException(ResourceAlreadyExistsException ex) {
+	@ExceptionHandler(ApprovalPendingException.class)
+	public ResponseEntity<MessageResponse> handleApprovalPendingException(ApprovalPendingException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
 	}
+
 }
