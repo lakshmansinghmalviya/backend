@@ -17,6 +17,7 @@ import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ApprovalPendingException;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;
+import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.UserRepository;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.JwtHelper;
@@ -64,8 +65,13 @@ public class AuthService {
 
 	public UnifiedResponse<AuthResponse> login(LoginRequest authRequest) {
 
+		if (findUserByEmail(authRequest.getEmail()) == null || !passwordEncoder.matches(authRequest.getPassword(),
+				findUserByEmail(authRequest.getEmail()).getPassword()))
+			throw new ResourceNotFoundException("Invalid credentials please enter the valid email and password");
+
 		if (findUserByEmail(authRequest.getEmail()).getRole().name().equals("Educator")
-				&& (!userRepository.isApprovedByEmail(authRequest.getEmail())))
+				&& (!userRepository.isApprovedByEmail(authRequest.getEmail())) && passwordEncoder
+						.matches(authRequest.getPassword(), findUserByEmail(authRequest.getEmail()).getPassword()))
 			throw new ApprovalPendingException("Approval is pending from the admin side please wait");
 
 		authenticationManager.authenticate(
@@ -83,7 +89,7 @@ public class AuthService {
 	}
 
 	public User findUserByEmail(String email) {
-		return userRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Email " + email + " not found"));
+		return userRepository.findByEmail(email).orElseThrow(
+				() -> new UsernameNotFoundException("Invalid credentials please enter the valid email and password"));
 	}
 }

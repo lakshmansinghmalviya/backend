@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ApprovalPendingException.class)
 	public ResponseEntity<MessageResponse> handleApprovalPendingException(ApprovalPendingException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
 	}
 
 }

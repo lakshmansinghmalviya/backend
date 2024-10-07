@@ -7,7 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.quizapp.dto.BookmarkRequest;
 import com.example.quizapp.dto.MessageResponse;
@@ -16,6 +18,7 @@ import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
+import com.example.quizapp.enums.Severity;
 import com.example.quizapp.exception.ResourceNotFoundException;
 import com.example.quizapp.repository.BookmarkRepository;
 import com.example.quizapp.util.CommonHelper;
@@ -65,7 +68,8 @@ public class BookmarkService {
 	}
 
 	public UnifiedResponse<PageResponse<Bookmark>> findBookmarksByFilters(String startDate, String endDate,
-			String query, Long categoryId, Long timeLimit, Boolean randomizeQuestions, String sort, Pageable pageable) {
+			String query, Severity severity, Long categoryId, Long timeLimit, Boolean randomizeQuestions, String sort,
+			Pageable pageable) {
 		Long userId = null;
 		if (getUser().getRole().toString().equals("Student"))
 			userId = getUser().getId();
@@ -82,7 +86,7 @@ public class BookmarkService {
 		}
 
 		Page<Bookmark> bookmarks = bookmarkRepository.findBookmarksByFilters(userId, dates[0], dates[1], query,
-				categoryId, timeLimit, randomizeQuestions, pageable);
+				severity, categoryId, timeLimit, randomizeQuestions, pageable);
 		return commonHelper.getPageResponse(bookmarks);
 	}
 }

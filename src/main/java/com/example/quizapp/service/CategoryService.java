@@ -58,10 +58,6 @@ public class CategoryService {
 	}
 
 	public UnifiedResponse<Category> updateCategoryById(Long categoryId, CategoryRequest request) {
-
-		if (categoryRepository.existsByName(request.getName()))
-			throwException("Category already exists with the same name");
-
 		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> throwException(categoryId));
 		category.setName(request.getName());
 		category.setDescription(request.getDescription());
