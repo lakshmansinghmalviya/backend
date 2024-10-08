@@ -57,13 +57,13 @@ public class QuizController {
 
 	@GetMapping("/filters")
 	public ResponseEntity<UnifiedResponse<PageResponse<QuizResponse>>> filterQuizzes(
-			@RequestParam(required = false) String query, @RequestParam(required = false) Severity severity,
-			@RequestParam(required = false) Long timeLimit, @RequestParam(required = false) Boolean randomizeQuestions,
-			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,
-			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
-			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(query, severity, start, end, timeLimit,
+			@RequestParam(required = false) Boolean toggle, @RequestParam(required = false) String query,
+			@RequestParam(required = false) Severity severity, @RequestParam(required = false) Long timeLimit,
+			@RequestParam(required = false) Boolean randomizeQuestions, @RequestParam(required = false) Long categoryId,
+			@RequestParam(required = false) Long creatorId, @RequestParam(required = false) String sort,
+			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(toggle, query, severity, start, end, timeLimit,
 				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}
 
@@ -75,7 +75,7 @@ public class QuizController {
 			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
-		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(query, severity, start, end, timeLimit,
+		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(null, query, severity, start, end, timeLimit,
 				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}
 }

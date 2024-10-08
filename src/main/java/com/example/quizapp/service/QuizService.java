@@ -95,12 +95,13 @@ public class QuizService {
 		return userHelper.getUser();
 	}
 
-	public UnifiedResponse<PageResponse<QuizResponse>> filterQuizzes(String query, Severity severity, String startDate,
-			String endDate, Long timeLimit, Boolean randomizeQuestions, Long categoryId, Long creatorId, String sort,
-			Pageable pageable) {
+	public UnifiedResponse<PageResponse<QuizResponse>> filterQuizzes(Boolean toggle, String query, Severity severity,
+			String startDate, String endDate, Long timeLimit, Boolean randomizeQuestions, Long categoryId,
+			Long creatorId, String sort, Pageable pageable) {
 
-		if (getUser().getRole().toString().equals("Educator"))
-			creatorId = getUser().getId();
+		if (toggle != null && toggle != true)
+			if (getUser().getRole().toString().equals("Educator"))
+				creatorId = getUser().getId();
 
 		LocalDateTime[] dates = { null, null };
 

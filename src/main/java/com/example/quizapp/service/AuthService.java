@@ -64,7 +64,6 @@ public class AuthService {
 	}
 
 	public UnifiedResponse<AuthResponse> login(LoginRequest authRequest) {
-
 		if (findUserByEmail(authRequest.getEmail()) == null || !passwordEncoder.matches(authRequest.getPassword(),
 				findUserByEmail(authRequest.getEmail()).getPassword()))
 			throw new ResourceNotFoundException("Invalid credentials please enter the valid email and password");
