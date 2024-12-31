@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.quizapp.dto.BookmarkRequest;
 import com.example.quizapp.dto.MessageResponse;
 import com.example.quizapp.dto.PageResponse;
@@ -23,12 +22,11 @@ import com.example.quizapp.service.BookmarkService;
 import com.example.quizapp.service.UserService;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.ResponseBuilder;
-
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/bookmarks")
-@PreAuthorize("hasRole('Student')")
 public class BookmarkController {
 
 	@Autowired

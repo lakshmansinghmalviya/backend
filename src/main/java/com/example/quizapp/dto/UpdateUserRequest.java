@@ -1,7 +1,6 @@
 package com.example.quizapp.dto;
 
 import com.example.quizapp.enums.Role;
-
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UpdateUserRequest {
-
 	@NotBlank(message = "Name is required.")
 	@Size(min = 3, max = 100, message = "Name should have between 3 and 100 characters.")
 	@Pattern(regexp = "^[A-Za-z][A-Za-z0-9 ]*$", message = "Name should start with a letter and should not contain special characters.")

@@ -21,7 +21,6 @@ import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.CategoryService;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.ResponseBuilder;
-
 import jakarta.validation.Valid;
 
 @RestController
@@ -42,7 +41,7 @@ public class CategoryController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Admin')")
-	public ResponseEntity<UnifiedResponse<Category>> updateCategoryById(@PathVariable("id") Long id,
+	public ResponseEntity<UnifiedResponse<Category>> updateCategoryById(@PathVariable Long id,
 			@Valid @RequestBody CategoryRequest request) {
 		return ResponseBuilder.buildOKResponse(categoryService.updateCategoryById(id, request));
 	}

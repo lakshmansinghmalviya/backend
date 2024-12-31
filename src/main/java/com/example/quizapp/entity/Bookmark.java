@@ -25,10 +25,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bookmark {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-   
+
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	@JsonBackReference

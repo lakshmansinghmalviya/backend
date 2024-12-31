@@ -16,7 +16,6 @@ import com.example.quizapp.dto.QuizRequest;
 import com.example.quizapp.dto.QuizResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.Category;
-import com.example.quizapp.entity.Question;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Severity;

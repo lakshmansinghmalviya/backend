@@ -45,16 +45,15 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex) {
-		MessageResponse res = new MessageResponse(ex.getMessage());
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
-	}
-
 	@ExceptionHandler(ApprovalPendingException.class)
 	public ResponseEntity<MessageResponse> handleApprovalPendingException(ApprovalPendingException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
 	}
 
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex) {
+		MessageResponse res = new MessageResponse(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+	}
 }

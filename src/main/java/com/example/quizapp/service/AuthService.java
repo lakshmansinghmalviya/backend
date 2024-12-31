@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.SignupRequest;
@@ -44,6 +43,7 @@ public class AuthService {
 	private CommonHelper commonHelper;
 
 	public UnifiedResponse<AuthResponse> register(SignupRequest registerUser) {
+
 		if (userRepository.existsByEmail(registerUser.getEmail())) {
 			throw new ResourceAlreadyExistsException("User already exists. Please try with other credentials.");
 		}
