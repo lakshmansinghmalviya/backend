@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Table(name = "categories")
 @Entity
 @Data
@@ -69,5 +68,95 @@ public class Category {
 	@PreUpdate
 	protected void onUpdate() {
 		this.updatedAt = LocalDateTime.now();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getCategoryPic() {
+		return categoryPic;
+	}
+
+	public void setCategoryPic(String categoryPic) {
+		this.categoryPic = categoryPic;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public User getCreator() {
+		return creator;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator;
+	}
+
+	public List<Quiz> getQuizzes() {
+		return quizzes;
+	}
+
+	public void setQuizzes(List<Quiz> quizzes) {
+		this.quizzes = quizzes;
+	}
+
+	public Category() {
+		super();
+	}
+
+	public Category(Long id, String name, String description, Boolean isDeleted, LocalDateTime createdAt,
+			String categoryPic, LocalDateTime updatedAt, User creator, List<Quiz> quizzes) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.isDeleted = isDeleted;
+		this.createdAt = createdAt;
+		this.categoryPic = categoryPic;
+		this.updatedAt = updatedAt;
+		this.creator = creator;
+		this.quizzes = quizzes;
 	}
 }

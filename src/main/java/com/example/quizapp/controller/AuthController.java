@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	
+
 	@Autowired
 	private AuthService authService;
 

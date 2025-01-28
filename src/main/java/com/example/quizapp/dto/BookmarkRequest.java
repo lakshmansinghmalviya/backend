@@ -9,6 +9,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookmarkRequest {
-	@NotNull(message = "QuizId should not be null")
-	private Long quizId;
+    @NotNull(message = "QuizId should not be null")
+    private Long quizId;
+
+    public BookmarkRequest() {
+    }
+
+    public BookmarkRequest(Long quizId) {
+        this.quizId = quizId;
+    }
+
+    public Long getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(Long quizId) {
+        this.quizId = quizId;
+    }
 }
