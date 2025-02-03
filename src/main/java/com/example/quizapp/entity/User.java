@@ -26,9 +26,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 

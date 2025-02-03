@@ -20,9 +20,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "options")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class Option {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

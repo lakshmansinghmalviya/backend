@@ -24,9 +24,9 @@ import lombok.NoArgsConstructor;
 
 @Table(name = "categories")
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

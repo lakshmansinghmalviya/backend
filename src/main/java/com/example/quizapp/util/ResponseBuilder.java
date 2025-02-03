@@ -14,5 +14,4 @@ public class ResponseBuilder {
 	public static <T> ResponseEntity<UnifiedResponse<T>> buildOKResponse(UnifiedResponse<T> response) {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
-
 }

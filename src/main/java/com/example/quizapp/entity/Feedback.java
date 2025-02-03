@@ -20,9 +20,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "feedbacks")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class Feedback {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

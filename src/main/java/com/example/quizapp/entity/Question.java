@@ -23,9 +23,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "questions")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class Question {
 	
 	@Id

@@ -28,9 +28,9 @@ import lombok.NoArgsConstructor;
  
 @Entity
 @Table(name = "quizzes")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class Quiz {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

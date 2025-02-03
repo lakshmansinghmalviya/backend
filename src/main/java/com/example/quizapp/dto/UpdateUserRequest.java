@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Data
 public class UpdateUserRequest {
 	@NotBlank(message = "Name is required.")
 	@Size(min = 3, max = 100, message = "Name should have between 3 and 100 characters.")

@@ -8,10 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
-@Getter
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Setter
+//@Getter
 public class PageResponse<T> {
 	private List<T> content;
 	private int pageNumber;

@@ -53,13 +53,13 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<UnifiedResponse<User>> updateUser(@PathVariable("id") Long id,
+	public ResponseEntity<UnifiedResponse<User>> updateUser(@PathVariable Long id,
 			@Valid @RequestBody UpdateUserRequest request) {
 		return ResponseBuilder.buildOKResponse(userService.updateUser(id, request));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<UnifiedResponse<Void>> deleteUser(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> deleteUser(@PathVariable Long id) {
 		return ResponseBuilder.buildOKResponse(userService.deleteUser(id));
 	}
 
