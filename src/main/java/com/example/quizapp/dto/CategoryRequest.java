@@ -22,38 +22,5 @@ public class CategoryRequest {
     private String description;
 
     private String categoryPic;
-
-    public CategoryRequest() {
-    }
-
-    public CategoryRequest(String name, String description, String categoryPic) {
-        this.name = name;
-        this.description = description;
-        this.categoryPic = categoryPic;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCategoryPic() {
-        return categoryPic;
-    }
-
-    public void setCategoryPic(String categoryPic) {
-        this.categoryPic = categoryPic;
-    }
 }
 

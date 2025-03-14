@@ -22,47 +22,5 @@ public class OptionRequest {
     private Long id;
 
     private String optionPic;
-
-    public OptionRequest() {
-    }
-
-    public OptionRequest(String text, Boolean isCorrect, Long id, String optionPic) {
-        this.text = text;
-        this.isCorrect = isCorrect;
-        this.id = id;
-        this.optionPic = optionPic;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Boolean getIsCorrect() {
-        return isCorrect;
-    }
-
-    public void setIsCorrect(Boolean isCorrect) {
-        this.isCorrect = isCorrect;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getOptionPic() {
-        return optionPic;
-    }
-
-    public void setOptionPic(String optionPic) {
-        this.optionPic = optionPic;
-    }
 }
 

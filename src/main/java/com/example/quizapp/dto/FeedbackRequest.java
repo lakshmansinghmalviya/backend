@@ -16,29 +16,5 @@ public class FeedbackRequest {
 
     @NotNull(message = "Question ID should not be null.")
     private Long questionId;
-
-    public FeedbackRequest() {
-    }
-
-    public FeedbackRequest(String feedbackText, Long questionId) {
-        this.feedbackText = feedbackText;
-        this.questionId = questionId;
-    }
-
-    public String getFeedbackText() {
-        return feedbackText;
-    }
-
-    public void setFeedbackText(String feedbackText) {
-        this.feedbackText = feedbackText;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
 }
 

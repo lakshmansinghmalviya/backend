@@ -3,6 +3,7 @@ package com.example.quizapp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +33,10 @@ public class AuthController {
 	@PostMapping("/login")
 	public ResponseEntity<UnifiedResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest authRequest) {
 		return ResponseBuilder.buildOKResponse(authService.login(authRequest));
+	}
+	
+	@GetMapping("/test")
+	public String test() {
+		return "Testing the aws app-congrats!! Running..";
 	}
 }

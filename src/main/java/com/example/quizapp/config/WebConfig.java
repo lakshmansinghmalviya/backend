@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("http://localhost:3000")
+		registry.addMapping("/**").allowedOrigins("http://localhost:3000","https://quizzy-murex.vercel.app","http://quizzy-murex.vercel.app","http://quizzy-app.eu-north-1.elasticbeanstalk.com/")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 				.allowedHeaders("*").allowCredentials(true);
 	}
