@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.FeedbackRequest;
-import com.example.quizapp.dto.MessageResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.FeedbackRequest;
+import com.example.quizapp.dto.response.MessageResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.service.FeedbackService;
 import com.example.quizapp.util.ResponseBuilder;
 

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.MessageResponse;
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.ResultRequest;
-import com.example.quizapp.dto.StudentProfileDataResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.ResultRequest;
+import com.example.quizapp.dto.response.MessageResponse;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.StudentProfileDataResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Result;
 import com.example.quizapp.service.ResultService;
 import com.example.quizapp.util.CommonHelper;

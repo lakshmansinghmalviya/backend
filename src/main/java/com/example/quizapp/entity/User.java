@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.example.quizapp.enums.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -17,8 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,8 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
+public class User extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,16 +38,12 @@ public class User {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
-
 	@Column(name = "is_active")
 	private Boolean isActive;
 
 	@Column(name = "is_approved")
 	private Boolean isApproved;
 
-	@Column()
 	private boolean isLogout;
 
 	@Column(nullable = false)
@@ -69,12 +61,6 @@ public class User {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Role role;
-
-	@Column(name = "created_at", updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
 
 	private String bio;
 
@@ -101,15 +87,4 @@ public class User {
 	@OneToMany(mappedBy = "creator")
 	@JsonBackReference
 	private List<Question> questions;
-
-	@PrePersist
-	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		this.updatedAt = LocalDateTime.now();
-	}
 }

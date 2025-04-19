@@ -1,4 +1,4 @@
-package com.example.quizapp.dto;
+package com.example.quizapp.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

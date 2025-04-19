@@ -1,4 +1,4 @@
-package com.example.quizapp.dto;
+package com.example.quizapp.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-	private String accessToken;
+public class TokenRequest {
 	private String refToken;
-	private String role;
-	private Boolean isApproved;
 }

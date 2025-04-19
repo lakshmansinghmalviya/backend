@@ -3,9 +3,9 @@ package com.example.quizapp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.FeedbackRequest;
-import com.example.quizapp.dto.MessageResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.FeedbackRequest;
+import com.example.quizapp.dto.response.MessageResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Feedback;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.repository.FeedbackRepository;

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.CategoryRequest;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.CategoryService;
 import com.example.quizapp.util.CommonHelper;
@@ -58,7 +58,7 @@ public class CategoryController {
 			@RequestParam(required = false) String query, @RequestParam(required = false) Long creatorId,
 			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue ="10") int size) {
+			@RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(categoryService.filterCategories(query, start, end, creatorId, sort,
 				commonHelper.makePageReq(page, size)));
 	}

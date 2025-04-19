@@ -11,10 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.QuizRequest;
-import com.example.quizapp.dto.QuizResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.QuizRequest;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.QuizResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.entity.User;

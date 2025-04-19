@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.BookmarkRequest;
-import com.example.quizapp.dto.MessageResponse;
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.BookmarkRequest;
+import com.example.quizapp.dto.response.MessageResponse;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Bookmark;
 import com.example.quizapp.enums.Severity;
 import com.example.quizapp.service.BookmarkService;

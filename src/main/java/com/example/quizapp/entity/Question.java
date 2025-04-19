@@ -1,6 +1,5 @@
 package com.example.quizapp.entity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -16,8 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,14 +25,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Question {
-	
+public class Question extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
 
 	@Column(nullable = false, unique = true)
 	private String text;
@@ -69,21 +63,4 @@ public class Question {
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Feedback> feedbacks;
-
-	@Column(name = "created_at", updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
-
-	@PrePersist
-	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		this.updatedAt = LocalDateTime.now();
-	}
 }

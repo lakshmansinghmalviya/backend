@@ -16,7 +16,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	@Query("SELECT COUNT(c) FROM Category c WHERE c.isDeleted = false")
 	Long countTotalCategory();
-	
+
 	boolean existsByName(String name);
 
 	@Query("SELECT c FROM Category c " + "WHERE (:creatorId IS NULL OR c.creator.id = :creatorId) "

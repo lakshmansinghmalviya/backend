@@ -3,7 +3,7 @@ package com.example.quizapp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.OptionRequest;
+import com.example.quizapp.dto.request.OptionRequest;
 import com.example.quizapp.entity.Option;
 import com.example.quizapp.entity.Question;
 import com.example.quizapp.repository.OptionRepository;

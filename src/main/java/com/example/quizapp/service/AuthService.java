@@ -11,12 +11,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.AuthResponse;
-import com.example.quizapp.dto.LoginRequest;
-import com.example.quizapp.dto.SignupRequest;
-import com.example.quizapp.dto.TokenRequest;
-import com.example.quizapp.dto.TokenResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.LoginRequest;
+import com.example.quizapp.dto.request.SignupRequest;
+import com.example.quizapp.dto.request.TokenRequest;
+import com.example.quizapp.dto.response.AuthResponse;
+import com.example.quizapp.dto.response.TokenResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ApprovalPendingException;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;

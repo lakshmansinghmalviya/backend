@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.QuizRequest;
-import com.example.quizapp.dto.QuizResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.QuizRequest;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.QuizResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Quiz;
 import com.example.quizapp.enums.Severity;
 import com.example.quizapp.service.QuizService;
@@ -44,13 +44,13 @@ public class QuizController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<Void>> deleteQuizById(@PathVariable  Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> deleteQuizById(@PathVariable Long id) {
 		return ResponseBuilder.buildOKResponse(quizService.deleteQuizById(id));
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<Quiz>> updateQuizById(@PathVariable  Long id,
+	public ResponseEntity<UnifiedResponse<Quiz>> updateQuizById(@PathVariable Long id,
 			@Valid @RequestBody QuizRequest request) {
 		return ResponseBuilder.buildOKResponse(quizService.updateQuizById(id, request));
 	}

@@ -1,7 +1,5 @@
 package com.example.quizapp.entity;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -12,8 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,15 +20,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Result {
+public class Result extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
-	
 	@Column(nullable = false)
 	private Long score;
 
@@ -66,21 +59,4 @@ public class Result {
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@JsonIgnoreProperties("results")
 	private Quiz quiz;
-
-	@Column(name = "created_at", updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
-
-	@PrePersist
-	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		this.updatedAt = LocalDateTime.now();
-	}
 }

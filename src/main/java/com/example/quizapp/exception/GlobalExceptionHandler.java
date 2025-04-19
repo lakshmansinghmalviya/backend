@@ -11,7 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.example.quizapp.dto.MessageResponse;
+import com.example.quizapp.dto.response.MessageResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

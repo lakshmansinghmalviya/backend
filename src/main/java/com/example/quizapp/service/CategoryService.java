@@ -9,9 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.CategoryRequest;
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.UnifiedResponse;
+import com.example.quizapp.dto.request.CategoryRequest;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.Category;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ResourceAlreadyExistsException;

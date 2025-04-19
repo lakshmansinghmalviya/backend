@@ -13,11 +13,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.quizapp.dto.AdminProfileDataResponse;
-import com.example.quizapp.dto.EducatorProfileDataResponse;
-import com.example.quizapp.dto.PageResponse;
-import com.example.quizapp.dto.UnifiedResponse;
-import com.example.quizapp.dto.UpdateUserRequest;
+import com.example.quizapp.dto.request.UpdateUserRequest;
+import com.example.quizapp.dto.response.AdminProfileDataResponse;
+import com.example.quizapp.dto.response.EducatorProfileDataResponse;
+import com.example.quizapp.dto.response.PageResponse;
+import com.example.quizapp.dto.response.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.enums.Role;
 import com.example.quizapp.exception.ResourceNotFoundException;
