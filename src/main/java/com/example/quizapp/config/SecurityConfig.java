@@ -16,15 +16,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.example.quizapp.filter.JwtAuthenticationFilter;
 import com.example.quizapp.service.MyUserDetailService;
-
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
 	@Autowired
 	private MyUserDetailService userDetailService;
 
@@ -32,20 +31,20 @@ public class SecurityConfig {
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(registry -> {
-			registry.requestMatchers(AllowedPaths.PERMITTEDPATHS).permitAll();
+			registry.requestMatchers(PublicThings.PUBLIC_PATHS).permitAll();
 			registry.anyRequest().authenticated();
 		}).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService() {
+	UserDetailsService userDetailsService() {
 		return userDetailService;
 	}
 
 	@Bean
-	public AuthenticationProvider authenticationProvider() {
+	AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(userDetailService);
 		provider.setPasswordEncoder(passwordEncoder());
@@ -53,12 +52,12 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager() {
+	AuthenticationManager authenticationManager() {
 		return new ProviderManager(authenticationProvider());
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 }

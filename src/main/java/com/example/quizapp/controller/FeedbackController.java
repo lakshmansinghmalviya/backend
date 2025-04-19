@@ -17,7 +17,7 @@ import com.example.quizapp.util.ResponseBuilder;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/feedbacks")
+@RequestMapping("/api/${api.version}/feedbacks")
 public class FeedbackController {
 
 	@Autowired

@@ -23,7 +23,7 @@ import com.example.quizapp.util.ResponseBuilder;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/results")
+@RequestMapping("/api/${api.version}/results")
 @PreAuthorize("hasRole('Student')")
 public class ResultController {
 
@@ -59,7 +59,7 @@ public class ResultController {
 			@RequestParam(required = false) Long score, @RequestParam(required = false) Boolean isCompleted,
 			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(
 				resultService.filterResults(quizId, query, score, totalScore, timeSpent, isCompleted, correctAnswers,
 						totalQuestion, timesTaken, start, end, timeLimit, sort, commonHelper.makePageReq(page, size)));

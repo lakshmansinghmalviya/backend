@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-	private String accessToken;
+public class TokenRequest {
 	private String refToken;
-	private String role;
-	private Boolean isApproved;
 }

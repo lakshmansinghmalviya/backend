@@ -21,10 +21,11 @@ import com.example.quizapp.entity.Category;
 import com.example.quizapp.service.CategoryService;
 import com.example.quizapp.util.CommonHelper;
 import com.example.quizapp.util.ResponseBuilder;
+
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/api/${api.version}/categories")
 public class CategoryController {
 
 	@Autowired
@@ -48,7 +49,7 @@ public class CategoryController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Admin')")
-	public ResponseEntity<UnifiedResponse<Void>> deleteCategory(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> deleteCategory(@PathVariable Long id) {
 		return ResponseBuilder.buildOKResponse(categoryService.deleteCategoryById(id));
 	}
 
@@ -57,7 +58,7 @@ public class CategoryController {
 			@RequestParam(required = false) String query, @RequestParam(required = false) Long creatorId,
 			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue ="10") int size) {
 		return ResponseBuilder.buildOKResponse(categoryService.filterCategories(query, start, end, creatorId, sort,
 				commonHelper.makePageReq(page, size)));
 	}

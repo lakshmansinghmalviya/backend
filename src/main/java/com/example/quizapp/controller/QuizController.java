@@ -27,7 +27,7 @@ import com.example.quizapp.util.ResponseBuilder;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/quizzes")
+@RequestMapping("/api/${api.version}/quizzes")
 public class QuizController {
 
 	@Autowired
@@ -44,13 +44,13 @@ public class QuizController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<Void>> deleteQuizById(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> deleteQuizById(@PathVariable  Long id) {
 		return ResponseBuilder.buildOKResponse(quizService.deleteQuizById(id));
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<Quiz>> updateQuizById(@PathVariable("id") Long id,
+	public ResponseEntity<UnifiedResponse<Quiz>> updateQuizById(@PathVariable  Long id,
 			@Valid @RequestBody QuizRequest request) {
 		return ResponseBuilder.buildOKResponse(quizService.updateQuizById(id, request));
 	}
@@ -62,7 +62,7 @@ public class QuizController {
 			@RequestParam(required = false) Boolean randomizeQuestions, @RequestParam(required = false) Long categoryId,
 			@RequestParam(required = false) Long creatorId, @RequestParam(required = false) String sort,
 			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(toggle, query, severity, start, end, timeLimit,
 				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}
@@ -74,7 +74,7 @@ public class QuizController {
 			@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long creatorId,
 			@RequestParam(required = false) String sort, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(quizService.filterQuizzes(null, query, severity, start, end, timeLimit,
 				randomizeQuestions, categoryId, creatorId, sort, commonHelper.makePageReq(page, size)));
 	}

@@ -26,7 +26,7 @@ import com.example.quizapp.util.ResponseBuilder;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/${api.version}/users")
 public class UserController {
 
 	@Autowired
@@ -53,13 +53,13 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<UnifiedResponse<User>> updateUser(@PathVariable("id") Long id,
+	public ResponseEntity<UnifiedResponse<User>> updateUser(@PathVariable Long id,
 			@Valid @RequestBody UpdateUserRequest request) {
 		return ResponseBuilder.buildOKResponse(userService.updateUser(id, request));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<UnifiedResponse<Void>> deleteUser(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> deleteUser(@PathVariable Long id) {
 		return ResponseBuilder.buildOKResponse(userService.deleteUser(id));
 	}
 
@@ -73,7 +73,7 @@ public class UserController {
 			@RequestParam(required = false) String query, @RequestParam(required = false) String sort,
 			@RequestParam(required = false) Role role, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(
 				userService.findUsersByFilters(role, query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}
@@ -83,7 +83,7 @@ public class UserController {
 			@RequestParam(required = false) String query, @RequestParam(required = false) String sort,
 			@RequestParam(required = false) Role role, @RequestParam(required = false) String start,
 			@RequestParam(required = false) String end, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(
 				userService.findUsersByFilters(role, query, start, end, sort, commonHelper.makePageReq(page, size)));
 	}

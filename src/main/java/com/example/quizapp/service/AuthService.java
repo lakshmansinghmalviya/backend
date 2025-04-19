@@ -3,15 +3,19 @@ package com.example.quizapp.service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.SignupRequest;
+import com.example.quizapp.dto.TokenRequest;
+import com.example.quizapp.dto.TokenResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.entity.User;
 import com.example.quizapp.exception.ApprovalPendingException;
@@ -23,6 +27,12 @@ import com.example.quizapp.util.JwtHelper;
 
 @Service
 public class AuthService {
+
+	@Value("${jwt.access.expiration}")
+	private long accessTokenValidity;
+
+	@Value("${jwt.refresh.expiration}")
+	private long refTokenValidity;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -76,7 +86,8 @@ public class AuthService {
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
-		String token = jwtHelper.generateToken(userDetails);
+		String accesstoken = jwtHelper.generateToken(userDetails.getUsername(), accessTokenValidity);
+		String reftoken = jwtHelper.generateToken(userDetails.getUsername(), refTokenValidity);
 
 		User user = findUserByEmail(authRequest.getEmail());
 		user.setLastLogin(LocalDateTime.now());
@@ -84,11 +95,19 @@ public class AuthService {
 		userRepository.save(user);
 
 		return commonHelper.returnUnifiedOK("Logged in successfully",
-				new AuthResponse(token, user.getRole().name(), user.getIsApproved()));
+				new AuthResponse(accesstoken, reftoken, user.getRole().name(), user.getIsApproved()));
 	}
 
 	public User findUserByEmail(String email) {
 		return userRepository.findByEmail(email).orElseThrow(
 				() -> new UsernameNotFoundException("Invalid credentials please enter the valid email and password"));
+	}
+
+	public UnifiedResponse<TokenResponse> refreshAccessToken(TokenRequest refTokenRequest) {
+		String refreshToken = refTokenRequest.getRefToken();
+		String email = jwtHelper.extractUsername(refreshToken);
+		String newAccessToken = jwtHelper.generateToken(email, accessTokenValidity);
+		return commonHelper.returnUnifiedOK("Token is refreshed successfully",
+				new TokenResponse(newAccessToken, refreshToken));
 	}
 }

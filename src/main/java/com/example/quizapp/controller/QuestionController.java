@@ -25,7 +25,7 @@ import com.example.quizapp.util.ResponseBuilder;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/questions")
+@RequestMapping("/api/${api.version}/questions")
 public class QuestionController {
 
 	@Autowired
@@ -42,14 +42,14 @@ public class QuestionController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<Question>> update(@PathVariable("id") Long id,
+	public ResponseEntity<UnifiedResponse<Question>> update(@PathVariable Long id,
 			@Valid @RequestBody QuestionRequest request) {
 		return ResponseBuilder.buildResponse(HttpStatus.OK, questionService.update(id, request));
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('Educator')")
-	public ResponseEntity<UnifiedResponse<Void>> delete(@PathVariable("id") Long id) {
+	public ResponseEntity<UnifiedResponse<Void>> delete(@PathVariable Long id) {
 		return ResponseBuilder.buildOKResponse(questionService.delete(id));
 	}
 
@@ -59,7 +59,7 @@ public class QuestionController {
 			@RequestParam(required = false) String questionType, @RequestParam(required = false) Long quizId,
 			@RequestParam(required = false) Long creatorId, @RequestParam(required = false) String sort,
 			@RequestParam(required = false) String start, @RequestParam(required = false) String end,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int size) {
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		return ResponseBuilder.buildOKResponse(questionService.findQuestionsByFilters(creatorId, quizId, start, end,
 				query, randomizeOptions, questionType, sort, commonHelper.makePageReq(page, size)));
 	}

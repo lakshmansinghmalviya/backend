@@ -15,13 +15,13 @@ import io.swagger.v3.oas.annotations.servers.Server;
 		version = "1.0"
 		), 
 		servers = {
-		@Server(description = "Quiz App Backend", url = "http://localhost:7000") 
+		@Server(description = "Quiz App Backend", url = "http://localhost:${server.port}") 
 		}, 
 		security = @SecurityRequirement(name = "Token based Authorization"))
 
 @SecuritySchemes({
 		@SecurityScheme(
-				name = "Token based Authorization", 
+				name = "TokenBasedAuthorization", 
 				description = "JWT Auth description", 
 				scheme = "bearer", type = SecuritySchemeType.HTTP, 
 				bearerFormat = "JWT", in = SecuritySchemeIn.HEADER) 

@@ -1,14 +1,22 @@
-{
-	"properties": [
-		{
-			"name": "jwt.secret",
-			"type": "java.lang.String",
-			"description": "This is for the Secret key will use this"
-		},
-		{
-			"name": "token.validity",
-			"type": "java.lang.long",
-			"description": "This is for the validity of the token"
-		}
-	]
-}
+{"properties": [
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "This is for the Secret key we will use this"
+  },
+  {
+    "name": "jwt.access.expiration",
+    "type": "java.lang.long",
+    "description": "A description for 'jwt.access.expiration"
+  },
+  {
+    "name": "jwt.refresh.expiration",
+    "type": "java.lang.long",
+    "description": "A description for 'jwt.refresh.expiration'"
+  },
+  {
+    "name": "api.version",
+    "type": "java.lang.String",
+    "description": "A description for 'api.version'"
+  },
+]}

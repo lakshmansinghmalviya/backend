@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.quizapp.dto.AuthResponse;
 import com.example.quizapp.dto.LoginRequest;
 import com.example.quizapp.dto.SignupRequest;
+import com.example.quizapp.dto.TokenRequest;
+import com.example.quizapp.dto.TokenResponse;
 import com.example.quizapp.dto.UnifiedResponse;
 import com.example.quizapp.service.AuthService;
 import com.example.quizapp.util.ResponseBuilder;
@@ -19,7 +21,7 @@ import com.example.quizapp.util.ResponseBuilder;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/${api.version}/auth")
 public class AuthController {
 
 	@Autowired
@@ -34,7 +36,13 @@ public class AuthController {
 	public ResponseEntity<UnifiedResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest authRequest) {
 		return ResponseBuilder.buildOKResponse(authService.login(authRequest));
 	}
-	
+
+	@PostMapping("/refresh-token")
+	public ResponseEntity<UnifiedResponse<TokenResponse>> refreshAccessToken(
+			@RequestBody TokenRequest refTokenRequest) {
+		return ResponseBuilder.buildOKResponse(authService.refreshAccessToken(refTokenRequest));
+	}
+
 	@GetMapping("/test")
 	public String test() {
 		return "Testing the aws app-congrats!! Running..";

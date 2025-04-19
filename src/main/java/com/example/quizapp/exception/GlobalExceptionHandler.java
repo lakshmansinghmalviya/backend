@@ -51,6 +51,12 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
 	}
 
+	@ExceptionHandler(TokenNotValidException.class)
+	public ResponseEntity<MessageResponse> handleTokenNotValidException(TokenNotValidException ex) {
+		MessageResponse res = new MessageResponse(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException ex) {
 		MessageResponse res = new MessageResponse(ex.getMessage());

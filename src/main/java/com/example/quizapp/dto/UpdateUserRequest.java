@@ -1,6 +1,7 @@
 package com.example.quizapp.dto;
 
 import com.example.quizapp.enums.Role;
+
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;

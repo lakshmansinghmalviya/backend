@@ -1,6 +1,7 @@
 package com.example.quizapp.filter;
 
 import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,8 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.example.quizapp.exception.TokenNotValidException;
 import com.example.quizapp.service.MyUserDetailService;
 import com.example.quizapp.util.JwtHelper;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 			UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
+			boolean isTokenValid = jwtHelper.isTokenValid(jwt);
+
+			if (!isTokenValid)
+				throw new TokenNotValidException("Token is not Valid or Expired please login again");
 
 			if (userDetails != null && jwtHelper.isTokenValid(jwt)) {
 				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
