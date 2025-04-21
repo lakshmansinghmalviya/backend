@@ -24,7 +24,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 			+ "AND (:endDate IS NULL OR c.createdAt <= :endDate) "
 			+ "AND (:query IS NULL OR (LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(c.description) LIKE LOWER(CONCAT('%', :query, '%')))) " + "AND c.isDeleted = false")
-	Page<Category> findCategoriesByFilters(@Param("creatorId") Long creatorId,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-			@Param("query") String query, Pageable pageable);
+	Page<Category> findCategoriesByFilters(Long creatorId, LocalDateTime startDate, LocalDateTime endDate, String query,
+			Pageable pageable);
 }

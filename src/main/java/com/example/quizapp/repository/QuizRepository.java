@@ -30,8 +30,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 			+ "AND (:categoryId IS NULL OR q.category.id = :categoryId) "
 			+ "AND (:timeLimit IS NULL OR q.timeLimit <= :timeLimit) "
 			+ "AND (:randomizeQuestions IS NULL OR q.randomizeQuestions = :randomizeQuestions)")
-	Page<Quiz> findQuizzesByFilters(@Param("creatorId") Long creatorId, @Param("severity") Severity severity,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-			@Param("query") String query, @Param("categoryId") Long categoryId, @Param("timeLimit") Long timeLimit,
-			@Param("randomizeQuestions") Boolean randomizeQuestions, Pageable pageable);
+	Page<Quiz> findQuizzesByFilters(Long creatorId, Severity severity, LocalDateTime startDate, LocalDateTime endDate,
+			String query, Long categoryId, Long timeLimit, Boolean randomizeQuestions, Pageable pageable);
 }

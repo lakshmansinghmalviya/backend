@@ -12,6 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -64,27 +65,27 @@ public class User extends BaseEntity {
 
 	private String bio;
 
-	@OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Category> categories;
 
-	@OneToMany(mappedBy = "creator")
+	@OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<Quiz> quizzes;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@JsonBackReference
 	private List<Result> results;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@JsonBackReference
 	private List<Feedback> feedbacks;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@JsonBackReference
 	private List<Bookmark> bookmarks;
 
-	@OneToMany(mappedBy = "creator")
+	@OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
 	@JsonBackReference
 	private List<Question> questions;
 }

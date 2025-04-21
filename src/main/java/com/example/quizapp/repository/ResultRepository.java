@@ -21,22 +21,22 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 	Long countByQuizId(Long quizId);
 
 	@Query("SELECT r FROM Result r WHERE r.user.id = :id ORDER BY r.updatedAt DESC")
-	Page<Result> findResultsByUserIdOrderedByUpdatedAtDesc(@Param("id") Long id, Pageable pageable);
+	Page<Result> findResultsByUserIdOrderedByUpdatedAtDesc(Long id, Pageable pageable);
 
 	@Query("SELECT SUM(r.score) FROM Result r WHERE r.user.id = :id")
-	Long findTotalScoreByUserId(@Param("id") Long id);
+	Long findTotalScoreByUserId(Long id);
 
 	@Query("SELECT SUM(r.totalScore) FROM Result r WHERE r.user.id = :id")
-	Long findTotalOfTheTotalScoreByUserId(@Param("id") Long id);
+	Long findTotalOfTheTotalScoreByUserId(Long id);
 
 	@Query("SELECT SUM(r.timeSpent) FROM Result r WHERE r.user.id = :id")
-	Long findTotalTimeSpentByUserId(@Param("id") Long id);
+	Long findTotalTimeSpentByUserId(Long id);
 
 	@Query("SELECT COUNT(r) FROM Result r WHERE r.user.id = :id AND r.isCompleted = true")
-	Long findTotalCompletedQuizzesByUserId(@Param("id") Long id);
+	Long findTotalCompletedQuizzesByUserId(Long id);
 
 	@Query("SELECT COUNT(r) FROM Result r WHERE r.user.id = :id AND r.isCompleted = false")
-	Long findTotalIncompleteQuizzesByUserId(@Param("id") Long id);
+	Long findTotalIncompleteQuizzesByUserId(Long id);
 
 	@Query("SELECT r FROM Result r JOIN r.quiz q " + "WHERE (:userId IS NULL OR r.user.id = :userId) "
 			+ "AND (:query IS NULL OR LOWER(q.title) LIKE LOWER(CONCAT('%', :query, '%'))) "
@@ -49,10 +49,7 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 			+ "AND (:startDate IS NULL OR r.createdAt >= :startDate) "
 			+ "AND (:endDate IS NULL OR r.createdAt <= :endDate) "
 			+ "AND (:timeLimit IS NULL OR q.timeLimit <= :timeLimit)")
-	Page<Result> searchResultsByFilters(@Param("userId") Long userId, @Param("query") String query,
-			@Param("score") Long score, @Param("totalScore") Long totalScore, @Param("timeSpent") Long timeSpent,
-			@Param("isCompleted") Boolean isCompleted, @Param("correctAnswers") Long correctAnswers,
-			@Param("totalQuestion") Long totalQuestion, @Param("timesTaken") Long timesTaken,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-			@Param("timeLimit") Long timeLimit, Pageable pageable);
+	Page<Result> searchResultsByFilters(Long userId, String query, Long score, Long totalScore, Long timeSpent,
+			Boolean isCompleted, Long correctAnswers, Long totalQuestion, Long timesTaken, LocalDateTime startDate,
+			LocalDateTime endDate, Long timeLimit, Pageable pageable);
 }

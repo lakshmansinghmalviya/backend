@@ -25,8 +25,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 			+ "AND (:categoryId IS NULL OR b.quiz.category.id = :categoryId) "
 			+ "AND (:timeLimit IS NULL OR b.quiz.timeLimit <= :timeLimit) "
 			+ "AND (:randomizeQuestions IS NULL OR b.quiz.randomizeQuestions = :randomizeQuestions)")
-	Page<Bookmark> findBookmarksByFilters(@Param("userId") Long userId, @Param("startDate") LocalDateTime startDate,
-			@Param("endDate") LocalDateTime endDate, @Param("query") String query, @Param("severity") Severity severity,
-			@Param("categoryId") Long categoryId, @Param("timeLimit") Long timeLimit,
-			@Param("randomizeQuestions") Boolean randomizeQuestions, Pageable pageable);
+	Page<Bookmark> findBookmarksByFilters(Long userId, LocalDateTime startDate, LocalDateTime endDate, String query,
+			Severity severity, Long categoryId, Long timeLimit, Boolean randomizeQuestions, Pageable pageable);
 }

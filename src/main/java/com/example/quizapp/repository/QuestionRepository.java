@@ -26,8 +26,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			+ "AND (:query IS NULL OR (LOWER(q.text) LIKE LOWER(CONCAT('%', :query, '%')))) "
 			+ "AND (:randomizeOptions IS NULL OR q.randomizeOptions = :randomizeOptions) "
 			+ "AND (:questionType IS NULL OR q.questionType = :questionType) " + "AND q.isDeleted = false")
-	Page<Question> findQuestionsByFilters(@Param("creatorId") Long creatorId, @Param("quizId") Long quizId,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-			@Param("query") String query, @Param("randomizeOptions") Boolean randomizeOptions,
-			@Param("questionType") String questionType, Pageable pageable);
+	Page<Question> findQuestionsByFilters(Long creatorId, Long quizId, LocalDateTime startDate, LocalDateTime endDate,
+			String query, Boolean randomizeOptions, String questionType, Pageable pageable);
 }

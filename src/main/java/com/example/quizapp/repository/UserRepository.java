@@ -7,8 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Query; 
 import org.springframework.stereotype.Repository;
 
 import com.example.quizapp.entity.User;
@@ -18,12 +17,12 @@ import com.example.quizapp.enums.Role;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query("SELECT u FROM User u WHERE u.email = :email AND (u.isDeleted = false OR u.isDeleted IS NULL)")
-	Optional<User> findByEmail(@Param("email") String email);
+	Optional<User> findByEmail(String email);
 
 	boolean existsByEmail(String email);
 
 	@Query("SELECT CASE WHEN u.isApproved = true THEN true ELSE false END FROM User u WHERE u.email = :email AND (u.isDeleted = false OR u.isDeleted IS NULL)")
-	boolean isApprovedByEmail(@Param("email") String email);
+	boolean isApprovedByEmail(String email);
 
 	Optional<User> findById(Long id);
 
@@ -37,6 +36,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.education) LIKE LOWER(CONCAT('%', :query, '%')) "
 			+ "OR LOWER(u.bio) LIKE LOWER(CONCAT('%', :query, '%'))))")
-	Page<User> findUsersByFilters(@Param("roles") List<Role> roles, @Param("startDate") LocalDateTime startDate,
-			@Param("endDate") LocalDateTime endDate, @Param("query") String query, Pageable pageable);
+	Page<User> findUsersByFilters(List<Role> roles, LocalDateTime startDate, LocalDateTime endDate, String query,
+			Pageable pageable);
 }
