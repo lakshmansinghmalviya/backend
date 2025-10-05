@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: quizapp
+
+  server:
+    port: 5000
+
+  datasource:
+    url: jdbc:mysql://quiz-app-db.cv0cm6misgcr.eu-north-1.rds.amazonaws.com:3306/quiz_app_dev
+    username: lakshmansde1
+    password: lakshmansde1
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+  secret: 638CBE3A90E0303BF3808F40F95A7F02A24B4B5D029954CF553F79E9EF1DC0384BE681C249F1223F6B55AA21DC070914834CA22C8DD98E14A872CA010091ACC
+  token:
+    validity: 10800000
