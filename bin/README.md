@@ -1,3 +1,0 @@
-# backend
-
-spring boot backend

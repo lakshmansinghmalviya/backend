@@ -1,14 +1,36 @@
-FROM python:3.11-slim
+# Use a lightweight Java runtime
+FROM eclipse-temurin:17-jdk-jammy AS build
 
+# Set working directory
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy Maven build files
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-COPY app ./app
-COPY run.py .
-COPY .env .
+# Download dependencies (caching layer)
+RUN ./mvnw dependency:go-offline -B
 
-EXPOSE 7000
+# Copy source code
+COPY src src
 
-CMD ["python", "run.py"]
+# Build the application JAR
+RUN ./mvnw clean package -DskipTests
+
+# -----------------------------
+# Run stage: minimal image
+# -----------------------------
+FROM eclipse-temurin:17-jre-jammy
+
+# Set working directory
+WORKDIR /app
+
+# Copy the built JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose application port (default Spring Boot is 8080)
+EXPOSE 8080
+
+# Run the JAR
+ENTRYPOINT ["java","-jar","app.jar"]

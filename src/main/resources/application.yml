@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: quizapp
+  server:
+    port: 7000
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/quiz_app_dev
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql": true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+api:
+  version: v1
+
+jwt:
+  secret: 638CBE3A90E0303BF3808F40F95A7F02A24B4B5D029954CF553F79E9EF1DC0384BE681C249F1223F6B55AA21DC070914834CA010091ACC
+  access:
+    expiration: 600000    # 10 min
+  refresh:
+    expiration: 86400000  # 1 day
+
+# Optional shorter JWT timings (commented)
+# jwt:
+#   access:
+#     expiration: 120000  # 2 min
+#   refresh:
+#     expiration: 300000  # 5 min
