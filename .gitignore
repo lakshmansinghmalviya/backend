@@ -1,24 +1,53 @@
-HELP.md
+### Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.mvn/
 
-### STS ###
+### Gradle ###
+.gradle/
+bin/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+.gradle/
+*.gradle
+gradle-app.setting
+
+### Logs ###
+*.log
+*.out
+*.err
+logs/
+
+### Spring specific ###
+HELP.md
+*.db
+*.h2.db
+*.mv.db
+*.trace.db
+
+### STS (Spring Tool Suite) ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 .metadata/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
+
+### Eclipse ###
+*.launch
+*.prefs
 
 ### NetBeans ###
 /nbproject/private/
@@ -26,9 +55,36 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+### OS-specific ###
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+### Package Archives ###
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### Temporary files ###
+*.swp
+*.swo
+*.tmp
+*.bak
+*.backup
+*.orig
